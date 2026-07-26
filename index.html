@@ -68,7 +68,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .user-badge {
@@ -113,16 +113,16 @@
 
         .score-board span {
             font-family: 'Press Start 2P', cursive;
-            font-size: 30px;
+            font-size: 28px;
             color: #fff;
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
             letter-spacing: 2px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             display: inline-block;
         }
 
         .score-board p {
-            font-size: 11px;
+            font-size: 10px;
             color: #ccc;
             font-weight: 800;
             letter-spacing: 3px;
@@ -132,23 +132,78 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             flex-grow: 1;
             text-align: center;
+            padding: 10px 0;
         }
 
         .section-view h3 {
             font-family: 'Press Start 2P', cursive;
             font-size: 13px;
             color: #00ffff;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        }
+
+        .coin-wrapper {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+            margin: auto 0;
+        }
+
+        .coin-glow {
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .coin-btn {
+            width: 210px;
+            height: 210px;
+            background-color: rgba(13, 13, 13, 0.9);
+            border: 6px solid #333;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 12px 0px #111, 0 18px 25px rgba(0,0,0,0.85);
+            position: relative;
+            z-index: 2;
+        }
+
+        .coin-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .coin-wrapper:active .coin-btn {
+            transform: translateY(4px) scale(0.97);
+            border-color: #00ffff;
+        }
+
+        .energy-section-bottom {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 5px;
         }
 
         .energy-container {
             width: 100%;
-            max-width: 280px;
-            margin-top: 20px;
+            max-width: 320px;
         }
 
         .energy-info {
@@ -156,7 +211,7 @@
             justify-content: space-between;
             font-size: 10px;
             color: #00ffff;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             font-weight: bold;
         }
 
@@ -176,6 +231,56 @@
             border-radius: 4px;
             width: 100%;
             transition: width 0.1s linear;
+        }
+
+        .hint {
+            margin-top: 6px;
+            font-size: 9px;
+            color: #bbb;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .wheel-box-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            z-index: 10;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid #ff0055;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .lucky-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #00ffff;
+            position: relative;
+            overflow: hidden;
+            background: conic-gradient(
+                #ff0055 0deg 60deg, 
+                #00ffff 60deg 120deg, 
+                #ffcc00 120deg 180deg, 
+                #7700ff 180deg 240deg, 
+                #00ff66 240deg 300deg, 
+                #ff5500 300deg 360deg
+            );
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
         }
 
         .upgrades-list, .tasks-list, .ranking-list {
@@ -217,33 +322,18 @@
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 10px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 9px;
+            font-size: 10px;
             cursor: pointer;
         }
 
-        .wheel-container {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .wheel-box {
-            font-size: 40px;
-            margin: 15px 0;
-            animation: bounceWheel 1.5s infinite alternate;
-        }
-
-        @keyframes bounceWheel {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
+        .action-btn:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
         }
 
         .rank-item {
@@ -254,61 +344,6 @@
         .rank-item.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.1); }
         .rank-item.silver { border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
         .rank-item.bronze { border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
-
-        .coin-wrapper {
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            touch-action: manipulation;
-        }
-
-        .coin-glow {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .coin-btn {
-            width: 170px;
-            height: 170px;
-            background-color: rgba(13, 13, 13, 0.85);
-            border: 5px solid #2a2a2a;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            box-shadow: 0 10px 0px #111, 0 15px 20px rgba(0,0,0,0.8);
-            position: relative;
-            z-index: 2;
-        }
-
-        .coin-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
-
-        .coin-wrapper:active .coin-btn {
-            transform: translateY(4px) scale(0.97);
-            border-color: #00ffff;
-        }
-
-        .hint {
-            margin-top: 12px;
-            font-size: 10px;
-            color: #bbb;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 800;
-        }
 
         .footer-nav {
             display: flex;
@@ -439,17 +474,18 @@
                 </div>
             </div>
             
-            <div class="energy-container">
-                <div class="energy-info">
-                    <span>⚡ ENERGY</span>
-                    <span id="energyText">1000 / 1000</span>
+            <div class="energy-section-bottom">
+                <div class="energy-container">
+                    <div class="energy-info">
+                        <span>⚡ ENERGY</span>
+                        <span id="energyText">1000 / 1000</span>
+                    </div>
+                    <div class="energy-bar-bg">
+                        <div class="energy-bar-fill" id="energyFill"></div>
+                    </div>
                 </div>
-                <div class="energy-bar-bg">
-                    <div class="energy-bar-fill" id="energyFill"></div>
-                </div>
+                <p class="hint" id="hintText">TAP TO EARN</p>
             </div>
-
-            <p class="hint" id="hintText">TAP TO EARN</p>
         </main>
 
         <!-- Upgrades View -->
@@ -459,21 +495,22 @@
                 <div class="upgrade-item">
                     <div class="upgrade-info">
                         <h4>⚡ Multi-Tap (Lv <span id="tapLevel">1</span>)</h4>
-                        <p id="tapCost">Cost: 2,500 Coins</p>
+                        <p id="tapCost">Cost: 5,000 Coins</p>
                     </div>
                     <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
                 </div>
             </div>
         </div>
 
-        <!-- Wheel View -->
+        <!-- Wheel View (Once per 24 hours & Harder odds) -->
         <div class="section-view" id="wheelView" style="display: none;">
             <h3>LUCKY WHEEL</h3>
-            <div class="wheel-container">
-                <div class="wheel-box">🎡</div>
-                <p style="font-size: 10px; color: #ccc; margin-bottom: 12px;">Cost: 500 Coins per Spin</p>
-                <button class="action-btn" onclick="spinWheel()">SPIN NOW</button>
+            <div class="wheel-box-container">
+                <div class="wheel-pointer"></div>
+                <div class="lucky-wheel" id="luckyWheel"></div>
             </div>
+            <p style="font-size: 10px; color: #ff0055; margin: 6px 0;" id="wheelTimerText">FREE SPIN AVAILABLE</p>
+            <button class="action-btn" id="spinBtn" onclick="spinWheel()">SPIN FREE</button>
         </div>
 
         <!-- Tasks View -->
@@ -483,9 +520,9 @@
                 <div class="task-item">
                     <div class="task-info">
                         <h4>📢 Join Telegram</h4>
-                        <p>+1,000 Coins</p>
+                        <p>+500 Coins</p>
                     </div>
-                    <button class="task-btn" onclick="completeTask(this, 1000)">CLAIM</button>
+                    <button class="task-btn" onclick="completeTask(this, 500)">CLAIM</button>
                 </div>
             </div>
         </div>
@@ -529,12 +566,15 @@
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        let score = localStorage.getItem('b3bo_score') ? parseInt(localStorage.getItem('b3bo_score')) : 500;
+        let score = localStorage.getItem('b3bo_score') ? parseInt(localStorage.getItem('b3bo_score')) : 100;
         let maxEnergy = 1000;
         let energy = localStorage.getItem('b3bo_energy') ? parseInt(localStorage.getItem('b3bo_energy')) : 1000;
         let tapPower = localStorage.getItem('b3bo_tapPower') ? parseInt(localStorage.getItem('b3bo_tapPower')) : 1;
-        let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 2500;
+        let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 5000;
         let miningEndTime = localStorage.getItem('b3bo_miningEndTime') ? parseInt(localStorage.getItem('b3bo_miningEndTime')) : 0;
+        let lastSpinTime = localStorage.getItem('b3bo_lastSpinTime') ? parseInt(localStorage.getItem('b3bo_lastSpinTime')) : 0;
+        let currentWheelAngle = 0;
+        let isSpinning = false;
 
         const scoreElement = document.getElementById('score');
         const coinButton = document.getElementById('coinButton');
@@ -544,6 +584,8 @@
         const hintText = document.getElementById('hintText');
         const tapLevelElem = document.getElementById('tapLevel');
         const tapCostElem = document.getElementById('tapCost');
+        const wheelTimerText = document.getElementById('wheelTimerText');
+        const spinBtn = document.getElementById('spinBtn');
 
         function updateDisplays() {
             scoreElement.textContent = score.toLocaleString();
@@ -561,8 +603,11 @@
 
         updateDisplays();
 
+        // Check Wheel 24h Timer Interval
         setInterval(() => {
             let now = Date.now();
+            
+            // Energy mining timer
             if (energy <= 0 && miningEndTime > now) {
                 let remainingSec = Math.ceil((miningEndTime - now) / 1000);
                 let mins = Math.floor(remainingSec / 60);
@@ -574,6 +619,22 @@
                 localStorage.setItem('b3bo_miningEndTime', 0);
                 hintText.textContent = "TAP TO EARN";
                 updateDisplays();
+            }
+
+            // Wheel 24h timer check
+            let cooldown = 24 * 60 * 60 * 1000;
+            if (now - lastSpinTime < cooldown) {
+                let timeLeft = cooldown - (now - lastSpinTime);
+                let hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                let mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                let secs = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                wheelTimerText.textContent = `Next Spin in: ${hours}h ${mins}m ${secs}s`;
+                spinBtn.disabled = true;
+                spinBtn.style.opacity = "0.5";
+            } else {
+                wheelTimerText.textContent = "FREE SPIN AVAILABLE!";
+                spinBtn.disabled = false;
+                spinBtn.style.opacity = "1";
             }
         }, 1000);
 
@@ -640,7 +701,7 @@
             if (score >= tapCostVal) {
                 score -= tapCostVal;
                 tapPower += 1;
-                tapCostVal = Math.floor(tapCostVal * 2.5);
+                tapCostVal = Math.floor(tapCostVal * 3); // Increased difficulty for upgrades
                 updateDisplays();
                 if (tg.showAlert) tg.showAlert(`Upgrade Successful! +${tapPower} per tap`);
             } else {
@@ -649,23 +710,55 @@
         }
 
         function spinWheel() {
-            let spinCost = 500;
-            if (score < spinCost) {
-                if (tg.showAlert) tg.showAlert("You need 500 coins to spin the wheel!");
+            if (isSpinning) return;
+            let now = Date.now();
+            let cooldown = 24 * 60 * 60 * 1000;
+            if (now - lastSpinTime < cooldown) {
+                if (tg.showAlert) tg.showAlert("You can only spin once every 24 hours!");
                 return;
             }
-            score -= spinCost;
-            updateDisplays();
 
-            let prizes = [100, 300, 1000, 2500, 0, 5000];
-            let won = prizes[Math.floor(Math.random() * prizes.length)];
-            score += won;
-            updateDisplays();
+            lastSpinTime = now;
+            localStorage.setItem('b3bo_lastSpinTime', lastSpinTime);
 
-            if (tg.showAlert) {
-                if (won > 0) tg.showAlert(`Wheel Spin: You won +${won} Coins! 🎉`);
-                else tg.showAlert("Bad luck! You won nothing. 😢");
+            isSpinning = true;
+            spinBtn.disabled = true;
+
+            // Harder / lower reward distribution (Index 0 to 5)
+            // 0: 10, 1: 50, 2: 0, 3: 100, 4: 0, 5: 500 (rare jackpot)
+            let prizes = [10, 50, 0, 100, 0, 500];
+            let weights = [40, 30, 15, 10, 4, 1]; // Odds
+            
+            let randomWeight = Math.random() * 100;
+            let cumulative = 0;
+            let randomIndex = 0;
+            for (let i = 0; i < weights.length; i++) {
+                cumulative += weights[i];
+                if (randomWeight <= cumulative) {
+                    randomIndex = i;
+                    break;
+                }
             }
+
+            let wonAmount = prizes[randomIndex];
+            let sectorDegree = 60;
+            let extraSpins = 360 * 6;
+            let targetAngle = extraSpins + (360 - (randomIndex * sectorDegree + sectorDegree / 2));
+            
+            currentWheelAngle += targetAngle;
+            const wheelElem = document.getElementById('luckyWheel');
+            wheelElem.style.transform = `rotate(${currentWheelAngle}deg)`;
+
+            setTimeout(() => {
+                score += wonAmount;
+                updateDisplays();
+                isSpinning = false;
+
+                if (tg.showAlert) {
+                    if (wonAmount > 0) tg.showAlert(`Wheel Spin: You won +${wonAmount} Coins! 🎉`);
+                    else tg.showAlert("Bad luck! You won nothing this time. 😢");
+                }
+            }, 4000);
         }
 
         function switchTab(tab) {
@@ -706,9 +799,9 @@
         function loadLeaderboard() {
             const listContainer = document.getElementById('rankingList');
             let leaders = [
-                { name: "CryptoKing", score: 25400 },
+                { name: "CryptoKing", score: 12500 },
                 { name: userName, score: score },
-                { name: "B3BOMaster", score: 18900 }
+                { name: "B3BOMaster", score: 8900 }
             ];
             leaders.sort((a, b) => b.score - a.score);
             listContainer.innerHTML = "";
@@ -734,4 +827,3 @@
     </script>
 </body>
 </html>
-
