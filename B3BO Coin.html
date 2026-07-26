@@ -1,0 +1,657 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BeboPixel Tap Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الخلفية الشاملة للعبة -->
+    <div class="app-bg">
+        <img src="https://i.ibb.co/wFMrKh5t/image.png" alt="Background">
+    </div>
+
+    <div class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="top-bar">
+                <div class="user-badge">
+                    <span class="status-dot"></span>
+                    <h2 id="username">PLAYER 1</h2>
+                </div>
+                <button class="wallet-btn" id="walletBtn" onclick="toggleWalletModal()">
+                    <span id="walletStatusText">CONNECT</span> 💳
+                </button>
+            </div>
+            <div class="score-board">
+                <span id="score">0</span>
+                <p>BEBO COIN</p>
+            </div>
+        </header>
+
+        <!-- Main Game View -->
+        <main class="tap-section" id="gameView">
+            <div class="coin-wrapper" id="coinButton">
+                <div class="coin-glow"></div>
+                <div class="coin-btn">
+                    <img src="https://i.ibb.co/3y69MMWz/image.png" alt="BeboPixel Coin">
+                </div>
+            </div>
+            <p class="hint">TAP TO EARN</p>
+        </main>
+
+        <!-- Rank View -->
+        <div class="section-view" id="rankView" style="display: none;">
+            <h3>LEADERBOARD</h3>
+            <div class="ranking-list" id="rankingList">
+                <!-- سيتم تعبئتها تلقائياً عبر البرمجة -->
+            </div>
+        </div>
+
+        <!-- Friends View -->
+        <div class="section-view" id="friendsView" style="display: none;">
+            <h3>REFERRALS</h3>
+            <p class="sub-text">Invite your friends and earn 500 coins for each referral!</p>
+            <div class="ref-box">
+                <input type="text" id="refLinkInput" readonly value="https://t.me/bebo_pixel_bot?start=ref_123">
+                <button class="action-btn" onclick="copyRefLink()">COPY LINK</button>
+            </div>
+        </div>
+
+        <!-- Footer Navigation -->
+        <nav class="footer-nav">
+            <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
+                <span class="nav-icon">⚡</span>
+                <span>HOME</span>
+            </button>
+            <button class="nav-btn" id="btnRank" onclick="switchTab('rank')">
+                <span class="nav-icon">🏆</span>
+                <span>RANK</span>
+            </button>
+            <button class="nav-btn" id="btnFriends" onclick="switchTab('friends')">
+                <span class="nav-icon">👥</span>
+                <span>FRIENDS</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Wallet Modal -->
+    <div class="modal-overlay" id="walletModal" style="display: none;">
+        <div class="modal-content">
+            <h3>CONNECT WALLET</h3>
+            <p>Link your TON wallet to withdraw your Bebo Coins.</p>
+            <button class="wallet-option-btn" onclick="connectWallet('TON Wallet')">💎 Connect TON Wallet</button>
+            <button class="wallet-option-btn" onclick="connectWallet('Telegram Wallet')">⚡ Connect Telegram Wallet</button>
+            <button class="close-modal-btn" onclick="toggleWalletModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<style>@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #050505;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+}
+
+/* تنسيق الخلفية الشاملة لتغطي الشاشة بوضوح وبدون بكسلة */
+.app-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.app-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75);
+}
+
+.game-container {
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 1;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.user-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #00ffcc;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00ffcc;
+    margin-right: 6px;
+}
+
+.user-badge h2 {
+    font-size: 10px;
+    color: #eee;
+    letter-spacing: 1px;
+}
+
+.wallet-btn {
+    background: rgba(0, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    color: #00ffff;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wallet-btn:active {
+    transform: scale(0.95);
+    background: rgba(0, 255, 255, 0.3);
+}
+
+.header {
+    text-align: center;
+}
+
+.score-board span {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 32px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+.score-board p {
+    font-size: 11px;
+    color: #ccc;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.tap-section, .section-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.section-view h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: #00ffff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+}
+
+.ranking-list {
+    width: 100%;
+    max-width: 320px;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.rank-item {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    padding: 12px 16px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+}
+
+.rank-item.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+.rank-item.silver { border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
+.rank-item.bronze { border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
+
+.sub-text {
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    padding: 0 10px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.ref-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    align-items: center;
+}
+
+.ref-box input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #444;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, #ff0055, #ff5500);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(255, 0, 85, 0.4);
+}
+
+.coin-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: manipulation;
+}
+
+.coin-glow {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(0, 255, 255, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.coin-wrapper:active .coin-glow {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+.coin-btn {
+    width: 210px;
+    height: 210px;
+    background-color: rgba(13, 13, 13, 0.85);
+    backdrop-filter: blur(5px);
+    border: 5px solid #2a2a2a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform 0.06s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 12px 0px #111, 0 18px 25px rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 2;
+}
+
+.coin-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.coin-wrapper:active .coin-btn {
+    transform: translateY(6px) scale(0.97);
+    border-color: #00ffff;
+    box-shadow: 0 4px 0px #111, 0 8px 12px rgba(0,0,0,0.6);
+}
+
+.hint {
+    margin-top: 35px;
+    font-size: 10px;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 10px;
+}
+
+.nav-icon {
+    font-size: 14px;
+}
+
+.nav-btn.active {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background: #121212;
+    border: 1px solid #333;
+    padding: 25px;
+    border-radius: 20px;
+    width: 85%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.modal-content h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    color: #00ffff;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.wallet-option-btn {
+    background: #1a1a1a;
+    border: 1px solid #444;
+    color: #fff;
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.wallet-option-btn:hover {
+    border-color: #00ffff;
+    background: rgba(0, 255, 255, 0.05);
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    color: #ff0055;
+    margin-top: 15px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
+}
+</style><script>const tg = window.Telegram.WebApp;
+try {
+    tg.expand();
+    if (tg.setHeaderColor) {
+        tg.setHeaderColor('#050505');
+    }
+} catch (e) {
+    console.error(e);
+}
+
+let score = localStorage.getItem('bebo_score') ? parseInt(localStorage.getItem('bebo_score')) : 1250;
+const scoreElement = document.getElementById('score');
+const coinButton = document.getElementById('coinButton');
+const usernameElement = document.getElementById('username');
+
+function updateScoreDisplay() {
+    if (scoreElement) {
+        scoreElement.textContent = score.toLocaleString();
+    }
+}
+
+updateScoreDisplay();
+
+let userName = "PLAYER 1";
+if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+    userName = tg.initDataUnsafe.user.first_name.toUpperCase();
+}
+usernameElement.textContent = userName;
+
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+if (coinButton) {
+    coinButton.addEventListener('click', (e) => {
+        handleTap(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
+    });
+
+    coinButton.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        handleTap(touch.clientX, touch.clientY);
+    }, { passive: false });
+}
+
+function handleTap(x, y) {
+    score += 1;
+    updateScoreDisplay();
+    localStorage.setItem('bebo_score', score);
+
+    if (tg.HapticFeedback) {
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    createFloatingNumber(x, y);
+}
+
+function createFloatingNumber(x, y) {
+    const el = document.createElement('div');
+    el.textContent = '+1';
+    el.style.position = 'fixed';
+    el.style.left = `${x + (Math.random() * 40 - 20)}px`;
+    el.style.top = `${y - 30}px`;
+    el.style.color = '#00ffff';
+    el.style.fontFamily = "'Press Start 2P', cursive";
+    el.style.fontSize = '12px';
+    el.style.fontWeight = 'bold';
+    el.style.pointerEvents = 'none';
+    el.style.zIndex = '999';
+    el.style.textShadow = '0 0 10px rgba(0, 255, 255, 0.8)';
+    
+    document.body.appendChild(el);
+
+    el.animate([
+        { transform: 'translateY(0px) scale(0.8)', opacity: 1 },
+        { transform: 'translateY(-80px) scale(1.2)', opacity: 0 }
+    ], {
+        duration: 500,
+        easing: 'cubic-bezier(0, .9, .5, 1)'
+    });
+
+    setTimeout(() => {
+        el.remove();
+    }, 500);
+}
+
+function switchTab(tab) {
+    const gameView = document.getElementById('gameView');
+    const rankView = document.getElementById('rankView');
+    const friendsView = document.getElementById('friendsView');
+
+    const btnHome = document.getElementById('btnHome');
+    const btnRank = document.getElementById('btnRank');
+    const btnFriends = document.getElementById('btnFriends');
+
+    gameView.style.display = 'none';
+    rankView.style.display = 'none';
+    friendsView.style.display = 'none';
+
+    btnHome.classList.remove('active');
+    btnRank.classList.remove('active');
+    btnFriends.classList.remove('active');
+
+    if (tab === 'home') {
+        gameView.style.display = 'flex';
+        btnHome.classList.add('active');
+    } else if (tab === 'rank') {
+        rankView.style.display = 'flex';
+        btnRank.classList.add('active');
+        loadLeaderboard();
+    } else if (tab === 'friends') {
+        friendsView.style.display = 'flex';
+        btnFriends.classList.add('active');
+    }
+}
+
+function loadLeaderboard() {
+    const listContainer = document.getElementById('rankingList');
+    
+    let leaders = [
+        { name: "CryptoKing", score: 25400 },
+        { name: "BeboPixel", score: 18900 },
+        { name: userName, score: score },
+        { name: "Satoshi_99", score: 8400 },
+        { name: "TON_Master", score: 5100 }
+    ];
+
+    leaders.sort((a, b) => b.score - a.score);
+
+    listContainer.innerHTML = "";
+    leaders.forEach((item, index) => {
+        let rankClass = index === 0 ? "gold" : (index === 1 ? "silver" : (index === 2 ? "bronze" : ""));
+        let row = document.createElement('div');
+        row.className = `rank-item ${rankClass}`;
+        row.innerHTML = `<span>${index + 1}. ${item.name}</span> <span>${item.score.toLocaleString()}</span>`;
+        listContainer.appendChild(row);
+    });
+}
+
+function copyRefLink() {
+    const refInput = document.getElementById('refLinkInput');
+    refInput.select();
+    refInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(refInput.value);
+
+    if (tg.showAlert) {
+        tg.showAlert('Invite link copied to clipboard!');
+    } else {
+        alert('Invite link copied successfully!');
+    }
+}
+
+function toggleWalletModal() {
+    const modal = document.getElementById('walletModal');
+    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function connectWallet(walletName) {
+    toggleWalletModal();
+    const walletBtnText = document.getElementById('walletStatusText');
+    walletBtnText.textContent = "CONNECTED";
+    
+    if (tg.showAlert) {
+        tg.showAlert(`Successfully connected to ${walletName}!`);
+    } else {
+        alert(`Successfully connected to ${walletName}!`);
+    }
+}
+</script>
