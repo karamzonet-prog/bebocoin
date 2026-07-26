@@ -116,7 +116,7 @@
 
         .score-board span {
             font-family: 'Press Start 2P', cursive;
-            font-size: 32px;
+            font-size: 30px;
             color: #fff;
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
             letter-spacing: 2px;
@@ -142,16 +142,16 @@
 
         .section-view h3 {
             font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
+            font-size: 13px;
             color: #00ffff;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
         }
 
         .energy-container {
             width: 100%;
             max-width: 280px;
-            margin-top: 25px;
+            margin-top: 20px;
         }
 
         .energy-info {
@@ -181,20 +181,21 @@
             transition: width 0.1s linear;
         }
 
-        .tasks-list {
+        .tasks-list, .upgrades-list {
             width: 100%;
             max-width: 340px;
-            max-height: 300px;
+            max-height: 270px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            padding-right: 4px;
         }
 
-        .task-item {
+        .task-item, .upgrade-item {
             background: rgba(0, 0, 0, 0.65);
             backdrop-filter: blur(5px);
-            padding: 12px 15px;
+            padding: 10px 14px;
             border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
@@ -202,26 +203,26 @@
             align-items: center;
         }
 
-        .task-info {
+        .task-info, .upgrade-info {
             text-align: left;
         }
 
-        .task-info h4 {
+        .task-info h4, .upgrade-info h4 {
             font-size: 11px;
             color: #fff;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
-        .task-info p {
+        .task-info p, .upgrade-info p {
             font-size: 9px;
             color: #00ffff;
         }
 
-        .task-btn {
+        .task-btn, .upgrade-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 10px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
@@ -229,18 +230,39 @@
             cursor: pointer;
         }
 
+        .wheel-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .wheel-box {
+            font-size: 40px;
+            margin: 15px 0;
+            animation: bounceWheel 1.5s infinite alternate;
+        }
+
+        @keyframes bounceWheel {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
         .ranking-list {
             width: 100%;
             max-width: 320px;
-            max-height: 280px;
+            max-height: 260px;
             overflow-y: auto;
         }
 
         .rank-item {
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
-            padding: 12px 16px;
-            margin: 8px 0;
+            padding: 10px 14px;
+            margin: 6px 0;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 11px;
@@ -253,47 +275,6 @@
         .rank-item.silver { border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
         .rank-item.bronze { border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
 
-        .sub-text {
-            font-size: 11px;
-            color: #ccc;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            padding: 0 10px;
-        }
-
-        .ref-box {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            max-width: 300px;
-            align-items: center;
-        }
-
-        .ref-box input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #444;
-            color: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 10px;
-            text-align: center;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .action-btn {
-            background: linear-gradient(135deg, #ff0055, #ff5500);
-            color: #fff;
-            border: none;
-            padding: 12px 24px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 11px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
         .coin-wrapper {
             position: relative;
             cursor: pointer;
@@ -305,23 +286,17 @@
 
         .coin-glow {
             position: absolute;
-            width: 240px;
-            height: 240px;
+            width: 220px;
+            height: 220px;
             background: radial-gradient(circle, rgba(0, 255, 255, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
             border-radius: 50%;
             pointer-events: none;
             opacity: 0.7;
-            transition: transform 0.2s ease;
-        }
-
-        .coin-wrapper:active .coin-glow {
-            opacity: 1;
-            transform: scale(1.15);
         }
 
         .coin-btn {
-            width: 190px;
-            height: 190px;
+            width: 170px;
+            height: 170px;
             background-color: rgba(13, 13, 13, 0.85);
             backdrop-filter: blur(5px);
             border: 5px solid #2a2a2a;
@@ -330,7 +305,6 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            transition: transform 0.06s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 0px #111, 0 15px 20px rgba(0,0,0,0.8);
             position: relative;
             z-index: 2;
@@ -344,17 +318,16 @@
         }
 
         .coin-wrapper:active .coin-btn {
-            transform: translateY(5px) scale(0.97);
+            transform: translateY(4px) scale(0.97);
             border-color: #00ffff;
-            box-shadow: 0 3px 0px #111, 0 6px 10px rgba(0,0,0,0.6);
         }
 
         .hint {
-            margin-top: 15px;
+            margin-top: 12px;
             font-size: 10px;
             color: #bbb;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             font-weight: 800;
         }
 
@@ -363,7 +336,7 @@
             justify-content: space-around;
             background-color: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
-            padding: 6px;
+            padding: 5px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
         }
@@ -372,7 +345,7 @@
             background: none;
             border: none;
             color: #777;
-            font-size: 9px;
+            font-size: 8px;
             cursor: pointer;
             font-weight: 800;
             transition: all 0.2s;
@@ -381,13 +354,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            padding: 6px 10px;
+            gap: 2px;
+            padding: 6px 6px;
             border-radius: 10px;
         }
 
         .nav-icon {
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .nav-btn.active {
@@ -483,6 +456,7 @@
             </div>
         </header>
 
+        <!-- Main Home View -->
         <main class="tap-section" id="gameView">
             <div class="coin-wrapper" id="coinButton">
                 <div class="coin-glow"></div>
@@ -504,51 +478,70 @@
             <p class="hint" id="hintText">TAP TO EARN</p>
         </main>
 
+        <!-- Upgrades View (تطوير النقر) -->
+        <div class="section-view" id="upgradesView" style="display: none;">
+            <h3>BOOSTERS</h3>
+            <div class="upgrades-list">
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <h4>⚡ Multi-Tap (Lv <span id="tapLevel">1</span>)</h4>
+                        <p id="tapCost">Cost: 1,000 Coins</p>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wheel View (عجلة الحظ) -->
+        <div class="section-view" id="wheelView" style="display: none;">
+            <h3>LUCKY WHEEL</h3>
+            <div class="wheel-container">
+                <div class="wheel-box">🎡</div>
+                <p id="wheelStatus" style="font-size: 10px; color: #ccc; margin-bottom: 12px;">Cost: 500 Coins per Spin</p>
+                <button class="action-btn" onclick="spinWheel()" style="background: linear-gradient(135deg, #00ffff, #0077ff); color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; cursor: pointer; font-family: 'Orbitron'; font-size: 10px;">SPIN NOW</button>
+            </div>
+        </div>
+
+        <!-- Tasks View -->
         <div class="section-view" id="tasksView" style="display: none;">
             <h3>DAILY TASKS</h3>
             <div class="tasks-list">
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>📢 Join Telegram Channel</h4>
-                        <p>+1,000 B3BO Coins</p>
+                        <h4>📢 Join Telegram</h4>
+                        <p>+1,000 Coins</p>
                     </div>
                     <button class="task-btn" onclick="completeTask(this, 1000)">CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>🐦 Follow on X (Twitter)</h4>
-                        <p>+1,000 B3BO Coins</p>
+                        <h4>🐦 Follow on X</h4>
+                        <p>+1,000 Coins</p>
                     </div>
                     <button class="task-btn" onclick="completeTask(this, 1000)">CLAIM</button>
-                </div>
-                <div class="task-item">
-                    <div class="task-info">
-                        <h4>🎮 Invite 3 Friends</h4>
-                        <p>+2,500 B3BO Coins</p>
-                    </div>
-                    <button class="task-btn" onclick="completeTask(this, 2500)">CLAIM</button>
                 </div>
             </div>
         </div>
 
+        <!-- Rank View -->
         <div class="section-view" id="rankView" style="display: none;">
             <h3>LEADERBOARD</h3>
             <div class="ranking-list" id="rankingList"></div>
         </div>
 
-        <div class="section-view" id="friendsView" style="display: none;">
-            <h3>REFERRALS</h3>
-            <p class="sub-text">Invite your friends and earn 500 coins for each referral!</p>
-            <div class="ref-box">
-                <input type="text" id="refLinkInput" readonly value="https://t.me/bebocoin_bot?start=ref_123">
-                <button class="action-btn" onclick="copyRefLink()">COPY LINK</button>
-            </div>
-        </div>
-
+        <!-- Footer Navigation -->
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span>
                 <span>HOME</span>
+            </button>
+            <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')">
+                <span class="nav-icon">🚀</span>
+                <span>BOOST</span>
+            </button>
+            <button class="nav-btn" id="btnWheel" onclick="switchTab('wheel')">
+                <span class="nav-icon">🎡</span>
+                <span>WHEEL</span>
             </button>
             <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')">
                 <span class="nav-icon">📋</span>
@@ -557,10 +550,6 @@
             <button class="nav-btn" id="btnRank" onclick="switchTab('rank')">
                 <span class="nav-icon">🏆</span>
                 <span>RANK</span>
-            </button>
-            <button class="nav-btn" id="btnFriends" onclick="switchTab('friends')">
-                <span class="nav-icon">👥</span>
-                <span>FRIENDS</span>
             </button>
         </nav>
     </div>
@@ -579,16 +568,17 @@
         const tg = window.Telegram.WebApp;
         try {
             tg.expand();
-            if (tg.setHeaderColor) {
-                tg.setHeaderColor('#050505');
-            }
+            if (tg.setHeaderColor) tg.setHeaderColor('#050505');
         } catch (e) {
             console.error(e);
         }
 
-        let score = localStorage.getItem('bebo_score') ? parseInt(localStorage.getItem('bebo_score')) : 1250;
+        let score = localStorage.getItem('bebo_score') ? parseInt(localStorage.getItem('bebo_score')) : 500;
         let maxEnergy = 1000;
         let energy = localStorage.getItem('bebo_energy') ? parseInt(localStorage.getItem('bebo_energy')) : 1000;
+        let tapPower = localStorage.getItem('bebo_tapPower') ? parseInt(localStorage.getItem('bebo_tapPower')) : 1;
+        let tapCostVal = localStorage.getItem('bebo_tapCost') ? parseInt(localStorage.getItem('bebo_tapCost')) : 1000;
+        let miningEndTime = localStorage.getItem('bebo_miningEndTime') ? parseInt(localStorage.getItem('bebo_miningEndTime')) : 0;
 
         const scoreElement = document.getElementById('score');
         const coinButton = document.getElementById('coinButton');
@@ -596,30 +586,40 @@
         const energyFill = document.getElementById('energyFill');
         const energyText = document.getElementById('energyText');
         const hintText = document.getElementById('hintText');
+        const tapLevelElem = document.getElementById('tapLevel');
+        const tapCostElem = document.getElementById('tapCost');
 
-        function updateScoreDisplay() {
-            if (scoreElement) {
-                scoreElement.textContent = score.toLocaleString();
-            }
-            localStorage.setItem('bebo_score', score);
-        }
-
-        function updateEnergyDisplay() {
+        function updateDisplays() {
+            if (scoreElement) scoreElement.textContent = score.toLocaleString();
             if (energyFill) {
                 let percentage = (energy / maxEnergy) * 100;
                 energyFill.style.width = percentage + '%';
-                energyText.textContent = `${energy} / ${maxEnergy}`;
             }
+            if (tapLevelElem) tapLevelElem.textContent = tapPower;
+            if (tapCostElem) tapCostElem.textContent = `Cost: ${tapCostVal.toLocaleString()} Coins`;
+            
+            localStorage.setItem('bebo_score', score);
             localStorage.setItem('bebo_energy', energy);
+            localStorage.setItem('bebo_tapPower', tapPower);
+            localStorage.setItem('bebo_tapCost', tapCostVal);
         }
 
-        updateScoreDisplay();
-        updateEnergyDisplay();
+        updateDisplays();
 
+        // نظام عداد التعدين للساعة في حال نفاد الطاقة
         setInterval(() => {
-            if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 3);
-                updateEnergyDisplay();
+            let now = Date.now();
+            if (energy <= 0 && miningEndTime > now) {
+                let remainingSec = Math.ceil((miningEndTime - now) / 1000);
+                let mins = Math.floor(remainingSec / 60);
+                let secs = remainingSec % 60;
+                hintText.textContent = `MINING: ${mins}m ${secs}s`;
+            } else if (energy <= 0 && miningEndTime > 0 && miningEndTime <= now) {
+                energy = maxEnergy;
+                miningEndTime = 0;
+                localStorage.setItem('bebo_miningEndTime', 0);
+                hintText.textContent = "TAP TO EARN";
+                updateDisplays();
             }
         }, 1000);
 
@@ -635,7 +635,6 @@
             coinButton.addEventListener('click', (e) => {
                 handleTap(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
             });
-
             coinButton.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 const touch = e.touches[0];
@@ -646,149 +645,149 @@
         let audioCtx = null;
         function playPopSound() {
             try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(450, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.08);
-                
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.08);
-            } catch (err) {
-                console.log(err);
-            }
+            } catch (err) {}
         }
 
         function handleTap(x, y) {
+            let now = Date.now();
             if (energy <= 0) {
-                hintText.textContent = "OUT OF ENERGY!";
-                setTimeout(() => { hintText.textContent = "TAP TO EARN"; }, 1000);
+                if (miningEndTime === 0) {
+                    miningEndTime = now + (60 * 60 * 1000); // ساعة كاملة
+                    localStorage.setItem('bebo_miningEndTime', miningEndTime);
+                }
                 return;
             }
 
-            energy -= 1;
-            score += 1;
+            energy = Math.max(0, energy - tapPower);
+            score += tapPower;
             
-            updateScoreDisplay();
-            updateEnergyDisplay();
+            updateDisplays();
             playPopSound();
 
-            if (tg.HapticFeedback) {
-                try {
-                    tg.HapticFeedback.impactOccurred('medium');
-                } catch (err) {
-                    console.error(err);
-                }
+            if (energy <= 0) {
+                miningEndTime = now + (60 * 60 * 1000);
+                localStorage.setItem('bebo_miningEndTime', miningEndTime);
             }
 
-            createFloatingNumber(x, y);
+            if (tg.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred('medium'); } catch (err) {}
+            }
+
+            createFloatingNumber(x, y, `+${tapPower}`);
         }
 
-        function createFloatingNumber(x, y) {
+        function createFloatingNumber(x, y, text) {
             const el = document.createElement('div');
-            el.textContent = '+1';
+            el.textContent = text;
             el.style.position = 'fixed';
-            el.style.left = `${x + (Math.random() * 40 - 20)}px`;
+            el.style.left = `${x + (Math.random() * 30 - 15)}px`;
             el.style.top = `${y - 30}px`;
             el.style.color = '#00ffff';
             el.style.fontFamily = "'Press Start 2P', cursive";
-            el.style.fontSize = '12px';
+            el.style.fontSize = '11px';
             el.style.fontWeight = 'bold';
             el.style.pointerEvents = 'none';
             el.style.zIndex = '999';
-            el.style.textShadow = '0 0 10px rgba(0, 255, 255, 0.8)';
+            el.style.textShadow = '0 0 8px rgba(0, 255, 255, 0.8)';
             
             document.body.appendChild(el);
-
             el.animate([
                 { transform: 'translateY(0px) scale(0.8)', opacity: 1 },
-                { transform: 'translateY(-80px) scale(1.2)', opacity: 0 }
-            ], {
-                duration: 500,
-                easing: 'cubic-bezier(0, .9, .5, 1)'
-            });
+                { transform: 'translateY(-70px) scale(1.2)', opacity: 0 }
+            ], { duration: 500, easing: 'cubic-bezier(0, .9, .5, 1)' });
 
-            setTimeout(() => {
-                el.remove();
-            }, 500);
+            setTimeout(() => el.remove(), 500);
+        }
+
+        function buyTapUpgrade() {
+            if (score >= tapCostVal) {
+                score -= tapCostVal;
+                tapPower += 1;
+                tapCostVal = Math.floor(tapCostVal * 2.2); // مكلف جداً ويتضاعف
+                updateDisplays();
+                if (tg.showAlert) tg.showAlert(`Upgrade Successful! Tap power is now +${tapPower}`);
+            } else {
+                if (tg.showAlert) tg.showAlert("Not enough coins to upgrade!");
+            }
+        }
+
+        function spinWheel() {
+            let spinCost = 500;
+            if (score < spinCost) {
+                if (tg.showAlert) tg.showAlert("You need at least 500 coins to spin!");
+                return;
+            }
+            score -= spinCost;
+            updateDisplays();
+
+            let prizes = [200, 500, 1000, 2500, 0, 5000];
+            let won = prizes[Math.floor(Math.random() * prizes.length)];
+            score += won;
+            updateDisplays();
+
+            if (tg.showAlert) {
+                if (won > 0) tg.showAlert(`Wheel Spin Result: You won +${won} Coins! 🎉`);
+                else tg.showAlert("Bad luck! You won nothing this time. 😢");
+            }
         }
 
         function switchTab(tab) {
-            const gameView = document.getElementById('gameView');
-            const tasksView = document.getElementById('tasksView');
-            const rankView = document.getElementById('rankView');
-            const friendsView = document.getElementById('friendsView');
+            const views = ['gameView', 'upgradesView', 'wheelView', 'tasksView', 'rankView'];
+            const btns = ['btnHome', 'btnUpgrades', 'btnWheel', 'btnTasks', 'btnRank'];
 
-            const btnHome = document.getElementById('btnHome');
-            const btnTasks = document.getElementById('btnTasks');
-            const btnRank = document.getElementById('btnRank');
-            const btnFriends = document.getElementById('btnFriends');
-
-            gameView.style.display = 'none';
-            tasksView.style.display = 'none';
-            rankView.style.display = 'none';
-            friendsView.style.display = 'none';
-
-            btnHome.classList.remove('active');
-            btnTasks.classList.remove('active');
-            btnRank.classList.remove('active');
-            btnFriends.classList.remove('active');
+            views.forEach(v => document.getElementById(v).style.display = 'none');
+            btns.forEach(b => document.getElementById(b).classList.remove('active'));
 
             if (tab === 'home') {
-                gameView.style.display = 'flex';
-                btnHome.classList.add('active');
+                document.getElementById('gameView').style.display = 'flex';
+                document.getElementById('btnHome').classList.add('active');
+            } else if (tab === 'upgrades') {
+                document.getElementById('upgradesView').style.display = 'flex';
+                document.getElementById('btnUpgrades').classList.add('active');
+            } else if (tab === 'wheel') {
+                document.getElementById('wheelView').style.display = 'flex';
+                document.getElementById('btnWheel').classList.add('active');
             } else if (tab === 'tasks') {
-                tasksView.style.display = 'flex';
-                btnTasks.classList.add('active');
+                document.getElementById('tasksView').style.display = 'flex';
+                document.getElementById('btnTasks').classList.add('active');
             } else if (tab === 'rank') {
-                rankView.style.display = 'flex';
-                btnRank.classList.add('active');
+                document.getElementById('rankView').style.display = 'flex';
+                document.getElementById('btnRank').classList.add('active');
                 loadLeaderboard();
-            } else if (tab === 'friends') {
-                friendsView.style.display = 'flex';
-                btnFriends.classList.add('active');
             }
         }
 
         function completeTask(btn, reward) {
             score += reward;
-            updateScoreDisplay();
+            updateDisplays();
             btn.textContent = "DONE ✓";
             btn.style.background = "#28a745";
             btn.disabled = true;
-            
-            if (tg.showAlert) {
-                tg.showAlert(`Successfully claimed +${reward} B3BO Coins!`);
-            } else {
-                alert(`Successfully claimed +${reward} B3BO Coins!`);
-            }
+            if (tg.showAlert) tg.showAlert(`Claimed +${reward} Coins!`);
         }
 
         function loadLeaderboard() {
             const listContainer = document.getElementById('rankingList');
-            
             let leaders = [
                 { name: "CryptoKing", score: 25400 },
                 { name: "B3BOMaster", score: 18900 },
                 { name: userName, score: score },
-                { name: "Satoshi_99", score: 8400 },
-                { name: "TON_Player", score: 5100 }
+                { name: "Satoshi_99", score: 8400 }
             ];
-
             leaders.sort((a, b) => b.score - a.score);
-
             listContainer.innerHTML = "";
             leaders.forEach((item, index) => {
                 let rankClass = index === 0 ? "gold" : (index === 1 ? "silver" : (index === 2 ? "bronze" : ""));
@@ -799,34 +798,15 @@
             });
         }
 
-        function copyRefLink() {
-            const refInput = document.getElementById('refLinkInput');
-            refInput.select();
-            refInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(refInput.value);
-
-            if (tg.showAlert) {
-                tg.showAlert('Invite link copied to clipboard!');
-            } else {
-                alert('Invite link copied successfully!');
-            }
-        }
-
         function toggleWalletModal() {
             const modal = document.getElementById('walletModal');
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        function connectWallet(walletName) {
+        function connectWallet(name) {
             toggleWalletModal();
-            const walletBtnText = document.getElementById('walletStatusText');
-            walletBtnText.textContent = "CONNECTED";
-            
-            if (tg.showAlert) {
-                tg.showAlert(`Successfully connected to ${walletName}!`);
-            } else {
-                alert(`Successfully connected to ${walletName}!`);
-            }
+            document.getElementById('walletStatusText').textContent = "CONNECTED";
+            if (tg.showAlert) tg.showAlert(`Connected to ${name}!`);
         }
     </script>
 </body>
