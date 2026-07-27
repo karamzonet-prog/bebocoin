@@ -595,7 +595,6 @@
         <div class="section-view" id="shopView" style="display: none;">
             <h3>💎 PREMIUM SHOP</h3>
             <div class="shop-list">
-                <!-- عرض 1000 بيبو -->
                 <div class="upgrade-item">
                     <div class="shop-item-left">
                         <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
@@ -607,7 +606,6 @@
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(1000, 0.1)">0.1 TON</button>
                 </div>
 
-                <!-- عرض 5000 بيبو -->
                 <div class="upgrade-item">
                     <div class="shop-item-left">
                         <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
@@ -619,7 +617,6 @@
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(5000, 0.4)">0.4 TON</button>
                 </div>
 
-                <!-- عرض 15,000 بيبو -->
                 <div class="upgrade-item">
                     <div class="shop-item-left">
                         <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
@@ -631,7 +628,6 @@
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(15000, 1.0)">1.0 TON</button>
                 </div>
 
-                <!-- عرض 50,000 بيبو -->
                 <div class="upgrade-item">
                     <div class="shop-item-left">
                         <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
@@ -641,18 +637,6 @@
                         </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(50000, 3.0)">3.0 TON</button>
-                </div>
-
-                <!-- بوت التعدين التلقائي -->
-                <div class="upgrade-item">
-                    <div class="shop-item-left">
-                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
-                        <div class="upgrade-info">
-                            <h4>AUTO BOT (24h)</h4>
-                            <p>Farms offline automatically</p>
-                        </div>
-                    </div>
-                    <button class="upgrade-btn" onclick="buyPremiumItem('bot', 0.5)">0.5 TON</button>
                 </div>
             </div>
         </div>
@@ -699,7 +683,6 @@
             </div>
         </div>
 
-        <!-- الأزرار السفلية -->
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span>
@@ -763,6 +746,7 @@
 
         const userRef = db.ref('users/' + telegramId);
         let botUsername = "bebocoin_bot";
+        const recipientWallet = "UQCuewaUAwR8I4ECznl0HeQP-BhzxcJUtV_GT2NPJpu1N-fo";
 
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
@@ -783,7 +767,6 @@
             completedTasks: {},
             referralCount: 0,
             walletAddress: "",
-            premiumItems: {},
             lastOnlineTime: Date.now()
         };
 
@@ -804,7 +787,6 @@
                 try {
                     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 } catch (e) {
-                    console.warn("Web Audio API not supported");
                     return false;
                 }
             }
@@ -834,9 +816,7 @@
                 
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.07);
-            } catch (error) {
-                console.log("Sound error:", error);
-            }
+            } catch (error) {}
         }
 
         function spawnParticles(x, y, count = 8) {
@@ -964,7 +944,6 @@
                 completedTasks: G.completedTasks,
                 referralCount: G.referralCount,
                 walletAddress: G.walletAddress,
-                premiumItems: G.premiumItems,
                 lastOnlineTime: Date.now()
             };
             localStorage.setItem('bebo_game_save', JSON.stringify(localData));
@@ -972,9 +951,7 @@
             userRef.set({
                 username: userName,
                 ...localData
-            }).catch((err) => {
-                console.error("Failed to save data:", err);
-            });
+            }).catch((err) => {});
         }
 
         const savedLocal = localStorage.getItem('bebo_game_save');
@@ -990,10 +967,7 @@
                 G.completedTasks = data.completedTasks || {};
                 G.referralCount = data.referralCount || 0;
                 G.walletAddress = data.walletAddress || "";
-                G.premiumItems = data.premiumItems || {};
-            } catch (e) {
-                console.error("Error parsing local save", e);
-            }
+            } catch (e) {}
         }
 
         userRef.once('value').then((snap) => {
@@ -1008,7 +982,6 @@
                 G.completedTasks = data.completedTasks || {};
                 G.referralCount = data.referralCount || 0;
                 G.walletAddress = data.walletAddress || "";
-                G.premiumItems = data.premiumItems || {};
             } else {
                 const startParam = tg.initDataUnsafe?.start_param || '';
                 if (startParam && startParam !== String(telegramId)) {
@@ -1029,7 +1002,6 @@
             saveToFirebase();
         });
 
-        // تجديد الطاقة بالكامل خلال ساعة واحدة
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 3600));
@@ -1051,25 +1023,37 @@
             }
         });
 
-        function buyCoinsWithTon(coins, amountInTon) {
+        async function buyCoinsWithTon(coins, amountInTon) {
             if (!tonConnectUI.connected) {
                 showToast('💎 Please connect your TON wallet first!', 'error');
                 switchTab('tasks');
                 return;
             }
-            G.score += coins;
-            updateUI();
-            saveToFirebase();
-            showToast(`✅ Successfully purchased +${coins.toLocaleString()} Bebo Coins!`, 'success');
-        }
 
-        function buyPremiumItem(itemId, amountInTon) {
-            if (!tonConnectUI.connected) {
-                showToast('💎 Please connect your TON wallet first!', 'error');
-                switchTab('tasks');
-                return;
+            try {
+                showToast('⏳ Opening wallet for payment...', 'info');
+                const nanoTon = Math.floor(amountInTon * 1000000000).toString();
+
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 360,
+                    messages: [
+                        {
+                            address: recipientWallet,
+                            amount: nanoTon
+                        }
+                    ]
+                };
+
+                const result = await tonConnectUI.sendTransaction(transaction);
+                if (result) {
+                    G.score += coins;
+                    updateUI();
+                    saveToFirebase();
+                    showToast(`✅ Payment successful! +${coins.toLocaleString()} Bebo Coins added!`, 'success');
+                }
+            } catch (error) {
+                showToast('❌ Payment cancelled or failed', 'error');
             }
-            showToast('Processing TON transaction...', 'info');
         }
 
         function doTask(taskId, url, reward) {
@@ -1091,7 +1075,7 @@
 
         function loadTopHundred() {
             const container = $('topHundredContainer');
-            container.innerHTML = '<div style="text-align:center;color:#888;font-size:10px;padding:20px;">Loading…</div>';
+            container.innerHTML = '<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>';
             db.ref('users').orderByChild('score').limitToLast(100).once('value').then((snap) => {
                 const leaders = [];
                 snap.forEach((child) => {
