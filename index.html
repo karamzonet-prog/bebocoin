@@ -231,7 +231,7 @@
             font-weight: 800;
         }
 
-        .daily-rewards-container, .upgrades-list, .tasks-list, .ranking-list {
+        .daily-rewards-container, .upgrades-list, .tasks-list, .ranking-list, .friends-container {
             width: 100%;
             max-width: 340px;
             max-height: 310px;
@@ -242,7 +242,7 @@
             padding-right: 2px;
         }
 
-        .daily-item, .upgrade-item, .task-item, .rank-item {
+        .daily-item, .upgrade-item, .task-item, .rank-item, .friend-card {
             background: rgba(0, 0, 0, 0.65);
             padding: 12px 14px;
             border-radius: 14px;
@@ -265,7 +265,7 @@
             text-align: left;
         }
 
-        .daily-btn, .upgrade-btn, .task-btn {
+        .daily-btn, .upgrade-btn, .task-btn, .friend-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
@@ -298,6 +298,33 @@
         .rank-item.silver { border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
         .rank-item.bronze { border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
 
+        .friend-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 14px;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .friend-box p {
+            font-size: 10px;
+            color: #ccc;
+        }
+
+        .friend-link-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 8px;
+            color: #00ffff;
+            font-size: 9px;
+            word-break: break-all;
+            text-align: center;
+        }
+
         .footer-nav {
             display: flex;
             justify-content: space-around;
@@ -311,20 +338,20 @@
             background: none;
             border: none;
             color: #777;
-            font-size: 8px;
+            font-size: 7px;
             cursor: pointer;
             font-weight: 800;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            padding: 6px;
+            padding: 5px;
             border-radius: 10px;
             font-family: 'Orbitron', sans-serif;
         }
 
         .nav-icon {
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .nav-btn.active {
@@ -418,6 +445,24 @@
             </div>
         </div>
 
+        <!-- Friends / Referrals View -->
+        <div class="section-view" id="friendsView" style="display: none;">
+            <h3>INVITE FRIENDS</h3>
+            <div class="friends-container">
+                <div class="friend-box">
+                    <p>Invite your friends and get <b>+1,000 Coins</b> for each referral!</p>
+                    <div class="friend-link-input" id="refLinkText">Generating link...</div>
+                    <button class="friend-btn" onclick="copyReferralLink()">COPY LINK</button>
+                </div>
+                <div class="friend-card">
+                    <div class="daily-info">
+                        <h4>👥 Total Invited Friends</h4>
+                        <p id="refCountText">0 Friends</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Rank View -->
         <div class="section-view" id="rankView" style="display: none;">
             <h3>LEADERBOARD</h3>
@@ -440,6 +485,9 @@
             <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')">
                 <span class="nav-icon">📋</span><span>TASKS</span>
             </button>
+            <button class="nav-btn" id="btnFriends" onclick="switchTab('friends')">
+                <span class="nav-icon">👥</span><span>FRIENDS</span>
+            </button>
             <button class="nav-btn" id="btnRank" onclick="switchTab('rank')">
                 <span class="nav-icon">🏆</span><span>RANK</span>
             </button>
@@ -447,7 +495,6 @@
     </div>
 
     <script>
-        // إعدادات مشروعك الجديد في Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDCgqRzK-pBNZgCBFWuJJSv-fYPZ1qBQSk",
             authDomain: "bebo-3151b.firebaseapp.com",
@@ -465,7 +512,17 @@
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        // معرف ثابت لمنع التصفير عند الخروج والدخول
+        // استخراج معرف البوت تلقائياً من التيليجرام وبدون تدخل منك
+        let botUsername = "bebocoin_bot"; // قيمة افتراضية احتياطية
+        try {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.bot_username) {
+                botUsername = tg.initDataUnsafe.bot_username;
+            } else if (window.location.hash.includes("bot_username=")) {
+                const match = window.location.hash.match(/bot_username=([^&]+)/);
+                if (match) botUsername = match[1];
+            }
+        } catch (e) {}
+
         let telegramId = "";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
             telegramId = tg.initDataUnsafe.user.id;
@@ -515,7 +572,6 @@
             { day: 5, reward: 2500 }
         ];
 
-        // التحقق من رابط الإحالة (start_param) قادم من تليجرام
         let startParam = "";
         if (tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
             startParam = tg.initDataUnsafe.start_param;
@@ -535,19 +591,17 @@
                 referralCount = data.referralCount || 0;
                 invitedBy = data.invitedBy || "none";
             } else {
-                // مستخدم جديد كلياً
                 invitedBy = (startParam && startParam !== String(telegramId)) ? startParam : "none";
                 saveToFirebase();
 
-                // إذا دعاه شخص، نقوم بمكافأة الداعي وإضافة نقاط له بأمان
                 if (invitedBy !== "none") {
                     rewardReferrer(invitedBy);
                 }
             }
             updateDisplays();
+            setupReferralLink();
         });
 
-        // دالة مكافأة الشخص الداعي بدون المساس ببياناته الأصلية
         function rewardReferrer(refId) {
             const refUserRef = db.ref('users/' + refId);
             refUserRef.once('value').then((snap) => {
@@ -556,8 +610,8 @@
                     let refScore = refData.score || 0;
                     let refCount = refData.referralCount || 0;
                     refUserRef.update({
-                        score: refScore + 1000,       // مكافأة 1000 نقطة لكل إحالة ناجحة
-                        referralCount: refCount + 1   // زيادة عدد المدعوين
+                        score: refScore + 1000,
+                        referralCount: refCount + 1
                     });
                 }
             });
@@ -576,6 +630,23 @@
                 completedTasks: completedTasks,
                 referralCount: referralCount,
                 invitedBy: invitedBy
+            });
+        }
+
+        function setupReferralLink() {
+            const refLink = `https://t.me/${botUsername}?start=${telegramId}`;
+            document.getElementById('refLinkText').textContent = refLink;
+            document.getElementById('refCountText').textContent = `${referralCount} Friends`;
+        }
+
+        function copyReferralLink() {
+            const refLink = `https://t.me/${botUsername}?start=${telegramId}`;
+            navigator.clipboard.writeText(refLink).then(() => {
+                if (tg.showAlert) {
+                    tg.showAlert("Referral link copied to clipboard! Share it with your friends. 🚀");
+                } else {
+                    alert("Referral link copied!");
+                }
             });
         }
 
@@ -604,6 +675,7 @@
             energyText.textContent = `${energy} / ${maxEnergy}`;
             tapLevelElem.textContent = tapPower;
             tapCostElem.textContent = `Cost: ${tapCostVal.toLocaleString()} Coins`;
+            document.getElementById('refCountText').textContent = `${referralCount} Friends`;
 
             renderDailyRewards();
             renderTasks();
@@ -798,8 +870,8 @@
         }
 
         function switchTab(tab) {
-            const views = ['gameView', 'upgradesView', 'wheelView', 'tasksView', 'rankView'];
-            const btns = ['btnHome', 'btnUpgrades', 'btnWheel', 'btnTasks', 'btnRank'];
+            const views = ['gameView', 'upgradesView', 'wheelView', 'tasksView', 'friendsView', 'rankView'];
+            const btns = ['btnHome', 'btnUpgrades', 'btnWheel', 'btnTasks', 'btnFriends', 'btnRank'];
 
             views.forEach(v => document.getElementById(v).style.display = 'none');
             btns.forEach(b => document.getElementById(b).classList.remove('active'));
@@ -817,6 +889,10 @@
             } else if (tab === 'tasks') {
                 document.getElementById('tasksView').style.display = 'flex';
                 document.getElementById('btnTasks').classList.add('active');
+            } else if (tab === 'friends') {
+                document.getElementById('friendsView').style.display = 'flex';
+                document.getElementById('btnFriends').classList.add('active');
+                setupReferralLink();
             } else if (tab === 'rank') {
                 document.getElementById('rankView').style.display = 'flex';
                 document.getElementById('btnRank').classList.add('active');
@@ -835,7 +911,7 @@
                 leaders.sort((a, b) => b.score - a.score);
                 
                 listContainer.innerHTML = "";
-                if (leaders.length === 0) {
+                if (leaders.length === 0)  {
                     listContainer.innerHTML = `<div class="rank-item" style="justify-content: center; color: #888;">No players yet. Start tapping!</div>`;
                     return;
                 }
