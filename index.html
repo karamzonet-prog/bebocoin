@@ -869,7 +869,6 @@
             $('energyFill').style.width = pct + '%';
             $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
             
-            // حساب الوقت المتبقي بالدقائق والثواني ليكتمل الشريط بالكامل
             const missingEnergy = G.maxEnergy - G.energy;
             const secondsLeft = Math.max(0, Math.ceil((missingEnergy / G.maxEnergy) * 1800));
             const mins = Math.floor(secondsLeft / 60);
@@ -936,38 +935,17 @@
             }).catch((err) => {});
         }
 
-        const savedLocal = localStorage.getItem('bebo_game_save_' + telegramId);
-        if (savedLocal) {
-            try {
-                const data = JSON.parse(savedLocal);
-                G.score = data.score || 0;
-                G.energy = data.energy ?? 100;
+        // جلب البيانات من Firebase أولاً وبأولوية مطلقة لمنع مشاكل الكتابة الخاطئة للسكور القديم
+        userRef.once('value').then((snap) => {
+            const data = snap.val();
+            if (data) {
+                // الاعتماد على القيم الموجودة في فايربيس (لتشمل أي تعديل يدوي قمت به)
+                G.score = data.score !== undefined ? data.score : 0;
                 G.tapPower = data.tapPower || 1;
                 G.tapCost = data.tapCost || 1000;
                 G.completedTasks = data.completedTasks || {};
                 G.referralCount = data.referralCount || 0;
                 G.walletAddress = data.walletAddress || "";
-                G.lastTime = data.lastTime || Date.now();
-
-                // حساب الوقت المنقضي أثناء الخروج من التطبيق وإضافة الطاقة المناسبة
-                const elapsedSeconds = (Date.now() - G.lastTime) / 1000;
-                if (elapsedSeconds > 0) {
-                    const energyToAdd = (elapsedSeconds / 1800) * 100;
-                    G.energy = Math.min(G.maxEnergy, G.energy + energyToAdd);
-                }
-            } catch (e) {}
-        }
-        updateUI();
-
-        userRef.once('value').then((snap) => {
-            const data = snap.val();
-            if (data) {
-                if (data.score !== undefined) G.score = data.score;
-                if (data.tapPower !== undefined) G.tapPower = data.tapPower;
-                if (data.tapCost !== undefined) G.tapCost = data.tapCost;
-                if (data.completedTasks) G.completedTasks = data.completedTasks;
-                if (data.referralCount !== undefined) G.referralCount = data.referralCount;
-                if (data.walletAddress) G.walletAddress = data.walletAddress;
 
                 if (data.energy !== undefined && data.lastTime !== undefined) {
                     const elapsedSeconds = (Date.now() - data.lastTime) / 1000;
@@ -975,14 +953,27 @@
                     G.energy = Math.min(G.maxEnergy, calculatedEnergy);
                 }
             } else {
-                G.score = 0;
-                G.energy = 100;
-                G.tapPower = 1;
-                G.tapCost = 1000;
-                G.completedTasks = {};
-                G.referralCount = 0;
-                G.walletAddress = "";
+                // إذا لم يكن المستخدم موجوداً، فحص الـ localStorage أو إنشاء بيانات جديدة
+                const savedLocal = localStorage.getItem('bebo_game_save_' + telegramId);
+                if (savedLocal) {
+                    try {
+                        const localData = JSON.parse(savedLocal);
+                        G.score = localData.score || 0;
+                        G.energy = localData.energy ?? 100;
+                        G.tapPower = localData.tapPower || 1;
+                        G.tapCost = localData.tapCost || 1000;
+                        G.completedTasks = localData.completedTasks || {};
+                        G.referralCount = localData.referralCount || 0;
+                        G.walletAddress = localData.walletAddress || "";
+                        
+                        const elapsedSeconds = (Date.now() - (localData.lastTime || Date.now())) / 1000;
+                        if (elapsedSeconds > 0) {
+                            G.energy = Math.min(G.maxEnergy, G.energy + ((elapsedSeconds / 1800) * 100));
+                        }
+                    } catch (e) {}
+                }
 
+                // التحقق من نظام الإحالة (Referral) عند التسجيل لأول مرة
                 const startParam = tg.initDataUnsafe?.start_param || '';
                 if (startParam && startParam !== String(telegramId)) {
                     db.ref('users/' + startParam).once('value').then((refSnap) => {
@@ -999,7 +990,7 @@
 
             updateUI();
             setupReferralLink();
-            saveToFirebase();
+            saveToFirebase(); // تحديث الـ LocalStorage و Firebase بالقيمة الصحيحة الحالية
         });
 
         // حلقة التحديث المستمر للطاقة والوقت كل ثانية
