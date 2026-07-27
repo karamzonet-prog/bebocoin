@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>B3BO Coin Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- مكتبات Firebase المتوافقة مع HTML العادي -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
@@ -498,7 +501,9 @@
         <!-- Rank View -->
         <div class="section-view" id="rankView" style="display: none;">
             <h3>LEADERBOARD</h3>
-            <div class="ranking-list" id="rankingList"></div>
+            <div class="ranking-list" id="rankingList">
+                <div class="rank-item" style="justify-content: center; color: #888;">No players yet. Start tapping!</div>
+            </div>
         </div>
 
         <!-- Footer -->
@@ -534,26 +539,45 @@
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCv_3P1hcqpPieCC6_xf-pOrD3cuyQ9nis",
+            authDomain: "bebo-4039e.firebaseapp.com",
+            databaseURL: "https://bebo-4039e-default-rtdb.firebaseio.com",
+            projectId: "bebo-4039e",
+            storageBucket: "bebo-4039e.firebasestorage.app",
+            messagingSenderId: "320695644050",
+            appId: "1:320695644050:web:2a4e17bb43b779ef499b4b",
+            measurementId: "G-3SW93GXR3P"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        // New clean isolated storage keys (Fresh start: Score starts at 0, tasks and statuses reset)
-        let score = localStorage.getItem('b3bo_fresh_score') ? parseInt(localStorage.getItem('b3bo_fresh_score')) : 0;
+        let telegramId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "guest_" + Math.floor(Math.random() * 100000);
+        let userRef = db.ref('users/' + telegramId);
+
+        let score = 0;
         let maxEnergy = 1000;
-        let energy = localStorage.getItem('b3bo_fresh_energy') ? parseInt(localStorage.getItem('b3bo_fresh_energy')) : 1000;
-        let tapPower = localStorage.getItem('b3bo_fresh_tapPower') ? parseInt(localStorage.getItem('b3bo_fresh_tapPower')) : 1;
-        let tapCostVal = localStorage.getItem('b3bo_fresh_tapCost') ? parseInt(localStorage.getItem('b3bo_fresh_tapCost')) : 1000;
-        let miningEndTime = localStorage.getItem('b3bo_fresh_miningEndTime') ? parseInt(localStorage.getItem('b3bo_fresh_miningEndTime')) : 0;
-        
-        let currentDay = localStorage.getItem('b3bo_fresh_currentDay') ? parseInt(localStorage.getItem('b3bo_fresh_currentDay')) : 1;
-        let lastClaimTime = localStorage.getItem('b3bo_fresh_lastClaimTime') ? parseInt(localStorage.getItem('b3bo_fresh_lastClaimTime')) : 0;
-        
-        let completedTasks = JSON.parse(localStorage.getItem('b3bo_fresh_completedTasks')) || {};
-        let connectedWalletAddress = localStorage.getItem('b3bo_fresh_wallet') || null;
+        let energy = 1000;
+        let tapPower = 1;
+        let tapCostVal = 1000;
+        let miningEndTime = 0;
+        let currentDay = 1;
+        let lastClaimTime = 0;
+        let completedTasks = {};
+        let connectedWalletAddress = null;
+
+        let userName = "PLAYER";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+            userName = tg.initDataUnsafe.user.first_name.toUpperCase();
+        }
+        document.getElementById('username').textContent = userName;
 
         const scoreElement = document.getElementById('score');
         const coinButton = document.getElementById('coinButton');
-        const usernameElement = document.getElementById('username');
         const energyFill = document.getElementById('energyFill');
         const energyText = document.getElementById('energyText');
         const hintText = document.getElementById('hintText');
@@ -568,6 +592,39 @@
             { day: 4, reward: 1000 },
             { day: 5, reward: 2500 }
         ];
+
+        userRef.once('value').then((snapshot) => {
+            let data = snapshot.val();
+            if (data) {
+                score = data.score || 0;
+                energy = data.energy !== undefined ? data.energy : 1000;
+                tapPower = data.tapPower || 1;
+                tapCostVal = data.tapCostVal || 1000;
+                miningEndTime = data.miningEndTime || 0;
+                currentDay = data.currentDay || 1;
+                lastClaimTime = data.lastClaimTime || 0;
+                completedTasks = data.completedTasks || {};
+                connectedWalletAddress = data.wallet || null;
+            } else {
+                saveToFirebase();
+            }
+            updateDisplays();
+        });
+
+        function saveToFirebase() {
+            userRef.set({
+                username: userName,
+                score: score,
+                energy: energy,
+                tapPower: tapPower,
+                tapCostVal: tapCostVal,
+                miningEndTime: miningEndTime,
+                currentDay: currentDay,
+                lastClaimTime: lastClaimTime,
+                completedTasks: completedTasks,
+                wallet: connectedWalletAddress
+            });
+        }
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
@@ -601,11 +658,6 @@
             } else {
                 walletBtnText.textContent = "CONNECT 💳";
             }
-            
-            localStorage.setItem('b3bo_fresh_score', score);
-            localStorage.setItem('b3bo_fresh_energy', energy);
-            localStorage.setItem('b3bo_fresh_tapPower', tapPower);
-            localStorage.setItem('b3bo_fresh_tapCost', tapCostVal);
 
             renderDailyRewards();
             renderTasks();
@@ -680,13 +732,6 @@
             }
         }
 
-        let userName = "PLAYER";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
-            userName = tg.initDataUnsafe.user.first_name.toUpperCase();
-        }
-        usernameElement.textContent = userName;
-        updateDisplays();
-
         setInterval(() => {
             let now = Date.now();
             if (energy <= 0 && miningEndTime > now) {
@@ -697,9 +742,9 @@
             } else if (energy <= 0 && miningEndTime > 0 && miningEndTime <= now) {
                 energy = maxEnergy;
                 miningEndTime = 0;
-                localStorage.setItem('b3bo_fresh_miningEndTime', 0);
                 hintText.textContent = "TAP TO EARN";
                 updateDisplays();
+                saveToFirebase();
             }
         }, 1000);
 
@@ -713,7 +758,7 @@
             if (energy <= 0) {
                 if (miningEndTime === 0) {
                     miningEndTime = now + (30 * 60 * 1000);
-                    localStorage.setItem('b3bo_fresh_miningEndTime', miningEndTime);
+                    saveToFirebase();
                 }
                 return;
             }
@@ -721,10 +766,11 @@
             energy = Math.max(0, energy - tapPower);
             score += tapPower;
             updateDisplays();
+            saveToFirebase();
 
             if (energy <= 0) {
                 miningEndTime = now + (30 * 60 * 1000);
-                localStorage.setItem('b3bo_fresh_miningEndTime', miningEndTime);
+                saveToFirebase();
             }
 
             if (tg.HapticFeedback) {
@@ -762,6 +808,7 @@
                 tapPower += 1;
                 tapCostVal = Math.floor(tapCostVal * 2.5);
                 updateDisplays();
+                saveToFirebase();
                 if (tg.showAlert) tg.showAlert(`Upgrade Successful! +${tapPower} per tap`);
             } else {
                 if (tg.showAlert) tg.showAlert("Not enough coins! Keep tapping.");
@@ -775,11 +822,9 @@
             currentDay += 1;
             if (currentDay > 5) currentDay = 5;
 
-            localStorage.setItem('b3bo_fresh_lastClaimTime', lastClaimTime);
-            localStorage.setItem('b3bo_fresh_currentDay', currentDay);
-
             score += reward;
             updateDisplays();
+            saveToFirebase();
             if (tg.showAlert) tg.showAlert(`Successfully claimed Day ${day} reward (+${reward} Coins)! 🎉`);
         }
 
@@ -797,9 +842,9 @@
             }
 
             completedTasks[taskId] = true;
-            localStorage.setItem('b3bo_fresh_completedTasks', JSON.stringify(completedTasks));
             score += reward;
             updateDisplays();
+            saveToFirebase();
             
             setTimeout(() => {
                 if (tg.showAlert) tg.showAlert(`Task completed! +${reward} Coins added! 🎉`);
@@ -835,19 +880,26 @@
 
         function loadLeaderboard() {
             const listContainer = document.getElementById('rankingList');
-            let leaders = [
-                { name: "CryptoWhale", score: 45000 },
-                { name: "TonHolder", score: 12400 },
-                { name: userName, score: score }
-            ];
-            leaders.sort((a, b) => b.score - a.score);
-            listContainer.innerHTML = "";
-            leaders.forEach((item, index) => {
-                let rankClass = index === 0 ? "gold" : (index === 1 ? "silver" : "bronze");
-                let row = document.createElement('div');
-                row.className = `rank-item ${rankClass}`;
-                row.innerHTML = `<span>${index + 1}. ${item.name}</span> <span>${item.score.toLocaleString()}</span>`;
-                listContainer.appendChild(row);
+            db.ref('users').orderByChild('score').limitToLast(10).once('value').then((snapshot) => {
+                let leaders = [];
+                snapshot.forEach((childSnapshot) => {
+                    let userData = childSnapshot.val();
+                    leaders.push({ name: userData.username || "PLAYER", score: userData.score || 0 });
+                });
+                leaders.sort((a, b) => b.score - a.score);
+                
+                listContainer.innerHTML = "";
+                if (leaders.length === 0) {
+                    listContainer.innerHTML = `<div class="rank-item" style="justify-content: center; color: #888;">No players yet. Start tapping!</div>`;
+                    return;
+                }
+                leaders.forEach((item, index) => {
+                    let rankClass = index === 0 ? "gold" : (index === 1 ? "silver" : "bronze");
+                    let row = document.createElement('div');
+                    row.className = `rank-item ${rankClass}`;
+                    row.innerHTML = `<span>${index + 1}. ${item.name}</span> <span>${item.score.toLocaleString()}</span>`;
+                    listContainer.appendChild(row);
+                });
             });
         }
 
@@ -860,16 +912,16 @@
             toggleWalletModal();
             let mockAddress = "UQCs" + Math.random().toString(36).substring(2, 12) + "B3BO_USER_TON";
             connectedWalletAddress = mockAddress;
-            localStorage.setItem('b3bo_fresh_wallet', connectedWalletAddress);
             updateDisplays();
+            saveToFirebase();
             if (tg.showAlert) tg.showAlert(`Successfully linked with ${walletProvider}! Address saved.`);
         }
 
         function disconnectWallet() {
             connectedWalletAddress = null;
-            localStorage.removeItem('b3bo_fresh_wallet');
             toggleWalletModal();
             updateDisplays();
+            saveToFirebase();
             if (tg.showAlert) tg.showAlert("Wallet disconnected.");
         }
     </script>
