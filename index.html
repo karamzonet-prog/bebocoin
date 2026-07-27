@@ -488,6 +488,8 @@
         let currentDay = 1;
         let lastClaimTime = 0;
         let completedTasks = {};
+        let referralCount = 0;
+        let invitedBy = "none";
 
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
@@ -513,6 +515,12 @@
             { day: 5, reward: 2500 }
         ];
 
+        // التحقق من رابط الإحالة (start_param) قادم من تليجرام
+        let startParam = "";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+            startParam = tg.initDataUnsafe.start_param;
+        }
+
         userRef.once('value').then((snapshot) => {
             let data = snapshot.val();
             if (data) {
@@ -524,11 +532,36 @@
                 currentDay = data.currentDay || 1;
                 lastClaimTime = data.lastClaimTime || 0;
                 completedTasks = data.completedTasks || {};
+                referralCount = data.referralCount || 0;
+                invitedBy = data.invitedBy || "none";
             } else {
+                // مستخدم جديد كلياً
+                invitedBy = (startParam && startParam !== String(telegramId)) ? startParam : "none";
                 saveToFirebase();
+
+                // إذا دعاه شخص، نقوم بمكافأة الداعي وإضافة نقاط له بأمان
+                if (invitedBy !== "none") {
+                    rewardReferrer(invitedBy);
+                }
             }
             updateDisplays();
         });
+
+        // دالة مكافأة الشخص الداعي بدون المساس ببياناته الأصلية
+        function rewardReferrer(refId) {
+            const refUserRef = db.ref('users/' + refId);
+            refUserRef.once('value').then((snap) => {
+                if (snap.exists()) {
+                    let refData = snap.val();
+                    let refScore = refData.score || 0;
+                    let refCount = refData.referralCount || 0;
+                    refUserRef.update({
+                        score: refScore + 1000,       // مكافأة 1000 نقطة لكل إحالة ناجحة
+                        referralCount: refCount + 1   // زيادة عدد المدعوين
+                    });
+                }
+            });
+        }
 
         function saveToFirebase() {
             userRef.set({
@@ -540,7 +573,9 @@
                 miningEndTime: miningEndTime,
                 currentDay: currentDay,
                 lastClaimTime: lastClaimTime,
-                completedTasks: completedTasks
+                completedTasks: completedTasks,
+                referralCount: referralCount,
+                invitedBy: invitedBy
             });
         }
 
