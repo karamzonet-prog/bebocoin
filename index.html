@@ -140,7 +140,7 @@
             font-family: 'Press Start 2P', cursive;
             font-size: 13px;
             color: #00ffff;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
         }
 
@@ -240,127 +240,69 @@
             font-weight: 800;
         }
 
-        /* Lucky Wheel Pro Design Fixed */
-        .wheel-box-container {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 10px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .wheel-pointer {
-            position: absolute;
-            top: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 22px solid #ff0055;
-            filter: drop-shadow(0 0 8px #ff0055);
-        }
-
-        .lucky-wheel {
-            width: 270px;
-            height: 270px;
-            border-radius: 50%;
-            border: 6px solid #222;
-            position: relative;
-            overflow: hidden;
-            background: conic-gradient(
-                #18181b 0deg 45deg, 
-                #25252b 45deg 90deg, 
-                #18181b 90deg 135deg, 
-                #25252b 135deg 180deg, 
-                #18181b 180deg 225deg, 
-                #25252b 225deg 270deg, 
-                #18181b 270deg 315deg, 
-                #25252b 315deg 360deg
-            );
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(255, 255, 255, 0.05);
-            transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Perfect Centered Hub */
-        .wheel-center-hub {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, #ffffff 0%, #a0a0a0 70%, #444 100%);
-            border-radius: 50%;
-            z-index: 10;
+        /* Daily Rewards UI */
+        .daily-rewards-container {
+            width: 100%;
+            max-width: 340px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            gap: 10px;
+            overflow-y: auto;
+            max-height: 310px;
+            padding-right: 2px;
+        }
+
+        .daily-item {
+            background: rgba(0, 0, 0, 0.65);
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.8);
-            border: 3px solid #222;
         }
 
-        .hub-title {
-            font-size: 7px;
-            color: #444;
-            font-weight: 800;
-            text-transform: uppercase;
+        .daily-info h4 {
+            font-size: 11px;
+            color: #fff;
+            margin-bottom: 3px;
+            text-align: left;
         }
 
-        .hub-timer {
-            font-size: 8px;
-            color: #000;
-            font-weight: 900;
-            margin-top: 2px;
-        }
-
-        /* Perfectly Aligned Numbers Inside Segments */
-        .wheel-numbers {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-
-        .w-num {
-            position: absolute;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
+        .daily-info p {
+            font-size: 9px;
             color: #00ffff;
-            text-shadow: 0 0 6px rgba(0,255,255,0.8);
-            width: 40px;
-            text-align: center;
+            text-align: left;
         }
 
-        /* Precise positioning for 8 segments around the center */
-        .wn-1 { top: 18%; left: 50%; transform: translateX(-50%) rotate(0deg); }
-        .wn-2 { top: 26%; right: 26%; transform: rotate(45deg); color: #ff0055; text-shadow: 0 0 6px rgba(255,0,85,0.8); }
-        .wn-3 { top: 50%; right: 18%; transform: translateY(-50%) rotate(90deg); }
-        .wn-4 { bottom: 26%; right: 26%; transform: rotate(135deg); color: #ffcc00; text-shadow: 0 0 6px rgba(255,204,0,0.8); }
-        .wn-5 { bottom: 18%; left: 50%; transform: translateX(-50%) rotate(180deg); }
-        .wn-6 { bottom: 26%; left: 26%; transform: rotate(225deg); color: #ff0055; text-shadow: 0 0 6px rgba(255,0,85,0.8); }
-        .wn-7 { top: 50%; left: 18%; transform: translateY(-50%) rotate(270deg); }
-        .wn-8 { top: 26%; left: 26%; transform: rotate(315deg); color: #ffcc00; text-shadow: 0 0 6px rgba(255,204,0,0.8); }
+        .daily-btn {
+            background: linear-gradient(135deg, #00ffff, #0077ff);
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .daily-btn:disabled {
+            background: #222;
+            color: #666;
+            cursor: not-allowed;
+            border: 1px solid #444;
+        }
 
         .upgrades-list, .tasks-list, .ranking-list {
             width: 100%;
             max-width: 340px;
-            max-height: 270px;
+            max-height: 310px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            padding-right: 2px;
         }
 
         .upgrade-item, .task-item, .rank-item {
@@ -388,7 +330,7 @@
             color: #00ffff;
         }
 
-        .upgrade-btn, .task-btn, .action-btn {
+        .upgrade-btn, .task-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
@@ -398,12 +340,14 @@
             font-weight: 800;
             font-size: 10px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .action-btn:disabled {
-            background: #444;
-            color: #888;
-            cursor: not-allowed;
+        .task-btn.claimed {
+            background: #28a745;
+            color: #fff;
+            cursor: default;
         }
 
         .rank-item {
@@ -572,42 +516,65 @@
             </div>
         </div>
 
-        <!-- Wheel View -->
+        <!-- Daily Rewards View (Replaced Wheel) -->
         <div class="section-view" id="wheelView" style="display: none;">
-            <h3>LUCKY WHEEL</h3>
-            <div class="wheel-box-container">
-                <div class="wheel-pointer"></div>
-                <div class="lucky-wheel" id="luckyWheel">
-                    <div class="wheel-center-hub">
-                        <span class="hub-title">Next Spin</span>
-                        <span class="hub-timer" id="hubTimer">24h</span>
+            <h3>DAILY REWARDS</h3>
+            <div class="daily-rewards-container">
+                <div class="daily-item">
+                    <div class="daily-info">
+                        <h4>🎁 Day 1 Reward</h4>
+                        <p>+250 Coins</p>
                     </div>
-                    <div class="wheel-numbers">
-                        <span class="w-num wn-1">10</span>
-                        <span class="w-num wn-2">50</span>
-                        <span class="w-num wn-3">0</span>
-                        <span class="w-num wn-4">100</span>
-                        <span class="w-num wn-5">0</span>
-                        <span class="w-num wn-6">250</span>
-                        <span class="w-num wn-7">0</span>
-                        <span class="w-num wn-8">500</span>
+                    <button class="daily-btn" id="dailyBtn1" onclick="claimDaily(1, 250)">CLAIM</button>
+                </div>
+                <div class="daily-item">
+                    <div class="daily-info">
+                        <h4>🎁 Day 2 Reward</h4>
+                        <p>+500 Coins</p>
                     </div>
+                    <button class="daily-btn" id="dailyBtn2" onclick="claimDaily(2, 500)">CLAIM</button>
+                </div>
+                <div class="daily-item">
+                    <div class="daily-info">
+                        <h4>🎁 Day 3 Reward</h4>
+                        <p>+1,000 Coins</p>
+                    </div>
+                    <button class="daily-btn" id="dailyBtn3" onclick="claimDaily(3, 1000)">CLAIM</button>
+                </div>
+                <div class="daily-item">
+                    <div class="daily-info">
+                        <h4>🎁 Day 4 Reward</h4>
+                        <p>+2,500 Coins</p>
+                    </div>
+                    <button class="daily-btn" id="dailyBtn4" onclick="claimDaily(4, 2500)">CLAIM</button>
+                </div>
+                <div class="daily-item">
+                    <div class="daily-info">
+                        <h4>🎁 Day 5 Reward</h4>
+                        <p>+5,000 Coins</p>
+                    </div>
+                    <button class="daily-btn" id="dailyBtn5" onclick="claimDaily(5, 5000)">CLAIM</button>
                 </div>
             </div>
-            <p style="font-size: 10px; color: #ff0055; margin: 6px 0;" id="wheelTimerText">FREE SPIN AVAILABLE</p>
-            <button class="action-btn" id="spinBtn" onclick="spinWheel()">SPIN FREE</button>
         </div>
 
-        <!-- Tasks View -->
+        <!-- Tasks View with requested links -->
         <div class="section-view" id="tasksView" style="display: none;">
-            <h3>DAILY TASKS</h3>
+            <h3>SOCIAL TASKS</h3>
             <div class="tasks-list">
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>📢 Join Telegram</h4>
+                        <h4>📢 Follow Telegram Channel</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <button class="task-btn" onclick="completeTask(this, 500)">CLAIM</button>
+                    <a href="https://t.me/BeboPixel" target="_blank" class="task-btn" id="taskTgBtn" onclick="completeTask('tg', 500)">VISIT & CLAIM</a>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h4>🐦 Follow on X (Twitter)</h4>
+                        <p>+500 Coins</p>
+                    </div>
+                    <a href="https://x.com/BeboCoin1" target="_blank" class="task-btn" id="taskXBtn" onclick="completeTask('x', 500)">VISIT & CLAIM</a>
                 </div>
             </div>
         </div>
@@ -627,7 +594,7 @@
                 <span class="nav-icon">🚀</span><span>BOOST</span>
             </button>
             <button class="nav-btn" id="btnWheel" onclick="switchTab('wheel')">
-                <span class="nav-icon">🎡</span><span>WHEEL</span>
+                <span class="nav-icon">🎁</span><span>DAILY</span>
             </button>
             <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')">
                 <span class="nav-icon">📋</span><span>TASKS</span>
@@ -657,9 +624,9 @@
         let tapPower = localStorage.getItem('b3bo_tapPower') ? parseInt(localStorage.getItem('b3bo_tapPower')) : 1;
         let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 5000;
         let miningEndTime = localStorage.getItem('b3bo_miningEndTime') ? parseInt(localStorage.getItem('b3bo_miningEndTime')) : 0;
-        let lastSpinTime = localStorage.getItem('b3bo_lastSpinTime') ? parseInt(localStorage.getItem('b3bo_lastSpinTime')) : 0;
-        let currentWheelAngle = 0;
-        let isSpinning = false;
+        
+        let claimedDays = JSON.parse(localStorage.getItem('b3bo_claimedDays')) || {};
+        let completedTasks = JSON.parse(localStorage.getItem('b3bo_completedTasks')) || {};
 
         const scoreElement = document.getElementById('score');
         const coinButton = document.getElementById('coinButton');
@@ -669,9 +636,6 @@
         const hintText = document.getElementById('hintText');
         const tapLevelElem = document.getElementById('tapLevel');
         const tapCostElem = document.getElementById('tapCost');
-        const wheelTimerText = document.getElementById('wheelTimerText');
-        const spinBtn = document.getElementById('spinBtn');
-        const hubTimer = document.getElementById('hubTimer');
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
@@ -703,13 +667,37 @@
             localStorage.setItem('b3bo_energy', energy);
             localStorage.setItem('b3bo_tapPower', tapPower);
             localStorage.setItem('b3bo_tapCost', tapCostVal);
+
+            // Update Daily Buttons state
+            for (let i = 1; i <= 5; i++) {
+                let btn = document.getElementById(`dailyBtn${i}`);
+                if (btn) {
+                    if (claimedDays[i]) {
+                        btn.textContent = "CLAIMED ✓";
+                        btn.disabled = true;
+                    }
+                }
+            }
+
+            // Update Tasks state
+            if (completedTasks['tg']) {
+                let btnTg = document.getElementById('taskTgBtn');
+                btnTg.textContent = "DONE ✓";
+                btnTg.classList.add('claimed');
+                btnTg.removeAttribute('href');
+            }
+            if (completedTasks['x']) {
+                let btnX = document.getElementById('taskXBtn');
+                btnX.textContent = "DONE ✓";
+                btnX.classList.add('claimed');
+                btnX.removeAttribute('href');
+            }
         }
 
         updateDisplays();
 
         setInterval(() => {
             let now = Date.now();
-            
             if (energy <= 0 && miningEndTime > now) {
                 let remainingSec = Math.ceil((miningEndTime - now) / 1000);
                 let mins = Math.floor(remainingSec / 60);
@@ -721,25 +709,6 @@
                 localStorage.setItem('b3bo_miningEndTime', 0);
                 hintText.textContent = "TAP TO EARN";
                 updateDisplays();
-            }
-
-            let cooldown = 24 * 60 * 60 * 1000;
-            if (now - lastSpinTime < cooldown) {
-                let timeLeft = cooldown - (now - lastSpinTime);
-                let hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                let mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                let secs = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                
-                let timeStr = `${hours}h ${mins}m`;
-                wheelTimerText.textContent = `Next Spin in: ${timeStr} ${secs}s`;
-                hubTimer.textContent = `${hours}h`;
-                spinBtn.disabled = true;
-                spinBtn.style.opacity = "0.5";
-            } else {
-                wheelTimerText.textContent = "FREE SPIN AVAILABLE!";
-                hubTimer.textContent = "READY";
-                spinBtn.disabled = false;
-                spinBtn.style.opacity = "1";
             }
         }, 1000);
 
@@ -814,55 +783,22 @@
             }
         }
 
-        function spinWheel() {
-            if (isSpinning) return;
-            let now = Date.now();
-            let cooldown = 24 * 60 * 60 * 1000;
-            if (now - lastSpinTime < cooldown) {
-                if (tg.showAlert) tg.showAlert("You can only spin once every 24 hours!");
-                return;
-            }
+        function claimDaily(day, reward) {
+            if (claimedDays[day]) return;
+            claimedDays[day] = true;
+            localStorage.setItem('b3bo_claimedDays', JSON.stringify(claimedDays));
+            score += reward;
+            updateDisplays();
+            if (tg.showAlert) tg.showAlert(`Successfully claimed Day ${day} reward (+${reward} Coins)! 🎉`);
+        }
 
-            lastSpinTime = now;
-            localStorage.setItem('b3bo_lastSpinTime', lastSpinTime);
-
-            isSpinning = true;
-            spinBtn.disabled = true;
-
-            let prizes = [10, 50, 0, 100, 0, 250, 0, 500];
-            let weights = [35, 25, 15, 10, 8, 4, 2, 1];
-            
-            let randomWeight = Math.random() * 100;
-            let cumulative = 0;
-            let randomIndex = 0;
-            for (let i = 0; i < weights.length; i++) {
-                cumulative += weights[i];
-                if (randomWeight <= cumulative) {
-                    randomIndex = i;
-                    break;
-                }
-            }
-
-            let wonAmount = prizes[randomIndex];
-            let sectorDegree = 360 / 8;
-            let extraSpins = 360 * 6;
-            
-            let targetAngle = extraSpins + (360 - (randomIndex * sectorDegree + sectorDegree / 2));
-            
-            currentWheelAngle += targetAngle;
-            const wheelElem = document.getElementById('luckyWheel');
-            wheelElem.style.transform = `rotate(${currentWheelAngle}deg)`;
-
-            setTimeout(() => {
-                score += wonAmount;
-                updateDisplays();
-                isSpinning = false;
-
-                if (tg.showAlert) {
-                    if (wonAmount > 0) tg.showAlert(`Wheel Spin: You won +${wonAmount} Coins! 🎉`);
-                    else tg.showAlert("Bad luck! You won nothing this time. 😢");
-                }
-            }, 4000);
+        function completeTask(taskId, reward) {
+            if (completedTasks[taskId]) return;
+            completedTasks[taskId] = true;
+            localStorage.setItem('b3bo_completedTasks', JSON.stringify(completedTasks));
+            score += reward;
+            updateDisplays();
+            if (tg.showAlert) tg.showAlert(`Task completed! +${reward} Coins added! 🎉`);
         }
 
         function switchTab(tab) {
@@ -889,15 +825,6 @@
                 document.getElementById('btnRank').classList.add('active');
                 loadLeaderboard();
             }
-        }
-
-        function completeTask(btn, reward) {
-            score += reward;
-            updateDisplays();
-            btn.textContent = "DONE ✓";
-            btn.style.background = "#28a745";
-            btn.disabled = true;
-            if (tg.showAlert) tg.showAlert(`Claimed +${reward} Coins!`);
         }
 
         function loadLeaderboard() {
@@ -931,3 +858,4 @@
     </script>
 </body>
 </html>
+
