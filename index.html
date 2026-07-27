@@ -8,6 +8,8 @@
     <!-- مكتبات Firebase المتوافقة مع HTML العادي -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <!-- مكتبة TonConnect الرسمية لربط المحافظ الحقيقية -->
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
@@ -365,6 +367,25 @@
             text-align: center;
         }
 
+        /* تنسيق زر ربط المحفظة */
+        .wallet-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid rgba(0,255,255,0.2);
+        }
+
+        #ton-connect-button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
         .footer-nav {
             display: flex;
             justify-content: space-around;
@@ -423,7 +444,6 @@
 
         <!-- Home View -->
         <main class="tap-section" id="gameView">
-            <!-- زر إحالة بارز ومستقل في الواجهة الرئيسية -->
             <div class="home-ref-banner">
                 <div class="home-ref-info">
                     <h4>👥 INVITE FRIENDS</h4>
@@ -475,8 +495,14 @@
 
         <!-- Tasks View -->
         <div class="section-view" id="tasksView" style="display: none;">
-            <h3>SOCIAL TASKS</h3>
+            <h3>SOCIAL TASKS & WALLET</h3>
             <div class="tasks-list">
+                <!-- قسم ربط المحفظة الحقيقي -->
+                <div class="wallet-section">
+                    <h4>💎 CONNECT TON WALLET</h4>
+                    <p style="font-size: 8px; color: #ccc;">Connect your Tonkeeper or TON wallet securely</p>
+                    <div id="ton-connect-button"></div>
+                </div>
                 <div class="task-item">
                     <div class="task-info">
                         <h4>📢 Follow Telegram Channel</h4>
@@ -494,7 +520,7 @@
             </div>
         </div>
 
-        <!-- Friends / Referrals View (عند الضغط عليها تفتح صفحة مستقلة لنسخ الرابط) -->
+        <!-- Friends / Referrals View -->
         <div class="section-view" id="friendsView" style="display: none;">
             <h3>INVITE FRIENDS</h3>
             <div class="friends-container">
@@ -520,7 +546,7 @@
             </div>
         </div>
 
-        <!-- Footer (رجع 5 أزرار رئيسية واسعة ومريحة جداً) -->
+        <!-- Footer -->
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span><span>HOME</span>
@@ -592,6 +618,7 @@
         let completedTasks = {};
         let referralCount = 0;
         let invitedBy = "none";
+        let walletAddress = "";
 
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
@@ -635,6 +662,7 @@
                 completedTasks = data.completedTasks || {};
                 referralCount = data.referralCount || 0;
                 invitedBy = data.invitedBy || "none";
+                walletAddress = data.walletAddress || "";
             } else {
                 invitedBy = (startParam && startParam !== String(telegramId)) ? startParam : "none";
                 saveToFirebase();
@@ -645,6 +673,26 @@
             }
             updateDisplays();
             setupReferralLink();
+        });
+
+        // تهيئة محفظة TON الحقيقية (TonConnect UI)
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/docs/main/public/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        // الاستماع لحالة اتصال المحفظة وحفظ العنوان بقاعدة البيانات
+        tonConnectUI.onStatusChange(wallet => {
+            if (wallet) {
+                walletAddress = wallet.account.address;
+                saveToFirebase();
+                if (tg.showAlert) {
+                    tg.showAlert("Wallet connected successfully! 🚀");
+                }
+            } else {
+                walletAddress = "";
+                saveToFirebase();
+            }
         });
 
         function rewardReferrer(refId) {
@@ -674,7 +722,8 @@
                 lastClaimTime: lastClaimTime,
                 completedTasks: completedTasks,
                 referralCount: referralCount,
-                invitedBy: invitedBy
+                invitedBy: invitedBy,
+                walletAddress: walletAddress
             });
         }
 
@@ -952,7 +1001,7 @@
 
         function loadLeaderboard() {
             const listContainer = document.getElementById('rankingList');
-            db.ref('users').orderByChild('score').limitToLast(10).once('value').then((snapshot) => {
+            db.ref('users').orderByChild('score').limitToLast(10).once('value').text ? snapshot => {} : db.ref('users').orderByChild('score').limitToLast(10).once('value').then((snapshot) => {
                 let leaders = [];
                 snapshot.forEach((childSnapshot) => {
                     let userData = childSnapshot.val();
