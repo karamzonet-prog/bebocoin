@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>B3BO Coin Game</title>
+    <title>Bebo Coin Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- مكتبات Firebase المتوافقة مع HTML العادي -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -94,22 +94,6 @@
             font-size: 10px;
             color: #eee;
             letter-spacing: 1px;
-        }
-
-        .wallet-btn {
-            background: rgba(0, 255, 255, 0.15);
-            border: 1px solid rgba(0, 255, 255, 0.4);
-            color: #00ffff;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            max-width: 130px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .header {
@@ -348,67 +332,6 @@
             background: rgba(255, 255, 255, 0.08);
             text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
         }
-
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #121212;
-            border: 1px solid #333;
-            padding: 25px;
-            border-radius: 20px;
-            width: 85%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .modal-content h3 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            color: #00ffff;
-            margin-bottom: 15px;
-        }
-
-        .modal-content p {
-            font-size: 11px;
-            color: #888;
-            margin-bottom: 20px;
-        }
-
-        .wallet-option-btn {
-            background: #1a1a1a;
-            border: 1px solid #444;
-            color: #fff;
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .close-modal-btn {
-            background: none;
-            border: none;
-            color: #ff0055;
-            margin-top: 15px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 11px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -424,13 +347,10 @@
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
                 </div>
-                <button class="wallet-btn" id="walletBtnText" onclick="toggleWalletModal()">
-                    CONNECT 💳
-                </button>
             </div>
             <div class="score-board">
                 <span id="score">0</span>
-                <p>B3BO COIN</p>
+                <p>BEBO COIN</p>
             </div>
         </header>
 
@@ -526,18 +446,6 @@
         </nav>
     </div>
 
-    <!-- Wallet Selection Modal -->
-    <div class="modal-overlay" id="walletModal" style="display: none;">
-        <div class="modal-content">
-            <h3>CONNECT WALLET</h3>
-            <p>Link your personal TON wallet.</p>
-            <button class="wallet-option-btn" onclick="connectTonWallet('Tonkeeper')">💎 Connect Tonkeeper</button>
-            <button class="wallet-option-btn" onclick="connectTonWallet('Telegram Wallet')">✈️ Connect Telegram Wallet</button>
-            <button class="wallet-option-btn" onclick="disconnectWallet()" style="color: #ff0055;" id="disconnectBtn">Disconnect Wallet</button>
-            <button class="close-modal-btn" onclick="toggleWalletModal()">CLOSE</button>
-        </div>
-    </div>
-
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCv_3P1hcqpPieCC6_xf-pOrD3cuyQ9nis",
@@ -556,6 +464,7 @@
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
+        // تسجيل الدخول التلقائي عبر يوزر التيليجرام
         let telegramId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "guest_" + Math.floor(Math.random() * 100000);
         let userRef = db.ref('users/' + telegramId);
 
@@ -568,7 +477,6 @@
         let currentDay = 1;
         let lastClaimTime = 0;
         let completedTasks = {};
-        let connectedWalletAddress = null;
 
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
@@ -583,7 +491,6 @@
         const hintText = document.getElementById('hintText');
         const tapLevelElem = document.getElementById('tapLevel');
         const tapCostElem = document.getElementById('tapCost');
-        const walletBtnText = document.getElementById('walletBtnText');
 
         const dailyRewardsData = [
             { day: 1, reward: 100 },
@@ -604,7 +511,6 @@
                 currentDay = data.currentDay || 1;
                 lastClaimTime = data.lastClaimTime || 0;
                 completedTasks = data.completedTasks || {};
-                connectedWalletAddress = data.wallet || null;
             } else {
                 saveToFirebase();
             }
@@ -621,8 +527,7 @@
                 miningEndTime: miningEndTime,
                 currentDay: currentDay,
                 lastClaimTime: lastClaimTime,
-                completedTasks: completedTasks,
-                wallet: connectedWalletAddress
+                completedTasks: completedTasks
             });
         }
 
@@ -651,13 +556,6 @@
             energyText.textContent = `${energy} / ${maxEnergy}`;
             tapLevelElem.textContent = tapPower;
             tapCostElem.textContent = `Cost: ${tapCostVal.toLocaleString()} Coins`;
-            
-            if (connectedWalletAddress) {
-                let shortAddr = connectedWalletAddress.substring(0, 4) + '...' + connectedWalletAddress.substring(connectedWalletAddress.length - 4);
-                walletBtnText.textContent = shortAddr;
-            } else {
-                walletBtnText.textContent = "CONNECT 💳";
-            }
 
             renderDailyRewards();
             renderTasks();
@@ -901,28 +799,6 @@
                     listContainer.appendChild(row);
                 });
             });
-        }
-
-        function toggleWalletModal() {
-            const modal = document.getElementById('walletModal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        function connectTonWallet(walletProvider) {
-            toggleWalletModal();
-            let mockAddress = "UQCs" + Math.random().toString(36).substring(2, 12) + "B3BO_USER_TON";
-            connectedWalletAddress = mockAddress;
-            updateDisplays();
-            saveToFirebase();
-            if (tg.showAlert) tg.showAlert(`Successfully linked with ${walletProvider}! Address saved.`);
-        }
-
-        function disconnectWallet() {
-            connectedWalletAddress = null;
-            toggleWalletModal();
-            updateDisplays();
-            saveToFirebase();
-            if (tg.showAlert) tg.showAlert("Wallet disconnected.");
         }
     </script>
 </body>
