@@ -894,6 +894,7 @@
         let invitedBy = "none";
         let walletAddress = "";
         let premiumItems = {};
+        let isDataLoaded = false; // متغير الحماية لمنع التصفير
 
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
@@ -924,11 +925,13 @@
             startParam = tg.initDataUnsafe.start_param;
         }
 
-        // تم تعديل الاتصال هنا لضمان مزامنة البيانات وعدم تصفيرها
+        // جلب البيانات مع حماية تامة ضد التصفير
         userRef.on('value', (snapshot) => {
             let data = snapshot.val();
             if (data) {
-                score = data.score || 0;
+                if (data.score !== undefined) {
+                    score = data.score;
+                }
                 energy = data.energy !== undefined ? data.energy : 1000;
                 tapPower = data.tapPower || 1;
                 tapCostVal = data.tapCostVal || 1000;
@@ -940,9 +943,12 @@
                 invitedBy = data.invitedBy || "none";
                 walletAddress = data.walletAddress || "";
                 premiumItems = data.premiumItems || {};
+
+                isDataLoaded = true;
             } else {
                 invitedBy = (startParam && startParam !== String(telegramId)) ? startParam : "none";
                 saveToFirebase();
+                isDataLoaded = true;
 
                 if (invitedBy !== "none") {
                     rewardReferrer(invitedBy);
@@ -988,6 +994,9 @@
         }
 
         function saveToFirebase() {
+            // لا تقم بالحفظ أبداً إذا لم يتم تحميل البيانات الأساسية أولاً لتجنب الكتابة الخاطئة
+            if (!isDataLoaded) return;
+
             let finalName = userName;
             if (premiumItems['vip']) {
                 finalName = "👑 " + userName;
