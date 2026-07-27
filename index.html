@@ -90,12 +90,11 @@
         </div>
     </div>
 
-    <!-- Firebase and Game Logic Script -->
+    <!-- Firebase and Fixed Game Logic Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firestore/database";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your real Firebase project configuration
         const firebaseConfig = {
           apiKey: "AIzaSyCv_3P1hcqpPieCC6_xf-pOrD3cuyQ9nis",
           authDomain: "bebo-4039e.firebaseapp.com",
@@ -117,7 +116,6 @@
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             userId = tg.initDataUnsafe.user.id.toString();
-            // إذا اللاعب ما عنده اسم مستعار أو جديد، يظهر بدون اسم حقيقي واضح
             userName = tg.initDataUnsafe.user.first_name ? tg.initDataUnsafe.user.first_name : `Player_${userId.slice(-4)}`;
         } else {
             userName = `Player_${Math.floor(Math.random() * 1000)}`;
@@ -133,7 +131,6 @@
         const walletInfo = document.getElementById("walletInfo");
         const lbList = document.getElementById("lbList");
 
-        // Load user data and set initial score to 0 if new
         async function loadUserData() {
             try {
                 const userRef = doc(db, "users", userId);
@@ -149,7 +146,6 @@
                         connectWalletBtn.innerText = "Wallet Connected";
                     }
                 } else {
-                    // Force start score at 0 for new players
                     score = 0;
                     await setDoc(userRef, {
                         name: userName,
@@ -161,10 +157,10 @@
                 loadLeaderboard();
             } catch (error) {
                 console.error("Error loading user data:", error);
+                document.getElementById("username").innerText = `Welcome, ${userName} (Offline)`;
             }
         }
 
-        // Fetch Top Players Leaderboard
         async function loadLeaderboard() {
             try {
                 const q = query(collection(db, "users"), orderBy("score", "desc"), limit(5));
@@ -174,7 +170,6 @@
                 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    // Hide name partially or show anonymous if player hasn't interacted/named properly
                     let displayName = data.name ? data.name : "Anonymous";
                     if(displayName.length > 8) displayName = displayName.substring(0, 6) + "..";
                     
@@ -190,7 +185,6 @@
 
         loadUserData();
 
-        // Increment score and update database
         clickBtn.addEventListener("click", async () => {
             score += 1;
             scoreDisplay.innerText = score;
@@ -200,13 +194,12 @@
                 await updateDoc(userRef, {
                     score: score
                 });
-                loadLeaderboard(); // Refresh leaderboard on click
+                loadLeaderboard();
             } catch (error) {
                 console.error("Error saving score:", error);
             }
         });
 
-        // TON Wallet simulation handler
         connectWalletBtn.addEventListener("click", async () => {
             const simulatedAddress = "UQD_ExampleTonWalletAddress999BeboNetwork"; 
             walletAddress = simulatedAddress;
@@ -227,3 +220,4 @@
     </script>
 </body>
 </html>
+
