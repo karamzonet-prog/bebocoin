@@ -823,7 +823,6 @@
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             
-            // تحقق صارم من نفاد الطاقة قبل السماح بالضغط
             if (G.energy < G.tapPower) {
                 showToast('⏳ Energy depleted! Wait for recharge.', 'error', 1500);
                 return;
@@ -913,7 +912,6 @@
             }).catch((err) => {});
         }
 
-        // جلب البيانات من الذاكرة المحلية الخاصة بهذا المستخدم فقط لمنع تداخل الحسابات
         const savedLocal = localStorage.getItem('bebo_game_save_' + telegramId);
         if (savedLocal) {
             try {
@@ -929,11 +927,9 @@
         }
         updateUI();
 
-        // مزامنة دقيقة مع قاعدة البيانات
         userRef.once('value').then((snap) => {
             const data = snap.val();
             if (data) {
-                // إذا كان المستخدم موجوداً بقاعدة البيانات نأخذ البيانات المخزنة له
                 if (data.score !== undefined) G.score = data.score;
                 if (data.energy !== undefined) G.energy = data.energy;
                 if (data.tapPower !== undefined) G.tapPower = data.tapPower;
@@ -942,7 +938,6 @@
                 if (data.referralCount !== undefined) G.referralCount = data.referralCount;
                 if (data.walletAddress) G.walletAddress = data.walletAddress;
             } else {
-                // لاعب جديد تماماً: يبدأ من الصفر تماماً وبدون أي رصيد وهمي
                 G.score = 0;
                 G.energy = 100;
                 G.tapPower = 1;
@@ -970,10 +965,11 @@
             saveToFirebase();
         });
 
-        // نظام تعبئة الطاقة تدريجياً بمرور الوقت
+        // نظام تعبئة الطاقة لتمتلئ بالكامل خلال نصف ساعة بالضبط (1800 ثانية)
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
-                G.energy = Math.min(G.maxEnergy, G.energy + (100 / 3600));
+                // الزيادة في كل ثانية = 100 تقسيم 1800 (نصف ساعة) لتكتمل بدقة
+                G.energy = Math.min(G.maxEnergy, G.energy + (100 / 1800));
                 updateUI();
             }
             saveToFirebase();
