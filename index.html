@@ -66,7 +66,6 @@
             backdrop-filter: blur(3px);
             position: relative;
             z-index: 1;
-            transition: all 0.2s ease;
         }
 
         .top-bar {
@@ -188,7 +187,6 @@
             font-weight: 800;
             font-size: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
         }
 
         .home-trophy-banner {
@@ -245,7 +243,7 @@
             box-shadow: 0 8px 0px #111, 0 12px 20px rgba(0, 0, 0, 0.85);
             position: relative;
             z-index: 2;
-            transition: transform 0.06s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.06s ease, border-color 0.15s ease;
         }
 
         .coin-btn img {
@@ -258,23 +256,6 @@
         .coin-wrapper.pressed .coin-btn {
             transform: translateY(6px) scale(0.94);
             border-color: #00ffff;
-            box-shadow: 0 2px 0px #111, 0 8px 15px rgba(0, 0, 0, 0.9);
-        }
-
-        .coin-wrapper.bump .coin-btn {
-            animation: coinBump 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes coinBump {
-            0% { transform: translateY(6px) scale(0.94); }
-            40% { transform: translateY(-4px) scale(1.04); }
-            70% { transform: translateY(2px) scale(0.98); }
-            100% { transform: translateY(0px) scale(1); }
-        }
-
-        .coin-wrapper.flash .coin-glow {
-            opacity: 1;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.7) 0%, rgba(0, 255, 255, 0.2) 50%, transparent 70%);
         }
 
         .particle {
@@ -355,7 +336,6 @@
             font-weight: 800;
             font-size: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 255, 255, 0.25);
             white-space: nowrap;
         }
 
@@ -405,7 +385,6 @@
             padding: 10px 6px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             flex-shrink: 0;
             gap: 4px;
         }
@@ -424,69 +403,35 @@
             padding: 10px 18px;
             border-radius: 14px;
             font-family: 'Orbitron', sans-serif;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
             flex: 1;
             min-width: 60px;
-            letter-spacing: 0.5px;
         }
 
-        .nav-btn .nav-icon {
-            font-size: 22px;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-btn span:last-child {
-            font-size: 8px;
-            opacity: 0.8;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-2px);
-        }
-
-        .nav-btn:active {
-            transform: scale(0.95);
-        }
-
+        .nav-btn .nav-icon { font-size: 22px; }
+        .nav-btn span:last-child { font-size: 8px; opacity: 0.8; }
         .nav-btn.active {
             background: linear-gradient(145deg, rgba(0, 255, 255, 0.12), rgba(0, 255, 255, 0.04));
             border-color: rgba(0, 255, 255, 0.3);
             color: #fff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.08), inset 0 0 20px rgba(0, 255, 255, 0.03);
-        }
-
-        .nav-btn.active .nav-icon {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.4));
         }
 
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
             width: 92%; max-width: 380px; height: 70%; max-height: 600px;
             background: rgba(15, 15, 20, 0.96);
             border: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 20px;
-            padding: 14px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            border-radius: 20px; padding: 14px 16px;
+            display: flex; flex-direction: column; gap: 8px;
         }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px; }
         .modal-header h3 { font-size: 10px; color: #ffd700; font-family: 'Press Start 2P', cursive; }
         .close-modal { background: none; border: none; color: #aaa; font-size: 16px; cursor: pointer; }
 
-        .ranking-scroll-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px; }
+        .ranking-scroll-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
         .rank-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 9px; font-weight: 700; }
         .rank-row.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.08); }
 
@@ -497,8 +442,7 @@
         .toast {
             background: rgba(10, 10, 15, 0.94); border: 1px solid rgba(0, 255, 255, 0.35);
             padding: 8px 16px; border-radius: 12px; color: #fff; font-size: 8px; font-weight: 600;
-            font-family: 'Orbitron', sans-serif; text-align: center; backdrop-filter: blur(6px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); pointer-events: auto; width: 100%;
+            font-family: 'Orbitron', sans-serif; text-align: center; pointer-events: auto; width: 100%;
         }
         .toast.success { border-color: #00ff88; }
         .toast.error { border-color: #ff4466; }
@@ -753,6 +697,65 @@
             setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, duration);
         }
 
+        // --- نظام القراءة والتحميل الآمن من ذاكرة الموبايل أولاً ---
+        const saveKey = 'bebo_save_' + telegramId;
+        let localDataSaved = localStorage.getItem(saveKey);
+        
+        if (localDataSaved) {
+            try {
+                const parsed = JSON.parse(localDataSaved);
+                G.score = parsed.score || 0;
+                G.energy = parsed.energy ?? 100;
+                G.tapPower = parsed.tapPower || 1;
+                G.tapCost = parsed.tapCost || 1000;
+                G.completedTasks = parsed.completedTasks || {};
+                G.referralCount = parsed.referralCount || 0;
+                G.walletAddress = parsed.walletAddress || "";
+            } catch(e) {}
+        }
+
+        function saveGame() {
+            // حفظ مباشر وفوري في ذاكرة الموبايل لكي لا يضيع أي شيء أبداً
+            const dataToSave = {
+                score: G.score,
+                energy: G.energy,
+                tapPower: G.tapPower,
+                tapCost: G.tapCost,
+                completedTasks: G.completedTasks,
+                referralCount: G.referralCount,
+                walletAddress: G.walletAddress,
+                lastTime: Date.now()
+            };
+            localStorage.setItem(saveKey, JSON.stringify(dataToSave));
+
+            // تحديث صامت لفايربيس بدون جلب قيم قديمة
+            userRef.update(dataToSave).catch(() => {});
+        }
+
+        // محاولة سحب البيانات من فايربيس مرة واحدة للمقارنة فقط، دون السماح لها بالتصفير
+        userRef.once('value').then((snap) => {
+            const remoteData = snap.val();
+            if (remoteData) {
+                // نأخذ القيمة الأكبر دائماً بين موبايلك وفايربيس
+                if ((remoteData.score || 0) > G.score) {
+                    G.score = remoteData.score;
+                }
+                if ((remoteData.tapPower || 1) > G.tapPower) {
+                    G.tapPower = remoteData.tapPower;
+                }
+                if ((remoteData.tapCost || 1000) > G.tapCost) {
+                    G.tapCost = remoteData.tapCost;
+                }
+                if ((remoteData.referralCount || 0) > G.referralCount) {
+                    G.referralCount = remoteData.referralCount;
+                }
+            }
+            updateUI();
+            saveGame();
+        }).catch(() => {
+            updateUI();
+        });
+
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -813,9 +816,7 @@
                 tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
             } else {
                 navigator.clipboard.writeText(link).then(() => {
-                    showToast('📋 Referral link copied to clipboard!', 'success');
-                }).catch(() => {
-                    showToast('❌ Failed to copy link', 'error');
+                    showToast('📋 Referral link copied!', 'success');
                 });
             }
         }
@@ -823,9 +824,8 @@
         const coinWrapper = $('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            
             if (G.energy < G.tapPower) {
-                showToast('⏳ Energy depleted! Wait for recharge.', 'error', 1500);
+                showToast('⏳ Energy depleted!', 'error', 1500);
                 return;
             }
 
@@ -834,34 +834,19 @@
             const clientY = e.clientY || (e.touches ? e.touches[0].clientY : window.innerHeight/2);
 
             coinWrapper.classList.add('pressed');
-            setTimeout(() => {
-                coinWrapper.classList.remove('pressed');
-                coinWrapper.classList.add('bump');
-                setTimeout(() => coinWrapper.classList.remove('bump'), 200);
-            }, 100);
-
-            coinWrapper.classList.add('flash');
-            setTimeout(() => coinWrapper.classList.remove('flash'), 300);
+            setTimeout(() => coinWrapper.classList.remove('pressed'), 100);
 
             spawnParticles(clientX, clientY, 8);
             playTapSound();
             if (tg.HapticFeedback) { try { tg.HapticFeedback.impactOccurred('medium'); } catch(_){} }
 
-            processTap(clientX, clientY);
-        });
-
-        function processTap(x, y) {
-            if (G.energy < G.tapPower) {
-                showToast('⏳ Energy depleted! Wait for recharge.', 'error', 1500);
-                return;
-            }
             G.energy = Math.max(0, G.energy - G.tapPower);
             G.score += G.tapPower;
 
             updateUI();
-            saveToFirebase();
-            createFloatingNumber(x, y, `+${G.tapPower}`, '#00ffff');
-        }
+            saveGame();
+            createFloatingNumber(clientX, clientY, `+${G.tapPower}`, '#00ffff');
+        });
 
         function updateUI() {
             $('score').textContent = G.score.toLocaleString();
@@ -901,127 +886,19 @@
                 G.tapPower += 1;
                 G.tapCost = Math.floor(G.tapCost * 2.2);
                 updateUI();
-                saveToFirebase();
+                saveGame();
                 showToast(`⚡ Multi-Tap upgraded to Lv.${G.tapPower}!`, 'success');
             } else {
                 showToast(`❌ Need ${G.tapCost.toLocaleString()} coins`, 'error');
             }
         }
 
-        function saveToFirebase() {
-            G.lastTime = Date.now();
-            const localData = {
-                score: G.score,
-                energy: G.energy,
-                tapPower: G.tapPower,
-                tapCost: G.tapCost,
-                completedTasks: G.completedTasks,
-                referralCount: G.referralCount,
-                walletAddress: G.walletAddress,
-                lastTime: G.lastTime
-            };
-            localStorage.setItem('bebo_game_save_' + telegramId, JSON.stringify(localData));
-
-            userRef.update({
-                username: userName,
-                score: G.score,
-                energy: G.energy,
-                tapPower: G.tapPower,
-                tapCost: G.tapCost,
-                completedTasks: G.completedTasks,
-                referralCount: G.referralCount,
-                walletAddress: G.walletAddress,
-                lastTime: G.lastTime
-            }).catch((err) => {});
-        }
-
-        // نظام الحماية الآمن ضد التصفير وضياع النقاط (Math.max)
-        userRef.once('value').then((snap) => {
-            const data = snap.val();
-            
-            // جلب السكور المحلي المخزن في متصفحك كخط دفاع أول
-            let localSaved = localStorage.getItem('bebo_game_save_' + telegramId);
-            let localScore = 0;
-            let localEnergy = 100;
-            let localTapPower = 1;
-            let localTapCost = 1000;
-            let localTasks = {};
-            let localRefs = 0;
-            let localWallet = "";
-            let localLastTime = Date.now();
-
-            if (localSaved) {
-                try {
-                    const parsed = JSON.parse(localSaved);
-                    localScore = parsed.score || 0;
-                    localEnergy = parsed.energy ?? 100;
-                    localTapPower = parsed.tapPower || 1;
-                    localTapCost = parsed.tapCost || 1000;
-                    localTasks = parsed.completedTasks || {};
-                    localRefs = parsed.referralCount || 0;
-                    localWallet = parsed.walletAddress || "";
-                    localLastTime = parsed.lastTime || Date.now();
-                } catch(e){}
-            }
-
-            if (data) {
-                let remoteScore = data.score !== undefined ? data.score : 0;
-                
-                // اختيار القيمة الأكبر دائماً بين فايربيس والمتصفح لضمان عدم عودته للصفر أبدًا
-                G.score = Math.max(remoteScore, localScore);
-                G.tapPower = Math.max(data.tapPower || 1, localTapPower);
-                G.tapCost = Math.max(data.tapCost || 1000, localTapCost);
-                G.completedTasks = Object.keys(data.completedTasks || {}).length > 0 ? data.completedTasks : localTasks;
-                G.referralCount = Math.max(data.referralCount || 0, localRefs);
-                G.walletAddress = data.walletAddress || localWallet;
-
-                const lastActiveTime = data.lastTime || localLastTime;
-                const remoteEnergy = data.energy !== undefined ? data.energy : localEnergy;
-                
-                if (lastActiveTime) {
-                    const elapsedSeconds = (Date.now() - lastActiveTime) / 1000;
-                    const calculatedEnergy = remoteEnergy + ((elapsedSeconds / 1800) * 100);
-                    G.energy = Math.min(G.maxEnergy, calculatedEnergy);
-                } else {
-                    G.energy = remoteEnergy;
-                }
-            } else {
-                // إذا لم يكن موجوداً بقاعدة البيانات، استخدم البيانات المحلية بالكامل
-                G.score = localScore;
-                G.energy = localEnergy;
-                G.tapPower = localTapPower;
-                G.tapCost = localTapCost;
-                G.completedTasks = localTasks;
-                G.referralCount = localRefs;
-                G.walletAddress = localWallet;
-            }
-
-            // التحقق من نظام الإحالة (Referral) عند التسجيل لأول مرة
-            const startParam = tg.initDataUnsafe?.start_param || '';
-            if (startParam && startParam !== String(telegramId)) {
-                db.ref('users/' + startParam).once('value').then((refSnap) => {
-                    if (refSnap.exists()) {
-                        const refData = refSnap.val();
-                        db.ref('users/' + startParam).update({
-                            score: (refData.score || 0) + 1000,
-                            referralCount: (refData.referralCount || 0) + 1
-                        });
-                    }
-                });
-            }
-
-            updateUI();
-            setupReferralLink();
-            saveToFirebase(); // تحديث وحفظ القيم الصحيحة والآمنة فوراً
-        });
-
-        // حلقة التحديث المستمر للطاقة والوقت كل ثانية
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 1800));
                 updateUI();
             }
-            saveToFirebase();
+            saveGame();
         }, 1000);
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -1032,36 +909,33 @@
         tonConnectUI.onStatusChange((wallet) => {
             if (wallet) {
                 G.walletAddress = wallet.account.address;
-                showToast('💎 TON Wallet connected successfully!', 'success');
-                saveToFirebase();
+                showToast('💎 TON Wallet connected!', 'success');
+                saveGame();
             }
         });
 
         async function buyCoinsWithTon(coins, amountInTon) {
             if (!tonConnectUI.connected) {
-                showToast('💎 Please connect your TON wallet first!', 'error');
+                showToast('💎 Connect your TON wallet first!', 'error');
                 switchTab('tasks');
                 return;
             }
-
             try {
-                showToast('⏳ Opening wallet for payment...', 'info');
+                showToast('⏳ Opening wallet...', 'info');
                 const nanoTon = Math.floor(amountInTon * 1000000000).toString();
-
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 360,
                     messages: [{ address: recipientWallet, amount: nanoTon }]
                 };
-
                 const result = await tonConnectUI.sendTransaction(transaction);
                 if (result) {
                     G.score += coins;
                     updateUI();
-                    saveToFirebase();
-                    showToast(`✅ Payment successful! +${coins.toLocaleString()} Bebo Coins added!`, 'success');
+                    saveGame();
+                    showToast(`✅ +${coins.toLocaleString()} Coins added!`, 'success');
                 }
             } catch (error) {
-                showToast('❌ Payment cancelled or failed', 'error');
+                showToast('❌ Payment cancelled', 'error');
             }
         }
 
@@ -1071,12 +945,11 @@
                 return;
             }
             try { tg.openLink ? tg.openLink(url) : window.open(url, '_blank'); } catch(_) { window.open(url, '_blank'); }
-            
             G.completedTasks[taskId] = true;
             G.score += reward;
             updateUI();
-            saveToFirebase();
-            showToast(`✅ Task completed! +${reward} coins`, 'success');
+            saveGame();
+            showToast(`✅ +${reward} coins claimed!`, 'success');
         }
 
         function openLeaderboardModal() { $('leaderboardModal').style.display = 'flex'; loadTopHundred(); }
