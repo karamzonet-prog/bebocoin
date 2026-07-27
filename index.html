@@ -305,7 +305,7 @@
         .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #ff0055, #00ffff); border-radius: 3px; width: 100%; transition: width 0.1s linear; }
         .hint { margin-top: 3px; font-size: 7px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; min-height: 16px; }
 
-        .upgrades-list, .tasks-list, .friends-container {
+        .upgrades-list, .tasks-list, .friends-container, .shop-list {
             width: 100%;
             flex: 1;
             overflow-y: auto;
@@ -383,9 +383,7 @@
         .wallet-section p { font-size: 7px; color: #aaa; }
         #ton-connect-button { display: flex; justify-content: center; width: 100%; }
 
-        /* ======================================== */
-        /* الأزرار السفلية - ثيم أسود احترافي كبير */
-        /* ======================================== */
+        /* الأزرار السفلية */
         .footer-nav {
             display: flex;
             justify-content: space-around;
@@ -582,7 +580,21 @@
 
         <div class="section-view" id="shopView" style="display: none;">
             <h3>💎 PREMIUM SHOP</h3>
-            <div class="shop-list" style="width:100%; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+            <div class="shop-list">
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <h4>💰 1,000 Bebo Coins</h4>
+                        <p>Instant reward package</p>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyCoinsWithTon(1000, 0.1)">0.1 TON</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <h4>💰 5,000 Bebo Coins</h4>
+                        <p>Special value bundle</p>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyCoinsWithTon(5000, 0.4)">0.4 TON</button>
+                </div>
                 <div class="upgrade-item">
                     <div class="upgrade-info">
                         <h4>🤖 AUTO BOT (24h)</h4>
@@ -606,7 +618,14 @@
                         <h4>📢 Follow Telegram Channel</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <button class="task-btn" onclick="doTask('tg','https://t.me/BeboPixel',500)">VISIT & CLAIM</button>
+                    <button class="task-btn" id="taskTg" onclick="doTask('tg','https://t.me/BeboPixel',500)">VISIT & CLAIM</button>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h4>🐦 Follow X (Twitter)</h4>
+                        <p>+500 Coins</p>
+                    </div>
+                    <button class="task-btn" id="taskX" onclick="doTask('x','https://x.com/BeboCoin1',500)">VISIT & CLAIM</button>
                 </div>
             </div>
         </div>
@@ -628,7 +647,7 @@
             </div>
         </div>
 
-        <!-- الأزرار السفلية - ثيم أسود كبير -->
+        <!-- الأزرار السفلية -->
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span>
@@ -763,7 +782,6 @@
                 
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.07);
-                
             } catch (error) {
                 console.log("Sound error:", error);
             }
@@ -816,7 +834,6 @@
         const coinWrapper = $('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            
             initAudio();
 
             const clientX = e.clientX || (e.touches ? e.touches[0].clientX : window.innerWidth/2);
@@ -860,6 +877,16 @@
             $('tapLevel').textContent = G.tapPower;
             $('tapCost').textContent = `Cost: ${G.tapCost.toLocaleString()} Coins`;
             $('refCountText').textContent = `${G.referralCount} Friends`;
+
+            // تحديث حالة أزرار المهام إذا تم إنجازها
+            if (G.completedTasks['tg']) {
+                const btn = $('taskTg');
+                if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
+            }
+            if (G.completedTasks['x']) {
+                const btn = $('taskX');
+                if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
+            }
         }
 
         function buyTapUpgrade() {
@@ -951,9 +978,11 @@
             saveToFirebase();
         });
 
+        // تجديد الطاقة بالكامل خلال ساعة واحدة (100 طاقة في 3600 ثانية = ~0.0277 طاقة بالكل مللي/ثانية أو إضافة بمعدل دقيق كل ثانية)
+        // 100 طاقة / 3600 ثانية = 0.02777 لكل ثانية -> أو كل ثانية نضيف ~0.028 ليتجدد بالكامل في ساعة.
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
-                G.energy = Math.min(G.maxEnergy, G.energy + 0.5);
+                G.energy = Math.min(G.maxEnergy, G.energy + (100 / 3600));
                 updateUI();
             }
             saveToFirebase();
@@ -972,6 +1001,18 @@
             }
         });
 
+        function buyCoinsWithTon(coins, amountInTon) {
+            if (!tonConnectUI.connected) {
+                showToast('💎 Please connect your TON wallet first!', 'error');
+                switchTab('tasks');
+                return;
+            }
+            G.score += coins;
+            updateUI();
+            saveToFirebase();
+            showToast(`✅ Successfully purchased +${coins.toLocaleString()} Bebo Coins!`, 'success');
+        }
+
         function buyPremiumItem(itemId, amountInTon) {
             if (!tonConnectUI.connected) {
                 showToast('💎 Please connect your TON wallet first!', 'error');
@@ -982,8 +1023,13 @@
         }
 
         function doTask(taskId, url, reward) {
-            if (G.completedTasks[taskId]) return;
+            if (G.completedTasks[taskId]) {
+                showToast('⚠️ Task already completed!', 'error');
+                return;
+            }
             try { tg.openLink ? tg.openLink(url) : window.open(url, '_blank'); } catch(_) { window.open(url, '_blank'); }
+            
+            // منح المكافأة مباشرة بعد النقر والتوجيه
             G.completedTasks[taskId] = true;
             G.score += reward;
             updateUI();
@@ -1048,3 +1094,4 @@
     </script>
 </body>
 </html>
+
