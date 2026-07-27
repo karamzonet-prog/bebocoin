@@ -894,7 +894,7 @@
         let invitedBy = "none";
         let walletAddress = "";
         let premiumItems = {};
-        let isDataLoaded = false; // متغير الحماية لمنع التصفير
+        let isDataLoaded = false;
 
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
@@ -925,7 +925,6 @@
             startParam = tg.initDataUnsafe.start_param;
         }
 
-        // جلب البيانات مع حماية تامة ضد التصفير
         userRef.on('value', (snapshot) => {
             let data = snapshot.val();
             if (data) {
@@ -969,9 +968,7 @@
             if (wallet) {
                 walletAddress = wallet.account.address;
                 saveToFirebase();
-                if (tg.showAlert) {
-                    tg.showAlert("Wallet connected successfully! 🚀");
-                }
+                // تم إزالة رسالة التنبيه هنا تماماً حتى لا تظهر عند كل دخول
             } else {
                 walletAddress = "";
                 saveToFirebase();
@@ -994,7 +991,6 @@
         }
 
         function saveToFirebase() {
-            // لا تقم بالحفظ أبداً إذا لم يتم تحميل البيانات الأساسية أولاً لتجنب الكتابة الخاطئة
             if (!isDataLoaded) return;
 
             let finalName = userName;
