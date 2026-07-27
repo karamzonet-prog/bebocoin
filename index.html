@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bebo Coin Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- مكتبات Firebase المتوافقة مع HTML العادي -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <!-- مكتبة TonConnect الرسمية لربط المحافظ الحقيقية -->
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -78,14 +76,14 @@
             display: inline-flex;
             align-items: center;
             background: rgba(0, 0, 0, 0.4);
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .status-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             background-color: #00ffcc;
             border-radius: 50%;
             box-shadow: 0 0 8px #00ffcc;
@@ -93,7 +91,7 @@
         }
 
         .user-badge h2 {
-            font-size: 9px;
+            font-size: 10px;
             color: #eee;
             letter-spacing: 1px;
         }
@@ -137,13 +135,12 @@
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
         }
 
-        /* بطاقة الإحالة البارزة في الواجهة الرئيسية */
         .home-ref-banner {
             width: 100%;
-            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 85, 0.1));
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.12), rgba(255, 0, 85, 0.12));
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 14px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -155,26 +152,27 @@
         }
 
         .home-ref-info h4 {
-            font-size: 10px;
+            font-size: 11px;
             color: #00ffff;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .home-ref-info p {
-            font-size: 8px;
-            color: #bbb;
+            font-size: 9px;
+            color: #ccc;
         }
 
         .home-ref-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 9px;
+            font-size: 11px;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
         }
 
         .coin-wrapper {
@@ -240,7 +238,7 @@
         .energy-info {
             display: flex;
             justify-content: space-between;
-            font-size: 9px;
+            font-size: 10px;
             color: #00ffff;
             margin-bottom: 4px;
             font-weight: bold;
@@ -248,9 +246,9 @@
 
         .energy-bar-bg {
             width: 100%;
-            height: 10px;
+            height: 12px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             overflow: hidden;
             padding: 2px;
@@ -259,14 +257,14 @@
         .energy-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #ff0055, #00ffff);
-            border-radius: 3px;
+            border-radius: 4px;
             width: 100%;
             transition: width 0.1s linear;
         }
 
         .hint {
-            margin-top: 4px;
-            font-size: 8px;
+            margin-top: 6px;
+            font-size: 9px;
             color: #bbb;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -280,13 +278,13 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             padding-right: 2px;
         }
 
         .daily-item, .upgrade-item, .task-item, .rank-item, .friend-card {
             background: rgba(0, 0, 0, 0.65);
-            padding: 12px 14px;
+            padding: 14px 16px;
             border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
@@ -297,12 +295,12 @@
         .daily-info h4, .upgrade-info h4, .task-info h4 {
             font-size: 11px;
             color: #fff;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             text-align: left;
         }
 
         .daily-info p, .upgrade-info p, .task-info p {
-            font-size: 9px;
+            font-size: 10px;
             color: #00ffff;
             text-align: left;
         }
@@ -311,12 +309,13 @@
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
-            padding: 8px 14px;
+            padding: 11px 18px;
             border-radius: 10px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 10px;
+            font-size: 11px;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 255, 255, 0.25);
         }
 
         .daily-btn:disabled, .task-btn.claimed {
@@ -324,6 +323,7 @@
             color: #666;
             cursor: not-allowed;
             border: 1px solid #444;
+            box-shadow: none;
         }
 
         .task-btn.claimed {
@@ -334,6 +334,7 @@
         .rank-item {
             font-size: 11px;
             font-weight: 600;
+            padding: 12px 16px;
         }
 
         .rank-item.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.1); }
@@ -344,11 +345,11 @@
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(0, 255, 255, 0.3);
             border-radius: 14px;
-            padding: 15px;
+            padding: 16px;
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .friend-box p {
@@ -359,7 +360,7 @@
         .friend-link-input {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
             color: #00ffff;
             font-size: 9px;
@@ -367,7 +368,6 @@
             text-align: center;
         }
 
-        /* تنسيق زر ربط المحفظة */
         .wallet-section {
             display: flex;
             flex-direction: column;
@@ -375,9 +375,9 @@
             gap: 12px;
             width: 100%;
             background: rgba(0,0,0,0.6);
-            padding: 15px;
+            padding: 16px;
             border-radius: 14px;
-            border: 1px solid rgba(0,255,255,0.2);
+            border: 1px solid rgba(0,255,255,0.3);
         }
 
         #ton-connect-button {
@@ -389,36 +389,39 @@
         .footer-nav {
             display: flex;
             justify-content: space-around;
-            background-color: rgba(10, 10, 10, 0.85);
-            padding: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            background-color: rgba(10, 10, 10, 0.9);
+            padding: 8px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.8);
         }
 
         .nav-btn {
             background: none;
             border: none;
-            color: #777;
-            font-size: 8px;
+            color: #888;
+            font-size: 9px;
             cursor: pointer;
             font-weight: 800;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            padding: 6px 10px;
-            border-radius: 10px;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 12px;
             font-family: 'Orbitron', sans-serif;
+            transition: 0.2s;
         }
 
         .nav-icon {
-            font-size: 14px;
+            font-size: 18px;
         }
 
         .nav-btn.active {
             color: #fff;
-            background: rgba(255, 255, 255, 0.08);
-            text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+            background: rgba(0, 255, 255, 0.12);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
         }
     </style>
 </head>
@@ -497,10 +500,9 @@
         <div class="section-view" id="tasksView" style="display: none;">
             <h3>SOCIAL TASKS & WALLET</h3>
             <div class="tasks-list">
-                <!-- قسم ربط المحفظة الحقيقي -->
                 <div class="wallet-section">
                     <h4>💎 CONNECT TON WALLET</h4>
-                    <p style="font-size: 8px; color: #ccc;">Connect your Tonkeeper or TON wallet securely</p>
+                    <p style="font-size: 9px; color: #ccc;">Connect your Tonkeeper or TON wallet securely</p>
                     <div id="ton-connect-button"></div>
                 </div>
                 <div class="task-item">
@@ -675,13 +677,11 @@
             setupReferralLink();
         });
 
-        // تهيئة محفظة TON الحقيقية (TonConnect UI)
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/docs/main/public/tonconnect-manifest.json',
+            manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
 
-        // الاستماع لحالة اتصال المحفظة وحفظ العنوان بقاعدة البيانات
         tonConnectUI.onStatusChange(wallet => {
             if (wallet) {
                 walletAddress = wallet.account.address;
@@ -1001,7 +1001,7 @@
 
         function loadLeaderboard() {
             const listContainer = document.getElementById('rankingList');
-            db.ref('users').orderByChild('score').limitToLast(10).once('value').text ? snapshot => {} : db.ref('users').orderByChild('score').limitToLast(10).once('value').then((snapshot) => {
+            db.ref('users').orderByChild('score').limitToLast(10).once('value').then((snapshot) => {
                 let leaders = [];
                 snapshot.forEach((childSnapshot) => {
                     let userData = childSnapshot.val();
