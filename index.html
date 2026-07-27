@@ -2,897 +2,228 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>B3BO Coin Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bebo Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            background-color: #050505;
+        body {
+            background-color: #0f172a;
             color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            font-family: 'Orbitron', sans-serif;
-            position: relative;
-        }
-
-        .app-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .app-bg img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.75);
-        }
-
-        .game-container {
-            width: 100%;
-            max-width: 420px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            font-family: Arial, sans-serif;
+            text-align: center;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
-            position: relative;
-            z-index: 1;
+            margin: 0;
         }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .wallet-btn {
+            background-color: #0ea5e9;
+        }
+        .score {
+            font-size: 32px;
+            margin: 20px 0;
+            color: #4ade80;
+        }
+        .wallet-info {
+            font-size: 12px;
+            color: #94a3b8;
+            word-break: break-all;
+            margin-top: 10px;
+        }
+        .leaderboard {
+            margin-top: 25px;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .leaderboard h3 {
+            text-align: center;
+            font-size: 16px;
+            color: #facc15;
             margin-bottom: 10px;
         }
-
-        .user-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #00ffcc;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ffcc;
-            margin-right: 6px;
-        }
-
-        .user-badge h2 {
-            font-size: 10px;
-            color: #eee;
-            letter-spacing: 1px;
-        }
-
-        .wallet-btn {
-            background: rgba(0, 255, 255, 0.15);
-            border: 1px solid rgba(0, 255, 255, 0.4);
-            color: #00ffff;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .header {
-            text-align: center;
-        }
-
-        .score-board span {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 28px;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-            display: inline-block;
-        }
-
-        .score-board p {
-            font-size: 10px;
-            color: #ccc;
-            font-weight: 800;
-            letter-spacing: 3px;
-        }
-
-        .tap-section, .section-view {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            flex-grow: 1;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .section-view h3 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 13px;
-            color: #00ffff;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
-        }
-
-        .coin-wrapper {
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            touch-action: manipulation;
-            margin: auto 0;
-        }
-
-        .coin-glow {
-            position: absolute;
-            width: 260px;
-            height: 260px;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
-        .coin-btn {
-            width: 210px;
-            height: 210px;
-            background-color: rgba(13, 13, 13, 0.9);
-            border: 6px solid #333;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            box-shadow: 0 12px 0px #111, 0 18px 25px rgba(0,0,0,0.85);
-            position: relative;
-            z-index: 2;
-        }
-
-        .coin-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
-
-        .coin-wrapper:active .coin-btn {
-            transform: translateY(4px) scale(0.97);
-            border-color: #00ffff;
-        }
-
-        .energy-section-bottom {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        .energy-container {
-            width: 100%;
-            max-width: 320px;
-        }
-
-        .energy-info {
+        .lb-item {
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
-            color: #00ffff;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .energy-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-            padding: 2px;
-        }
-
-        .energy-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff0055, #00ffff);
-            border-radius: 4px;
-            width: 100%;
-            transition: width 0.1s linear;
-        }
-
-        .hint {
-            margin-top: 6px;
-            font-size: 9px;
-            color: #bbb;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 800;
-        }
-
-        /* Daily Rewards UI */
-        .daily-rewards-container {
-            width: 100%;
-            max-width: 340px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-            max-height: 310px;
-            padding-right: 2px;
-        }
-
-        .daily-item {
-            background: rgba(0, 0, 0, 0.65);
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .daily-info h4 {
-            font-size: 11px;
-            color: #fff;
-            margin-bottom: 3px;
-            text-align: left;
-        }
-
-        .daily-info p {
-            font-size: 9px;
-            color: #00ffff;
-            text-align: left;
-        }
-
-        .daily-btn {
-            background: linear-gradient(135deg, #00ffff, #0077ff);
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 10px;
-            cursor: pointer;
-        }
-
-        .daily-btn:disabled {
-            background: #222;
-            color: #666;
-            cursor: not-allowed;
-            border: 1px solid #444;
-        }
-
-        .upgrades-list, .tasks-list, .ranking-list {
-            width: 100%;
-            max-width: 340px;
-            max-height: 310px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-right: 2px;
-        }
-
-        .upgrade-item, .task-item, .rank-item {
-            background: rgba(0, 0, 0, 0.65);
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .upgrade-info, .task-info {
-            text-align: left;
-        }
-
-        .upgrade-info h4, .task-info h4 {
-            font-size: 11px;
-            color: #fff;
-            margin-bottom: 3px;
-        }
-
-        .upgrade-info p, .task-info p {
-            font-size: 9px;
-            color: #00ffff;
-        }
-
-        .upgrade-btn, .task-btn {
-            background: linear-gradient(135deg, #00ffff, #0077ff);
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .task-btn.claimed {
-            background: #28a745;
-            color: #fff;
-            cursor: default;
-        }
-
-        .rank-item {
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .rank-item.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.1); }
-        .rank-item.silver { border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
-        .rank-item.bronze { border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
-
-        .footer-nav {
-            display: flex;
-            justify-content: space-around;
-            background-color: rgba(10, 10, 10, 0.85);
-            padding: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            color: #777;
-            font-size: 8px;
-            cursor: pointer;
-            font-weight: 800;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            padding: 6px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .nav-icon {
-            font-size: 12px;
-        }
-
-        .nav-btn.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.08);
-            text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
-        }
-
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #121212;
-            border: 1px solid #333;
-            padding: 25px;
-            border-radius: 20px;
-            width: 85%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .modal-content h3 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            color: #00ffff;
-            margin-bottom: 15px;
-        }
-
-        .modal-content p {
-            font-size: 11px;
-            color: #888;
-            margin-bottom: 20px;
-        }
-
-        .wallet-option-btn {
-            background: #1a1a1a;
-            border: 1px solid #444;
-            color: #fff;
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .close-modal-btn {
-            background: none;
-            border: none;
-            color: #ff0055;
-            margin-top: 15px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 11px;
-            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 0;
+            border-bottom: 1px solid #1e293b;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-bg">
-        <img src="https://i.ibb.co/wFMrKh5t/image.png" alt="Background">
-    </div>
+    <div class="container">
+        <h1>Bebo Game</h1>
+        <p id="username">Loading user data...</p>
+        
+        <div class="score" id="scoreDisplay">0</div>
+        <button id="clickBtn">Tap to Increase Score!</button>
+        
+        <button class="wallet-btn" id="connectWalletBtn">Connect TON Wallet</button>
+        <div class="wallet-info" id="walletInfo">Wallet: Not Connected</div>
 
-    <div class="game-container">
-        <header class="header">
-            <div class="top-bar">
-                <div class="user-badge">
-                    <span class="status-dot"></span>
-                    <h2 id="username">PLAYER</h2>
-                </div>
-                <button class="wallet-btn" onclick="toggleWalletModal()">
-                    <span id="walletStatusText">CONNECT</span> 💳
-                </button>
-            </div>
-            <div class="score-board">
-                <span id="score">0</span>
-                <p>B3BO COIN</p>
-            </div>
-        </header>
-
-        <!-- Home View -->
-        <main class="tap-section" id="gameView">
-            <div class="coin-wrapper" id="coinButton">
-                <div class="coin-glow"></div>
-                <div class="coin-btn">
-                    <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin">
-                </div>
-            </div>
-            
-            <div class="energy-section-bottom">
-                <div class="energy-container">
-                    <div class="energy-info">
-                        <span>⚡ ENERGY</span>
-                        <span id="energyText">1000 / 1000</span>
-                    </div>
-                    <div class="energy-bar-bg">
-                        <div class="energy-bar-fill" id="energyFill"></div>
-                    </div>
-                </div>
-                <p class="hint" id="hintText">TAP TO EARN</p>
-            </div>
-        </main>
-
-        <!-- Upgrades View -->
-        <div class="section-view" id="upgradesView" style="display: none;">
-            <h3>BOOSTERS</h3>
-            <div class="upgrades-list">
-                <div class="upgrade-item">
-                    <div class="upgrade-info">
-                        <h4>⚡ Multi-Tap (Lv <span id="tapLevel">1</span>)</h4>
-                        <p id="tapCost">Cost: 5,000 Coins</p>
-                    </div>
-                    <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Daily Rewards View (Fixed Streak System) -->
-        <div class="section-view" id="wheelView" style="display: none;">
-            <h3>DAILY REWARDS</h3>
-            <div class="daily-rewards-container" id="dailyListContainer">
-                <!-- Generated dynamically via JS for strict 1-day interval -->
-            </div>
-        </div>
-
-        <!-- Tasks View (Fixed Telegram & X link handling) -->
-        <div class="section-view" id="tasksView" style="display: none;">
-            <h3>SOCIAL TASKS</h3>
-            <div class="tasks-list">
-                <div class="task-item">
-                    <div class="task-info">
-                        <h4>📢 Follow Telegram Channel</h4>
-                        <p>+500 Coins</p>
-                    </div>
-                    <button class="task-btn" id="taskTgBtn" onclick="doTask('tg', 'https://t.me/BeboPixel', 500)">VISIT & CLAIM</button>
-                </div>
-                <div class="task-item">
-                    <div class="task-info">
-                        <h4>🐦 Follow on X (Twitter)</h4>
-                        <p>+500 Coins</p>
-                    </div>
-                    <button class="task-btn" id="taskXBtn" onclick="doTask('x', 'https://x.com/BeboCoin1', 500)">VISIT & CLAIM</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Rank View -->
-        <div class="section-view" id="rankView" style="display: none;">
-            <h3>LEADERBOARD</h3>
-            <div class="ranking-list" id="rankingList"></div>
-        </div>
-
-        <!-- Footer -->
-        <nav class="footer-nav">
-            <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
-                <span class="nav-icon">⚡</span><span>HOME</span>
-            </button>
-            <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')">
-                <span class="nav-icon">🚀</span><span>BOOST</span>
-            </button>
-            <button class="nav-btn" id="btnWheel" onclick="switchTab('wheel')">
-                <span class="nav-icon">🎁</span><span>DAILY</span>
-            </button>
-            <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')">
-                <span class="nav-icon">📋</span><span>TASKS</span>
-            </button>
-            <button class="nav-btn" id="btnRank" onclick="switchTab('rank')">
-                <span class="nav-icon">🏆</span><span>RANK</span>
-            </button>
-        </nav>
-    </div>
-
-    <div class="modal-overlay" id="walletModal" style="display: none;">
-        <div class="modal-content">
-            <h3>CONNECT WALLET</h3>
-            <p>Link your TON wallet.</p>
-            <button class="wallet-option-btn" onclick="connectWallet('TON Wallet')">💎 Connect TON</button>
-            <button class="close-modal-btn" onclick="toggleWalletModal()">CLOSE</button>
+        <div class="leaderboard">
+            <h3>Top Players Leaderboard</h3>
+            <div id="lbList">Loading leaderboard...</div>
         </div>
     </div>
 
-    <script>
+    <!-- Firebase and Game Logic Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firestore/database";
+
+        // Your real Firebase project configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCv_3P1hcqpPieCC6_xf-pOrD3cuyQ9nis",
+          authDomain: "bebo-4039e.firebaseapp.com",
+          projectId: "bebo-4039e",
+          storageBucket: "bebo-4039e.firebasestorage.app",
+          messagingSenderId: "320695644050",
+          appId: "1:320695644050:web:db86b27d512fc977499b4b",
+          measurementId: "G-G0B1NJJW69"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const tg = window.Telegram.WebApp;
-        try { tg.expand(); } catch (e) {}
+        tg.expand();
 
-        let score = localStorage.getItem('b3bo_score') ? parseInt(localStorage.getItem('b3bo_score')) : 100;
-        let maxEnergy = 1000;
-        let energy = localStorage.getItem('b3bo_energy') ? parseInt(localStorage.getItem('b3bo_energy')) : 1000;
-        let tapPower = localStorage.getItem('b3bo_tapPower') ? parseInt(localStorage.getItem('b3bo_tapPower')) : 1;
-        let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 5000;
-        let miningEndTime = localStorage.getItem('b3bo_miningEndTime') ? parseInt(localStorage.getItem('b3bo_miningEndTime')) : 0;
-        
-        // Daily Streak variables
-        let currentDay = localStorage.getItem('b3bo_currentDay') ? parseInt(localStorage.getItem('b3bo_currentDay')) : 1;
-        let lastClaimTime = localStorage.getItem('b3bo_lastClaimTime') ? parseInt(localStorage.getItem('b3bo_lastClaimTime')) : 0;
-        
-        let completedTasks = JSON.parse(localStorage.getItem('b3bo_completedTasks')) || {};
+        let userId = "guest_user";
+        let userName = "Anonymous Player";
 
-        const scoreElement = document.getElementById('score');
-        const coinButton = document.getElementById('coinButton');
-        const usernameElement = document.getElementById('username');
-        const energyFill = document.getElementById('energyFill');
-        const energyText = document.getElementById('energyText');
-        const hintText = document.getElementById('hintText');
-        const tapLevelElem = document.getElementById('tapLevel');
-        const tapCostElem = document.getElementById('tapCost');
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userId = tg.initDataUnsafe.user.id.toString();
+            // إذا اللاعب ما عنده اسم مستعار أو جديد، يظهر بدون اسم حقيقي واضح
+            userName = tg.initDataUnsafe.user.first_name ? tg.initDataUnsafe.user.first_name : `Player_${userId.slice(-4)}`;
+        } else {
+            userName = `Player_${Math.floor(Math.random() * 1000)}`;
+        }
 
-        const dailyRewardsData = [
-            { day: 1, reward: 250 },
-            { day: 2, reward: 500 },
-            { day: 3, reward: 1000 },
-            { day: 4, reward: 2500 },
-            { day: 5, reward: 5000 }
-        ];
+        document.getElementById("username").innerText = `Welcome, ${userName}`;
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playClickSound() {
+        let score = 0;
+        let walletAddress = "";
+        const scoreDisplay = document.getElementById("scoreDisplay");
+        const clickBtn = document.getElementById("clickBtn");
+        const connectWalletBtn = document.getElementById("connectWalletBtn");
+        const walletInfo = document.getElementById("walletInfo");
+        const lbList = document.getElementById("lbList");
+
+        // Load user data and set initial score to 0 if new
+        async function loadUserData() {
             try {
-                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(450, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.08);
-            } catch (e) {}
-        }
+                const userRef = doc(db, "users", userId);
+                const docSnap = await getDoc(userRef);
 
-        function updateDisplays() {
-            scoreElement.textContent = score.toLocaleString();
-            let percentage = (energy / maxEnergy) * 100;
-            energyFill.style.width = percentage + '%';
-            energyText.textContent = `${energy} / ${maxEnergy}`;
-            tapLevelElem.textContent = tapPower;
-            tapCostElem.textContent = `Cost: ${tapCostVal.toLocaleString()} Coins`;
-            
-            localStorage.setItem('b3bo_score', score);
-            localStorage.setItem('b3bo_energy', energy);
-            localStorage.setItem('b3bo_tapPower', tapPower);
-            localStorage.setItem('b3bo_tapCost', tapCostVal);
-
-            renderDailyRewards();
-            renderTasks();
-        }
-
-        function renderDailyRewards() {
-            const container = document.getElementById('dailyListContainer');
-            container.innerHTML = '';
-            
-            let now = Date.now();
-            let timeDiff = now - lastClaimTime;
-            let oneDayMs = 24 * 60 * 60 * 1000;
-            let canClaimNow = (lastClaimTime === 0) || (timeDiff >= oneDayMs);
-
-            dailyRewardsData.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'daily-item';
-                
-                let btnText = "CLAIM";
-                let isDisabled = true;
-                
-                if (item.day < currentDay) {
-                    btnText = "CLAIMED ✓";
-                    isDisabled = true;
-                } else if (item.day === currentDay) {
-                    if (canClaimNow) {
-                        btnText = "CLAIM";
-                        isDisabled = false;
-                    } else {
-                        let remainingHours = Math.ceil((oneDayMs - timeDiff) / (1000 * 60 * 60));
-                        btnText = `WAIT ${remainingHours}H`;
-                        isDisabled = true;
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    score = data.score || 0;
+                    walletAddress = data.wallet || "";
+                    scoreDisplay.innerText = score;
+                    if (walletAddress) {
+                        walletInfo.innerText = `Wallet: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`;
+                        connectWalletBtn.innerText = "Wallet Connected";
                     }
                 } else {
-                    btnText = "LOCKED 🔒";
-                    isDisabled = true;
+                    // Force start score at 0 for new players
+                    score = 0;
+                    await setDoc(userRef, {
+                        name: userName,
+                        score: 0,
+                        wallet: "",
+                        createdAt: new Date()
+                    });
                 }
-
-                div.innerHTML = `
-                    <div class="daily-info">
-                        <h4>🎁 Day ${item.day} Reward</h4>
-                        <p>+${item.reward.toLocaleString()} Coins</p>
-                    </div>
-                    <button class="daily-btn" ${isDisabled ? 'disabled' : ''} onclick="claimDaily(${item.day}, ${item.reward})">${btnText}</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderTasks() {
-            if (completedTasks['tg']) {
-                let btnTg = document.getElementById('taskTgBtn');
-                btnTg.textContent = "DONE ✓";
-                btnTg.classList.add('claimed');
-                btnTg.disabled = true;
-            }
-            if (completedTasks['x']) {
-                let btnX = document.getElementById('taskXBtn');
-                btnX.textContent = "DONE ✓";
-                btnX.classList.add('claimed');
-                btnX.disabled = true;
+                loadLeaderboard();
+            } catch (error) {
+                console.error("Error loading user data:", error);
             }
         }
 
-        updateDisplays();
-
-        setInterval(() => {
-            let now = Date.now();
-            if (energy <= 0 && miningEndTime > now) {
-                let remainingSec = Math.ceil((miningEndTime - now) / 1000);
-                let mins = Math.floor(remainingSec / 60);
-                let secs = remainingSec % 60;
-                hintText.textContent = `MINING: ${mins}m ${secs}s`;
-            } else if (energy <= 0 && miningEndTime > 0 && miningEndTime <= now) {
-                energy = maxEnergy;
-                miningEndTime = 0;
-                localStorage.setItem('b3bo_miningEndTime', 0);
-                hintText.textContent = "TAP TO EARN";
-                updateDisplays();
+        // Fetch Top Players Leaderboard
+        async function loadLeaderboard() {
+            try {
+                const q = query(collection(db, "users"), orderBy("score", "desc"), limit(5));
+                const querySnapshot = await getDocs(q);
+                let html = "";
+                let rank = 1;
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Hide name partially or show anonymous if player hasn't interacted/named properly
+                    let displayName = data.name ? data.name : "Anonymous";
+                    if(displayName.length > 8) displayName = displayName.substring(0, 6) + "..";
+                    
+                    html += `<div class="lb-item"><span>${rank}. ${displayName}</span> <span><b>${data.score || 0}</b> pts</span></div>`;
+                    rank++;
+                });
+                lbList.innerHTML = html || "No players yet.";
+            } catch (error) {
+                console.error("Error loading leaderboard:", error);
+                lbList.innerHTML = "Leaderboard available soon.";
             }
-        }, 1000);
-
-        let userName = "PLAYER";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
-            userName = tg.initDataUnsafe.user.first_name.toUpperCase();
         }
-        usernameElement.textContent = userName;
 
-        coinButton.addEventListener('click', (e) => {
-            playClickSound();
-            handleTap(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
+        loadUserData();
+
+        // Increment score and update database
+        clickBtn.addEventListener("click", async () => {
+            score += 1;
+            scoreDisplay.innerText = score;
+
+            try {
+                const userRef = doc(db, "users", userId);
+                await updateDoc(userRef, {
+                    score: score
+                });
+                loadLeaderboard(); // Refresh leaderboard on click
+            } catch (error) {
+                console.error("Error saving score:", error);
+            }
         });
 
-        function handleTap(x, y) {
-            let now = Date.now();
-            if (energy <= 0) {
-                if (miningEndTime === 0) {
-                    miningEndTime = now + (60 * 60 * 1000);
-                    localStorage.setItem('b3bo_miningEndTime', miningEndTime);
-                }
-                return;
-            }
-
-            energy = Math.max(0, energy - tapPower);
-            score += tapPower;
-            updateDisplays();
-
-            if (energy <= 0) {
-                miningEndTime = now + (60 * 60 * 1000);
-                localStorage.setItem('b3bo_miningEndTime', miningEndTime);
-            }
-
-            if (tg.HapticFeedback) {
-                try { tg.HapticFeedback.impactOccurred('medium'); } catch (err) {}
-            }
-
-            createFloatingNumber(x, y, `+${tapPower}`);
-        }
-
-        function createFloatingNumber(x, y, text) {
-            const el = document.createElement('div');
-            el.textContent = text;
-            el.style.position = 'fixed';
-            el.style.left = `${x}px`;
-            el.style.top = `${y - 30}px`;
-            el.style.color = '#00ffff';
-            el.style.fontFamily = "'Press Start 2P', cursive";
-            el.style.fontSize = '11px';
-            el.style.fontWeight = 'bold';
-            el.style.pointerEvents = 'none';
-            el.style.zIndex = '999';
-            document.body.appendChild(el);
+        // TON Wallet simulation handler
+        connectWalletBtn.addEventListener("click", async () => {
+            const simulatedAddress = "UQD_ExampleTonWalletAddress999BeboNetwork"; 
+            walletAddress = simulatedAddress;
             
-            el.animate([
-                { transform: 'translateY(0px) scale(0.8)', opacity: 1 },
-                { transform: 'translateY(-60px) scale(1.2)', opacity: 0 }
-            ], { duration: 400 });
+            walletInfo.innerText = `Wallet: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`;
+            connectWalletBtn.innerText = "Wallet Connected";
 
-            setTimeout(() => el.remove(), 400);
-        }
-
-        function buyTapUpgrade() {
-            if (score >= tapCostVal) {
-                score -= tapCostVal;
-                tapPower += 1;
-                tapCostVal = Math.floor(tapCostVal * 3);
-                updateDisplays();
-                if (tg.showAlert) tg.showAlert(`Upgrade Successful! +${tapPower} per tap`);
-            } else {
-                if (tg.showAlert) tg.showAlert("Not enough coins! Collect more.");
-            }
-        }
-
-        function claimDaily(day, reward) {
-            if (day !== currentDay) return;
-            
-            lastClaimTime = Date.now();
-            currentDay += 1;
-            if (currentDay > 5) currentDay = 5; // إعادة التدوير أو التثبيت عند اليوم الخامس
-
-            localStorage.setItem('b3bo_lastClaimTime', lastClaimTime);
-            localStorage.setItem('b3bo_currentDay', currentDay);
-
-            score += reward;
-            updateDisplays();
-            if (tg.showAlert) tg.showAlert(`Successfully claimed Day ${day} reward (+${reward} Coins)! 🎉`);
-        }
-
-        function doTask(taskId, url, reward) {
-            if (completedTasks[taskId]) return;
-            
-            // فتح الرابط خارج التيليجرام بشكل صحيح وآمن
             try {
-                if (tg.openLink) {
-                    tg.openLink(url);
-                } else {
-                    window.open(url, '_blank');
-                }
-            } catch (e) {
-                window.open(url, '_blank');
+                const userRef = doc(db, "users", userId);
+                await updateDoc(userRef, {
+                    wallet: walletAddress
+                });
+                alert("Wallet connected successfully!");
+            } catch (error) {
+                console.error("Error saving wallet address:", error);
             }
-
-            // منح المكافأة مباشرة بعد النقر والتوجه للمهمة
-            completedTasks[taskId] = true;
-            localStorage.setItem('b3bo_completedTasks', JSON.stringify(completedTasks));
-            score += reward;
-            updateDisplays();
-            
-            setTimeout(() => {
-                if (tg.showAlert) tg.showAlert(`Task completed! +${reward} Coins added! 🎉`);
-            }, 500);
-        }
-
-        function switchTab(tab) {
-            const views = ['gameView', 'upgradesView', 'wheelView', 'tasksView', 'rankView'];
-            const btns = ['btnHome', 'btnUpgrades', 'btnWheel', 'btnTasks', 'btnRank'];
-
-            views.forEach(v => document.getElementById(v).style.display = 'none');
-            btns.forEach(b => document.getElementById(b).classList.remove('active'));
-
-            if (tab === 'home') {
-                document.getElementById('gameView').style.display = 'flex';
-                document.getElementById('btnHome').classList.add('active');
-            } else if (tab === 'upgrades') {
-                document.getElementById('upgradesView').style.display = 'flex';
-                document.getElementById('btnUpgrades').classList.add('active');
-            } else if (tab === 'wheel') {
-                document.getElementById('wheelView').style.display = 'flex';
-                document.getElementById('btnWheel').classList.add('active');
-                renderDailyRewards();
-            } else if (tab === 'tasks') {
-                document.getElementById('tasksView').style.display = 'flex';
-                document.getElementById('btnTasks').classList.add('active');
-            } else if (tab === 'rank') {
-                document.getElementById('rankView').style.display = 'flex';
-                document.getElementById('btnRank').classList.add('active');
-                loadLeaderboard();
-            }
-        }
-
-        function loadLeaderboard() {
-            const listContainer = document.getElementById('rankingList');
-            let leaders = [
-                { name: "CryptoKing", score: 12500 },
-                { name: userName, score: score },
-                { name: "B3BOMaster", score: 8900 }
-            ];
-            leaders.sort((a, b) => b.score - a.score);
-            listContainer.innerHTML = "";
-            leaders.forEach((item, index) => {
-                let rankClass = index === 0 ? "gold" : (index === 1 ? "silver" : "bronze");
-                let row = document.createElement('div');
-                row.className = `rank-item ${rankClass}`;
-                row.innerHTML = `<span>${index + 1}. ${item.name}</span> <span>${item.score.toLocaleString()}</span>`;
-                listContainer.appendChild(row);
-            });
-        }
-
-        function toggleWalletModal() {
-            const modal = document.getElementById('walletModal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        function connectWallet(name) {
-            toggleWalletModal();
-            document.getElementById('walletStatusText').textContent = "CONNECTED";
-            if (tg.showAlert) tg.showAlert(`Connected to ${name}!`);
-        }
+        });
     </script>
 </body>
 </html>
-
