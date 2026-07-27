@@ -935,62 +935,84 @@
             }).catch((err) => {});
         }
 
-        // جلب البيانات من Firebase أولاً وبأولوية مطلقة لمنع مشاكل الكتابة الخاطئة للسكور القديم
+        // نظام الحماية الآمن ضد التصفير وضياع النقاط (Math.max)
         userRef.once('value').then((snap) => {
             const data = snap.val();
-            if (data) {
-                // الاعتماد على القيم الموجودة في فايربيس (لتشمل أي تعديل يدوي قمت به)
-                G.score = data.score !== undefined ? data.score : 0;
-                G.tapPower = data.tapPower || 1;
-                G.tapCost = data.tapCost || 1000;
-                G.completedTasks = data.completedTasks || {};
-                G.referralCount = data.referralCount || 0;
-                G.walletAddress = data.walletAddress || "";
+            
+            // جلب السكور المحلي المخزن في متصفحك كخط دفاع أول
+            let localSaved = localStorage.getItem('bebo_game_save_' + telegramId);
+            let localScore = 0;
+            let localEnergy = 100;
+            let localTapPower = 1;
+            let localTapCost = 1000;
+            let localTasks = {};
+            let localRefs = 0;
+            let localWallet = "";
+            let localLastTime = Date.now();
 
-                if (data.energy !== undefined && data.lastTime !== undefined) {
-                    const elapsedSeconds = (Date.now() - data.lastTime) / 1000;
-                    const calculatedEnergy = data.energy + ((elapsedSeconds / 1800) * 100);
+            if (localSaved) {
+                try {
+                    const parsed = JSON.parse(localSaved);
+                    localScore = parsed.score || 0;
+                    localEnergy = parsed.energy ?? 100;
+                    localTapPower = parsed.tapPower || 1;
+                    localTapCost = parsed.tapCost || 1000;
+                    localTasks = parsed.completedTasks || {};
+                    localRefs = parsed.referralCount || 0;
+                    localWallet = parsed.walletAddress || "";
+                    localLastTime = parsed.lastTime || Date.now();
+                } catch(e){}
+            }
+
+            if (data) {
+                let remoteScore = data.score !== undefined ? data.score : 0;
+                
+                // اختيار القيمة الأكبر دائماً بين فايربيس والمتصفح لضمان عدم عودته للصفر أبدًا
+                G.score = Math.max(remoteScore, localScore);
+                G.tapPower = Math.max(data.tapPower || 1, localTapPower);
+                G.tapCost = Math.max(data.tapCost || 1000, localTapCost);
+                G.completedTasks = Object.keys(data.completedTasks || {}).length > 0 ? data.completedTasks : localTasks;
+                G.referralCount = Math.max(data.referralCount || 0, localRefs);
+                G.walletAddress = data.walletAddress || localWallet;
+
+                const lastActiveTime = data.lastTime || localLastTime;
+                const remoteEnergy = data.energy !== undefined ? data.energy : localEnergy;
+                
+                if (lastActiveTime) {
+                    const elapsedSeconds = (Date.now() - lastActiveTime) / 1000;
+                    const calculatedEnergy = remoteEnergy + ((elapsedSeconds / 1800) * 100);
                     G.energy = Math.min(G.maxEnergy, calculatedEnergy);
+                } else {
+                    G.energy = remoteEnergy;
                 }
             } else {
-                // إذا لم يكن المستخدم موجوداً، فحص الـ localStorage أو إنشاء بيانات جديدة
-                const savedLocal = localStorage.getItem('bebo_game_save_' + telegramId);
-                if (savedLocal) {
-                    try {
-                        const localData = JSON.parse(savedLocal);
-                        G.score = localData.score || 0;
-                        G.energy = localData.energy ?? 100;
-                        G.tapPower = localData.tapPower || 1;
-                        G.tapCost = localData.tapCost || 1000;
-                        G.completedTasks = localData.completedTasks || {};
-                        G.referralCount = localData.referralCount || 0;
-                        G.walletAddress = localData.walletAddress || "";
-                        
-                        const elapsedSeconds = (Date.now() - (localData.lastTime || Date.now())) / 1000;
-                        if (elapsedSeconds > 0) {
-                            G.energy = Math.min(G.maxEnergy, G.energy + ((elapsedSeconds / 1800) * 100));
-                        }
-                    } catch (e) {}
-                }
+                // إذا لم يكن موجوداً بقاعدة البيانات، استخدم البيانات المحلية بالكامل
+                G.score = localScore;
+                G.energy = localEnergy;
+                G.tapPower = localTapPower;
+                G.tapCost = localTapCost;
+                G.completedTasks = localTasks;
+                G.referralCount = localRefs;
+                G.walletAddress = localWallet;
+            }
 
-                // التحقق من نظام الإحالة (Referral) عند التسجيل لأول مرة
-                const startParam = tg.initDataUnsafe?.start_param || '';
-                if (startParam && startParam !== String(telegramId)) {
-                    db.ref('users/' + startParam).once('value').then((refSnap) => {
-                        if (refSnap.exists()) {
-                            const refData = refSnap.val();
-                            db.ref('users/' + startParam).update({
-                                score: (refData.score || 0) + 1000,
-                                referralCount: (refData.referralCount || 0) + 1
-                            });
-                        }
-                    });
-                }
+            // التحقق من نظام الإحالة (Referral) عند التسجيل لأول مرة
+            const startParam = tg.initDataUnsafe?.start_param || '';
+            if (startParam && startParam !== String(telegramId)) {
+                db.ref('users/' + startParam).once('value').then((refSnap) => {
+                    if (refSnap.exists()) {
+                        const refData = refSnap.val();
+                        db.ref('users/' + startParam).update({
+                            score: (refData.score || 0) + 1000,
+                            referralCount: (refData.referralCount || 0) + 1
+                        });
+                    }
+                });
             }
 
             updateUI();
             setupReferralLink();
-            saveToFirebase(); // تحديث الـ LocalStorage و Firebase بالقيمة الصحيحة الحالية
+            saveToFirebase(); // تحديث وحفظ القيم الصحيحة والآمنة فوراً
         });
 
         // حلقة التحديث المستمر للطاقة والوقت كل ثانية
