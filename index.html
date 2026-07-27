@@ -103,6 +103,10 @@
             font-size: 10px;
             font-weight: bold;
             cursor: pointer;
+            max-width: 130px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .header {
@@ -240,19 +244,18 @@
             font-weight: 800;
         }
 
-        /* Daily Rewards UI */
-        .daily-rewards-container {
+        .daily-rewards-container, .upgrades-list, .tasks-list, .ranking-list {
             width: 100%;
             max-width: 340px;
+            max-height: 310px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            overflow-y: auto;
-            max-height: 310px;
             padding-right: 2px;
         }
 
-        .daily-item {
+        .daily-item, .upgrade-item, .task-item, .rank-item {
             background: rgba(0, 0, 0, 0.65);
             padding: 12px 14px;
             border-radius: 14px;
@@ -262,20 +265,20 @@
             align-items: center;
         }
 
-        .daily-info h4 {
+        .daily-info h4, .upgrade-info h4, .task-info h4 {
             font-size: 11px;
             color: #fff;
             margin-bottom: 3px;
             text-align: left;
         }
 
-        .daily-info p {
+        .daily-info p, .upgrade-info p, .task-info p {
             font-size: 9px;
             color: #00ffff;
             text-align: left;
         }
 
-        .daily-btn {
+        .daily-btn, .upgrade-btn, .task-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
@@ -287,67 +290,16 @@
             cursor: pointer;
         }
 
-        .daily-btn:disabled {
+        .daily-btn:disabled, .task-btn.claimed {
             background: #222;
             color: #666;
             cursor: not-allowed;
             border: 1px solid #444;
         }
 
-        .upgrades-list, .tasks-list, .ranking-list {
-            width: 100%;
-            max-width: 340px;
-            max-height: 310px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-right: 2px;
-        }
-
-        .upgrade-item, .task-item, .rank-item {
-            background: rgba(0, 0, 0, 0.65);
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .upgrade-info, .task-info {
-            text-align: left;
-        }
-
-        .upgrade-info h4, .task-info h4 {
-            font-size: 11px;
-            color: #fff;
-            margin-bottom: 3px;
-        }
-
-        .upgrade-info p, .task-info p {
-            font-size: 9px;
-            color: #00ffff;
-        }
-
-        .upgrade-btn, .task-btn {
-            background: linear-gradient(135deg, #00ffff, #0077ff);
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
         .task-btn.claimed {
             background: #28a745;
             color: #fff;
-            cursor: default;
         }
 
         .rank-item {
@@ -469,8 +421,8 @@
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
                 </div>
-                <button class="wallet-btn" onclick="toggleWalletModal()">
-                    <span id="walletStatusText">CONNECT</span> 💳
+                <button class="wallet-btn" id="walletBtnText" onclick="toggleWalletModal()">
+                    CONNECT 💳
                 </button>
             </div>
             <div class="score-board">
@@ -509,22 +461,20 @@
                 <div class="upgrade-item">
                     <div class="upgrade-info">
                         <h4>⚡ Multi-Tap (Lv <span id="tapLevel">1</span>)</h4>
-                        <p id="tapCost">Cost: 5,000 Coins</p>
+                        <p id="tapCost">Cost: 1,000 Coins</p>
                     </div>
                     <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
                 </div>
             </div>
         </div>
 
-        <!-- Daily Rewards View (Fixed Streak System) -->
+        <!-- Daily Rewards View -->
         <div class="section-view" id="wheelView" style="display: none;">
             <h3>DAILY REWARDS</h3>
-            <div class="daily-rewards-container" id="dailyListContainer">
-                <!-- Generated dynamically via JS for strict 1-day interval -->
-            </div>
+            <div class="daily-rewards-container" id="dailyListContainer"></div>
         </div>
 
-        <!-- Tasks View (Fixed Telegram & X link handling) -->
+        <!-- Tasks View -->
         <div class="section-view" id="tasksView" style="display: none;">
             <h3>SOCIAL TASKS</h3>
             <div class="tasks-list">
@@ -571,11 +521,14 @@
         </nav>
     </div>
 
+    <!-- Wallet Selection Modal -->
     <div class="modal-overlay" id="walletModal" style="display: none;">
         <div class="modal-content">
             <h3>CONNECT WALLET</h3>
-            <p>Link your TON wallet.</p>
-            <button class="wallet-option-btn" onclick="connectWallet('TON Wallet')">💎 Connect TON</button>
+            <p>Link your personal TON wallet.</p>
+            <button class="wallet-option-btn" onclick="connectTonWallet('Tonkeeper')">💎 Connect Tonkeeper</button>
+            <button class="wallet-option-btn" onclick="connectTonWallet('Telegram Wallet')">✈️ Connect Telegram Wallet</button>
+            <button class="wallet-option-btn" onclick="disconnectWallet()" style="color: #ff0055;" id="disconnectBtn">Disconnect Wallet</button>
             <button class="close-modal-btn" onclick="toggleWalletModal()">CLOSE</button>
         </div>
     </div>
@@ -584,18 +537,19 @@
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        let score = localStorage.getItem('b3bo_score') ? parseInt(localStorage.getItem('b3bo_score')) : 100;
+        // New clean isolated storage keys (Fresh start: Score starts at 0, tasks and statuses reset)
+        let score = localStorage.getItem('b3bo_fresh_score') ? parseInt(localStorage.getItem('b3bo_fresh_score')) : 0;
         let maxEnergy = 1000;
-        let energy = localStorage.getItem('b3bo_energy') ? parseInt(localStorage.getItem('b3bo_energy')) : 1000;
-        let tapPower = localStorage.getItem('b3bo_tapPower') ? parseInt(localStorage.getItem('b3bo_tapPower')) : 1;
-        let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 5000;
-        let miningEndTime = localStorage.getItem('b3bo_miningEndTime') ? parseInt(localStorage.getItem('b3bo_miningEndTime')) : 0;
+        let energy = localStorage.getItem('b3bo_fresh_energy') ? parseInt(localStorage.getItem('b3bo_fresh_energy')) : 1000;
+        let tapPower = localStorage.getItem('b3bo_fresh_tapPower') ? parseInt(localStorage.getItem('b3bo_fresh_tapPower')) : 1;
+        let tapCostVal = localStorage.getItem('b3bo_fresh_tapCost') ? parseInt(localStorage.getItem('b3bo_fresh_tapCost')) : 1000;
+        let miningEndTime = localStorage.getItem('b3bo_fresh_miningEndTime') ? parseInt(localStorage.getItem('b3bo_fresh_miningEndTime')) : 0;
         
-        // Daily Streak variables
-        let currentDay = localStorage.getItem('b3bo_currentDay') ? parseInt(localStorage.getItem('b3bo_currentDay')) : 1;
-        let lastClaimTime = localStorage.getItem('b3bo_lastClaimTime') ? parseInt(localStorage.getItem('b3bo_lastClaimTime')) : 0;
+        let currentDay = localStorage.getItem('b3bo_fresh_currentDay') ? parseInt(localStorage.getItem('b3bo_fresh_currentDay')) : 1;
+        let lastClaimTime = localStorage.getItem('b3bo_fresh_lastClaimTime') ? parseInt(localStorage.getItem('b3bo_fresh_lastClaimTime')) : 0;
         
-        let completedTasks = JSON.parse(localStorage.getItem('b3bo_completedTasks')) || {};
+        let completedTasks = JSON.parse(localStorage.getItem('b3bo_fresh_completedTasks')) || {};
+        let connectedWalletAddress = localStorage.getItem('b3bo_fresh_wallet') || null;
 
         const scoreElement = document.getElementById('score');
         const coinButton = document.getElementById('coinButton');
@@ -605,13 +559,14 @@
         const hintText = document.getElementById('hintText');
         const tapLevelElem = document.getElementById('tapLevel');
         const tapCostElem = document.getElementById('tapCost');
+        const walletBtnText = document.getElementById('walletBtnText');
 
         const dailyRewardsData = [
-            { day: 1, reward: 250 },
-            { day: 2, reward: 500 },
-            { day: 3, reward: 1000 },
-            { day: 4, reward: 2500 },
-            { day: 5, reward: 5000 }
+            { day: 1, reward: 100 },
+            { day: 2, reward: 250 },
+            { day: 3, reward: 500 },
+            { day: 4, reward: 1000 },
+            { day: 5, reward: 2500 }
         ];
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -640,10 +595,17 @@
             tapLevelElem.textContent = tapPower;
             tapCostElem.textContent = `Cost: ${tapCostVal.toLocaleString()} Coins`;
             
-            localStorage.setItem('b3bo_score', score);
-            localStorage.setItem('b3bo_energy', energy);
-            localStorage.setItem('b3bo_tapPower', tapPower);
-            localStorage.setItem('b3bo_tapCost', tapCostVal);
+            if (connectedWalletAddress) {
+                let shortAddr = connectedWalletAddress.substring(0, 4) + '...' + connectedWalletAddress.substring(connectedWalletAddress.length - 4);
+                walletBtnText.textContent = shortAddr;
+            } else {
+                walletBtnText.textContent = "CONNECT 💳";
+            }
+            
+            localStorage.setItem('b3bo_fresh_score', score);
+            localStorage.setItem('b3bo_fresh_energy', energy);
+            localStorage.setItem('b3bo_fresh_tapPower', tapPower);
+            localStorage.setItem('b3bo_fresh_tapCost', tapCostVal);
 
             renderDailyRewards();
             renderTasks();
@@ -694,20 +656,35 @@
         }
 
         function renderTasks() {
+            let btnTg = document.getElementById('taskTgBtn');
+            let btnX = document.getElementById('taskXBtn');
+
             if (completedTasks['tg']) {
-                let btnTg = document.getElementById('taskTgBtn');
                 btnTg.textContent = "DONE ✓";
                 btnTg.classList.add('claimed');
                 btnTg.disabled = true;
+            } else {
+                btnTg.textContent = "VISIT & CLAIM";
+                btnTg.classList.remove('claimed');
+                btnTg.disabled = false;
             }
+
             if (completedTasks['x']) {
-                let btnX = document.getElementById('taskXBtn');
                 btnX.textContent = "DONE ✓";
                 btnX.classList.add('claimed');
                 btnX.disabled = true;
+            } else {
+                btnX.textContent = "VISIT & CLAIM";
+                btnX.classList.remove('claimed');
+                btnX.disabled = false;
             }
         }
 
+        let userName = "PLAYER";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+            userName = tg.initDataUnsafe.user.first_name.toUpperCase();
+        }
+        usernameElement.textContent = userName;
         updateDisplays();
 
         setInterval(() => {
@@ -716,21 +693,15 @@
                 let remainingSec = Math.ceil((miningEndTime - now) / 1000);
                 let mins = Math.floor(remainingSec / 60);
                 let secs = remainingSec % 60;
-                hintText.textContent = `MINING: ${mins}m ${secs}s`;
+                hintText.textContent = `RELOADING: ${mins}m ${secs}s`;
             } else if (energy <= 0 && miningEndTime > 0 && miningEndTime <= now) {
                 energy = maxEnergy;
                 miningEndTime = 0;
-                localStorage.setItem('b3bo_miningEndTime', 0);
+                localStorage.setItem('b3bo_fresh_miningEndTime', 0);
                 hintText.textContent = "TAP TO EARN";
                 updateDisplays();
             }
         }, 1000);
-
-        let userName = "PLAYER";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
-            userName = tg.initDataUnsafe.user.first_name.toUpperCase();
-        }
-        usernameElement.textContent = userName;
 
         coinButton.addEventListener('click', (e) => {
             playClickSound();
@@ -741,8 +712,8 @@
             let now = Date.now();
             if (energy <= 0) {
                 if (miningEndTime === 0) {
-                    miningEndTime = now + (60 * 60 * 1000);
-                    localStorage.setItem('b3bo_miningEndTime', miningEndTime);
+                    miningEndTime = now + (30 * 60 * 1000);
+                    localStorage.setItem('b3bo_fresh_miningEndTime', miningEndTime);
                 }
                 return;
             }
@@ -752,8 +723,8 @@
             updateDisplays();
 
             if (energy <= 0) {
-                miningEndTime = now + (60 * 60 * 1000);
-                localStorage.setItem('b3bo_miningEndTime', miningEndTime);
+                miningEndTime = now + (30 * 60 * 1000);
+                localStorage.setItem('b3bo_fresh_miningEndTime', miningEndTime);
             }
 
             if (tg.HapticFeedback) {
@@ -789,11 +760,11 @@
             if (score >= tapCostVal) {
                 score -= tapCostVal;
                 tapPower += 1;
-                tapCostVal = Math.floor(tapCostVal * 3);
+                tapCostVal = Math.floor(tapCostVal * 2.5);
                 updateDisplays();
                 if (tg.showAlert) tg.showAlert(`Upgrade Successful! +${tapPower} per tap`);
             } else {
-                if (tg.showAlert) tg.showAlert("Not enough coins! Collect more.");
+                if (tg.showAlert) tg.showAlert("Not enough coins! Keep tapping.");
             }
         }
 
@@ -802,10 +773,10 @@
             
             lastClaimTime = Date.now();
             currentDay += 1;
-            if (currentDay > 5) currentDay = 5; // إعادة التدوير أو التثبيت عند اليوم الخامس
+            if (currentDay > 5) currentDay = 5;
 
-            localStorage.setItem('b3bo_lastClaimTime', lastClaimTime);
-            localStorage.setItem('b3bo_currentDay', currentDay);
+            localStorage.setItem('b3bo_fresh_lastClaimTime', lastClaimTime);
+            localStorage.setItem('b3bo_fresh_currentDay', currentDay);
 
             score += reward;
             updateDisplays();
@@ -815,7 +786,6 @@
         function doTask(taskId, url, reward) {
             if (completedTasks[taskId]) return;
             
-            // فتح الرابط خارج التيليجرام بشكل صحيح وآمن
             try {
                 if (tg.openLink) {
                     tg.openLink(url);
@@ -826,9 +796,8 @@
                 window.open(url, '_blank');
             }
 
-            // منح المكافأة مباشرة بعد النقر والتوجه للمهمة
             completedTasks[taskId] = true;
-            localStorage.setItem('b3bo_completedTasks', JSON.stringify(completedTasks));
+            localStorage.setItem('b3bo_fresh_completedTasks', JSON.stringify(completedTasks));
             score += reward;
             updateDisplays();
             
@@ -867,9 +836,9 @@
         function loadLeaderboard() {
             const listContainer = document.getElementById('rankingList');
             let leaders = [
-                { name: "CryptoKing", score: 12500 },
-                { name: userName, score: score },
-                { name: "B3BOMaster", score: 8900 }
+                { name: "CryptoWhale", score: 45000 },
+                { name: "TonHolder", score: 12400 },
+                { name: userName, score: score }
             ];
             leaders.sort((a, b) => b.score - a.score);
             listContainer.innerHTML = "";
@@ -887,12 +856,22 @@
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        function connectWallet(name) {
+        function connectTonWallet(walletProvider) {
             toggleWalletModal();
-            document.getElementById('walletStatusText').textContent = "CONNECTED";
-            if (tg.showAlert) tg.showAlert(`Connected to ${name}!`);
+            let mockAddress = "UQCs" + Math.random().toString(36).substring(2, 12) + "B3BO_USER_TON";
+            connectedWalletAddress = mockAddress;
+            localStorage.setItem('b3bo_fresh_wallet', connectedWalletAddress);
+            updateDisplays();
+            if (tg.showAlert) tg.showAlert(`Successfully linked with ${walletProvider}! Address saved.`);
+        }
+
+        function disconnectWallet() {
+            connectedWalletAddress = null;
+            localStorage.removeItem('b3bo_fresh_wallet');
+            toggleWalletModal();
+            updateDisplays();
+            if (tg.showAlert) tg.showAlert("Wallet disconnected.");
         }
     </script>
 </body>
 </html>
-
