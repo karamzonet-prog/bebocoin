@@ -2,12 +2,16 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Bebo Coin Game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js">
+    </script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js">
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
@@ -21,9 +25,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
+        html,
+        body {
             width: 100%;
-            height: 100%;
+            height: 100dvh;
+            height: 100vh;
             background-color: #050505;
             color: #ffffff;
             display: flex;
@@ -32,6 +38,7 @@
             overflow: hidden;
             font-family: 'Orbitron', sans-serif;
             position: relative;
+            touch-action: none;
         }
 
         .app-bg {
@@ -54,29 +61,132 @@
         .game-container {
             width: 100%;
             max-width: 420px;
-            height: 100%;
+            height: 100dvh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.5);
+            padding: max(8px, env(safe-area-inset-top)) 14px max(6px, env(safe-area-inset-bottom));
+            background: rgba(0, 0, 0, 0.55);
             backdrop-filter: blur(3px);
             position: relative;
             z-index: 1;
+            transition: all 0.2s ease;
+        }
+
+        @media (max-height: 700px) {
+            .game-container {
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+            .coin-btn {
+                width: 110px;
+                height: 110px;
+            }
+            .coin-glow {
+                width: 140px;
+                height: 140px;
+            }
+            .score-board span {
+                font-size: 16px;
+            }
+            .home-middle-section {
+                gap: 4px;
+                margin: 0;
+            }
+            .home-ref-banner,
+            .home-trophy-banner {
+                padding: 5px 10px;
+            }
+            .home-ref-info h4 {
+                font-size: 7px;
+            }
+            .home-ref-info p {
+                font-size: 5.5px;
+            }
+            .nav-btn {
+                font-size: 6px;
+                padding: 3px 6px;
+            }
+            .nav-icon {
+                font-size: 11px;
+            }
+            .footer-nav {
+                padding: 3px 4px;
+            }
+            .energy-container {
+                max-width: 250px;
+            }
+            .section-view h3 {
+                font-size: 9px;
+                margin-bottom: 4px;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .coin-btn {
+                width: 90px;
+                height: 90px;
+            }
+            .coin-glow {
+                width: 120px;
+                height: 120px;
+            }
+            .score-board span {
+                font-size: 13px;
+            }
+            .user-badge h2 {
+                font-size: 7px;
+            }
+            .top-bar {
+                margin-bottom: 0;
+            }
+            .energy-info {
+                font-size: 6px;
+            }
+            .energy-bar-bg {
+                height: 5px;
+            }
+            .hint {
+                font-size: 5px;
+                min-height: 12px;
+            }
+            .header .score-board p {
+                font-size: 6px;
+            }
+            .home-ref-btn {
+                font-size: 6px;
+                padding: 3px 8px;
+            }
+            .home-ref-info h4 {
+                font-size: 6px;
+            }
+            .home-ref-info p {
+                font-size: 5px;
+            }
+            .trophy-info h4 {
+                font-size: 7px;
+            }
+            .trophy-info p {
+                font-size: 5px;
+            }
+            .trophy-big-icon {
+                font-size: 16px;
+            }
         }
 
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .user-badge {
             display: inline-flex;
             align-items: center;
             background: rgba(0, 0, 0, 0.4);
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
@@ -91,18 +201,24 @@
         }
 
         .user-badge h2 {
-            font-size: 10px;
+            font-size: 9px;
             color: #eee;
             letter-spacing: 1px;
         }
 
+        .user-badge .vip-crown {
+            font-size: 12px;
+            margin-left: 3px;
+        }
+
         .header {
             text-align: center;
+            flex-shrink: 0;
         }
 
         .score-board span {
             font-family: 'Press Start 2P', cursive;
-            font-size: 24px;
+            font-size: 20px;
             color: #fff;
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
             letter-spacing: 2px;
@@ -111,44 +227,49 @@
         }
 
         .score-board p {
-            font-size: 9px;
+            font-size: 8px;
             color: #ccc;
             font-weight: 800;
             letter-spacing: 3px;
         }
 
-        .tap-section, .section-view {
+        .tap-section,
+        .section-view {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            flex-grow: 1;
+            flex: 1;
             text-align: center;
-            padding: 5px 0;
+            padding: 2px 0;
+            overflow: hidden;
+            min-height: 0;
         }
 
         .section-view h3 {
             font-family: 'Press Start 2P', cursive;
-            font-size: 13px;
+            font-size: 11px;
             color: #00ffff;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+            flex-shrink: 0;
         }
 
         .home-middle-section {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin: 5px 0;
+            gap: 6px;
+            margin: 2px 0;
+            flex-shrink: 0;
         }
 
         .home-ref-banner {
             width: 100%;
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.12), rgba(255, 0, 85, 0.12));
             border: 1px solid rgba(0, 255, 255, 0.4);
-            border-radius: 14px;
-            padding: 10px 14px;
+            border-radius: 12px;
+            padding: 7px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -159,13 +280,13 @@
         }
 
         .home-ref-info h4 {
-            font-size: 10px;
+            font-size: 8px;
             color: #00ffff;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .home-ref-info p {
-            font-size: 8px;
+            font-size: 6.5px;
             color: #ccc;
         }
 
@@ -173,89 +294,111 @@
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
+            padding: 5px 14px;
+            border-radius: 8px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 10px;
+            font-size: 8px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+            transition: transform 0.15s;
+        }
+
+        .home-ref-btn:active {
+            transform: scale(0.94);
         }
 
         .home-trophy-banner {
             width: 100%;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
             border: 1px solid rgba(255, 215, 0, 0.5);
-            border-radius: 14px;
-            padding: 12px 16px;
+            border-radius: 12px;
+            padding: 7px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-            transition: 0.2s;
+            transition: transform 0.15s;
         }
+
         .home-trophy-banner:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
+
         .trophy-info {
             text-align: left;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
+
         .trophy-big-icon {
-            font-size: 26px;
+            font-size: 20px;
         }
+
         .trophy-info h4 {
-            font-size: 11px;
+            font-size: 9px;
             color: #ffd700;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
             font-family: 'Press Start 2P', cursive;
         }
+
         .trophy-info p {
-            font-size: 8px;
+            font-size: 6.5px;
             color: #ddd;
         }
+
         .trophy-arrow {
-            font-size: 14px;
+            font-size: 12px;
             color: #ffd700;
             font-weight: bold;
         }
 
+        /* ============================================================
+               COIN WRAPPER - محسّن للنقر الواقعي
+               ============================================================ */
         .coin-wrapper {
             position: relative;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            touch-action: manipulation;
+            touch-action: none;
             margin: auto 0;
+            flex: 1;
+            min-height: 80px;
+            -webkit-touch-callout: none;
         }
 
         .coin-glow {
             position: absolute;
-            width: 210px;
-            height: 210px;
+            width: 180px;
+            height: 180px;
             background: radial-gradient(circle, rgba(0, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
             border-radius: 50%;
             pointer-events: none;
             opacity: 0.8;
+            transition: opacity 0.3s ease;
         }
 
+        /* تأثير الضغط على العملة */
         .coin-btn {
-            width: 160px;
-            height: 160px;
+            width: 140px;
+            height: 140px;
             background-color: rgba(13, 13, 13, 0.9);
-            border: 5px solid #333;
+            border: 4px solid #333;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            box-shadow: 0 10px 0px #111, 0 15px 22px rgba(0,0,0,0.85);
+            box-shadow: 0 8px 0px #111, 0 12px 20px rgba(0, 0, 0, 0.85);
             position: relative;
             z-index: 2;
+            transition: transform 0.06s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+            will-change: transform;
+            touch-action: none;
         }
 
         .coin-btn img {
@@ -263,11 +406,87 @@
             height: 100%;
             object-fit: cover;
             pointer-events: none;
+            touch-action: none;
         }
 
-        .coin-wrapper:active .coin-btn {
-            transform: translateY(4px) scale(0.97);
+        /* حالة النقر - تنضغط العملة للأسفل */
+        .coin-wrapper.pressed .coin-btn {
+            transform: translateY(6px) scale(0.94);
             border-color: #00ffff;
+            box-shadow: 0 2px 0px #111, 0 8px 15px rgba(0, 0, 0, 0.9);
+        }
+
+        /* اهتزاز العملة عند النقر */
+        .coin-wrapper.bump .coin-btn {
+            animation: coinBump 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes coinBump {
+            0% {
+                transform: translateY(6px) scale(0.94);
+            }
+            40% {
+                transform: translateY(-4px) scale(1.04);
+            }
+            70% {
+                transform: translateY(2px) scale(0.98);
+            }
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+        }
+
+        /* توهج إضافي عند النقر */
+        .coin-wrapper.flash .coin-glow {
+            opacity: 1;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.7) 0%, rgba(0, 255, 255, 0.2) 50%, transparent 70%);
+        }
+
+        /* Ripple effect */
+        .coin-wrapper .tap-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.5) 0%, rgba(0, 255, 255, 0.1) 60%, transparent 70%);
+            pointer-events: none;
+            animation: rippleOut 0.6s ease-out forwards;
+            z-index: 1;
+            will-change: transform, opacity;
+        }
+
+        @keyframes rippleOut {
+            0% {
+                width: 10px;
+                height: 10px;
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+            100% {
+                width: 250px;
+                height: 250px;
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* جزيئات متطايرة عند النقر */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 998;
+            animation: particleFly 0.6s ease-out forwards;
+            will-change: transform, opacity;
+        }
+
+        @keyframes particleFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(1.5);
+            }
         }
 
         .energy-section-bottom {
@@ -276,77 +495,68 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 2px;
+            flex-shrink: 0;
         }
 
         .energy-container {
             width: 100%;
-            max-width: 320px;
+            max-width: 300px;
         }
 
         .energy-info {
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
+            font-size: 8px;
             color: #00ffff;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             font-weight: bold;
         }
 
         .energy-bar-bg {
             width: 100%;
-            height: 12px;
+            height: 8px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
+            border-radius: 5px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             overflow: hidden;
-            padding: 2px;
+            padding: 1px;
         }
 
         .energy-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #ff0055, #00ffff);
-            border-radius: 4px;
+            border-radius: 3px;
             width: 100%;
             transition: width 0.1s linear;
         }
 
         .hint {
-            margin-top: 6px;
-            font-size: 9px;
+            margin-top: 3px;
+            font-size: 7px;
             color: #bbb;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 800;
-        }
-
-        .daily-rewards-container, .upgrades-list, .tasks-list, .friends-container {
-            width: 100%;
-            max-width: 340px;
-            max-height: 290px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-right: 2px;
+            min-height: 16px;
         }
 
         .shop-list {
             width: 100%;
-            max-width: 360px;
-            max-height: 290px;
+            flex: 1;
             overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 6px;
             padding-right: 2px;
+            align-content: start;
+            min-height: 0;
         }
 
         .shop-item {
-            background: rgba(0, 0, 0, 0.65);
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 255, 255, 0.4);
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 128, 0.05));
+            padding: 7px 5px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.35);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -354,36 +564,40 @@
             text-align: center;
         }
 
+        .shop-item.full-width {
+            grid-column: span 2;
+        }
+
         .shop-info h4 {
-            font-size: 9px;
+            font-size: 7.5px;
             color: #00ffff;
-            margin-bottom: 3px;
+            margin-bottom: 1px;
             font-family: 'Press Start 2P', cursive;
         }
+
         .shop-info p {
-            font-size: 7px;
+            font-size: 5.5px;
             color: #ccc;
-            margin-bottom: 8px;
+            margin-bottom: 3px;
         }
 
         .shop-price-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 4px;
+            margin-bottom: 3px;
         }
 
         .shop-coin-icon {
-            width: 24px;
-            height: 24px;
+            width: 16px;
+            height: 16px;
             object-fit: cover;
             border-radius: 50%;
-            background: transparent;
         }
 
         .shop-price-text {
-            font-size: 11px;
+            font-size: 9px;
             color: #ffd700;
             font-weight: bold;
         }
@@ -392,16 +606,21 @@
             background: linear-gradient(135deg, #00ffcc, #0077ff);
             color: #000;
             border: none;
-            padding: 6px 10px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 9px;
+            font-size: 7px;
             cursor: pointer;
-            box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
-            transition: 0.2s;
+            box-shadow: 0 0 6px rgba(0, 255, 204, 0.4);
             width: 100%;
+            transition: transform 0.12s;
         }
+
+        .shop-btn:active {
+            transform: scale(0.94);
+        }
+
         .shop-btn.purchased {
             background: #28a745;
             color: #fff;
@@ -409,43 +628,82 @@
             cursor: default;
         }
 
-        .daily-item, .upgrade-item, .task-item, .friend-card {
+        .shop-btn.purchased:active {
+            transform: none;
+        }
+
+        .upgrades-list,
+        .daily-rewards-container,
+        .tasks-list,
+        .friends-container {
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 2px;
+            min-height: 0;
+        }
+
+        .upgrade-item,
+        .daily-item,
+        .task-item,
+        .friend-card {
             background: rgba(0, 0, 0, 0.65);
-            padding: 12px 14px;
-            border-radius: 14px;
+            padding: 8px 12px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
-        .daily-info h4, .upgrade-info h4, .task-info h4 {
-            font-size: 11px;
+        .upgrade-info h4,
+        .daily-info h4,
+        .task-info h4 {
+            font-size: 9px;
             color: #fff;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             text-align: left;
         }
 
-        .daily-info p, .upgrade-info p, .task-info p {
-            font-size: 10px;
+        .upgrade-info p,
+        .daily-info p,
+        .task-info p {
+            font-size: 8px;
             color: #00ffff;
             text-align: left;
         }
 
-        .daily-btn, .upgrade-btn, .task-btn, .friend-btn {
+        .upgrade-btn,
+        .daily-btn,
+        .task-btn,
+        .friend-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
-            padding: 11px 18px;
-            border-radius: 10px;
+            padding: 6px 14px;
+            border-radius: 8px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 11px;
+            font-size: 8px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 255, 255, 0.25);
+            transition: transform 0.12s;
+            white-space: nowrap;
         }
 
-        .daily-btn:disabled, .task-btn.claimed {
+        .upgrade-btn:active,
+        .daily-btn:active,
+        .task-btn:active,
+        .friend-btn:active {
+            transform: scale(0.94);
+        }
+
+        .daily-btn:disabled,
+        .task-btn.claimed {
             background: #222;
             color: #666;
             cursor: not-allowed;
@@ -456,6 +714,106 @@
         .task-btn.claimed {
             background: #28a745;
             color: #fff;
+        }
+
+        .friend-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .friend-box p {
+            font-size: 8px;
+            color: #ccc;
+        }
+
+        .friend-box p b {
+            color: #00ffff;
+        }
+
+        .friend-link-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 7px;
+            border-radius: 6px;
+            color: #00ffff;
+            font-size: 7px;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .wallet-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .wallet-section h4 {
+            font-size: 9px;
+            color: #fff;
+        }
+
+        .wallet-section p {
+            font-size: 7px;
+            color: #aaa;
+        }
+
+        #ton-connect-button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(10, 10, 10, 0.92);
+            padding: 4px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+            flex-shrink: 0;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 7px;
+            cursor: pointer;
+            font-weight: 800;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            transition: 0.2s;
+        }
+
+        .nav-icon {
+            font-size: 13px;
+        }
+
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(0, 255, 255, 0.12);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
         }
 
         .modal-overlay {
@@ -475,15 +833,15 @@
         .modal-content {
             width: 92%;
             max-width: 380px;
-            height: 75%;
+            height: 70%;
+            max-height: 600px;
             background: rgba(15, 15, 20, 0.96);
             border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: 20px;
-            padding: 20px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+            gap: 8px;
         }
 
         .modal-header {
@@ -491,11 +849,12 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
+            padding-bottom: 6px;
+            flex-shrink: 0;
         }
 
         .modal-header h3 {
-            font-size: 12px;
+            font-size: 10px;
             color: #ffd700;
             font-family: 'Press Start 2P', cursive;
         }
@@ -504,17 +863,19 @@
             background: none;
             border: none;
             color: #aaa;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
+            padding: 0 4px;
         }
 
         .ranking-scroll-list {
-            flex-grow: 1;
+            flex: 1;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             padding-right: 4px;
+            min-height: 0;
         }
 
         .rank-row {
@@ -522,98 +883,127 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .rank-row.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.08); }
-        .rank-row.silver { border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; background: rgba(192, 192, 192, 0.08); }
-        .rank-row.bronze { border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; background: rgba(205, 127, 50, 0.08); }
-
-        .friend-box {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 14px;
-            padding: 16px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .friend-box p {
-            font-size: 10px;
-            color: #ccc;
-        }
-
-        .friend-link-input {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px;
+            padding: 6px 12px;
             border-radius: 8px;
-            color: #00ffff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             font-size: 9px;
-            word-break: break-all;
-            text-align: center;
+            font-weight: 700;
+            flex-shrink: 0;
         }
 
-        .wallet-section {
+        .rank-row.gold {
+            border-color: rgba(255, 215, 0, 0.5);
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.08);
+        }
+        .rank-row.silver {
+            border-color: rgba(192, 192, 192, 0.5);
+            color: #c0c0c0;
+            background: rgba(192, 192, 192, 0.08);
+        }
+        .rank-row.bronze {
+            border-color: rgba(205, 127, 50, 0.5);
+            color: #cd7f32;
+            background: rgba(205, 127, 50, 0.08);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
             display: flex;
             flex-direction: column;
+            gap: 6px;
             align-items: center;
-            gap: 12px;
-            width: 100%;
-            background: rgba(0,0,0,0.6);
-            padding: 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(0,255,255,0.3);
+            pointer-events: none;
+            width: 92%;
+            max-width: 400px;
         }
 
-        #ton-connect-button {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .footer-nav {
-            display: flex;
-            justify-content: space-around;
-            background-color: rgba(10, 10, 10, 0.9);
-            padding: 8px 6px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 18px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.8);
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 9px;
-            cursor: pointer;
-            font-weight: 800;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 12px;
+        .toast {
+            background: rgba(10, 10, 15, 0.94);
+            border: 1px solid rgba(0, 255, 255, 0.35);
+            padding: 8px 16px;
             border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            transition: 0.2s;
-        }
-
-        .nav-icon {
-            font-size: 16px;
-        }
-
-        .nav-btn.active {
             color: #fff;
-            background: rgba(0, 255, 255, 0.12);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            font-size: 8px;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+            animation: toastIn 0.35s ease-out;
+            pointer-events: auto;
+            width: 100%;
+        }
+
+        .toast.success {
+            border-color: #00ff88;
+        }
+        .toast.error {
+            border-color: #ff4466;
+        }
+        .toast.info {
+            border-color: #00ccff;
+        }
+
+        @keyframes toastIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.92);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 2px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.3);
+            border-radius: 6px;
+        }
+
+        @media (max-width: 380px) {
+            .coin-btn {
+                width: 110px;
+                height: 110px;
+            }
+            .coin-glow {
+                width: 140px;
+                height: 140px;
+            }
+            .score-board span {
+                font-size: 16px;
+            }
+            .nav-btn {
+                font-size: 6px;
+                padding: 3px 5px;
+            }
+            .nav-icon {
+                font-size: 11px;
+            }
+            .shop-item {
+                padding: 5px 4px;
+            }
+            .shop-info h4 {
+                font-size: 6px;
+            }
+        }
+
+        @media (min-width: 500px) {
+            .game-container {
+                border-radius: 24px;
+                box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
+                max-height: 780px;
+            }
         }
     </style>
 </head>
@@ -623,12 +1013,13 @@
         <img src="https://i.ibb.co/wFMrKh5t/image.png" alt="Background">
     </div>
 
-    <div class="game-container">
+    <div class="game-container" id="gameContainer">
         <header class="header">
             <div class="top-bar">
                 <div class="user-badge">
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
+                    <span class="vip-crown" id="vipCrown" style="display:none;">👑</span>
                 </div>
             </div>
             <div class="score-board">
@@ -637,7 +1028,6 @@
             </div>
         </header>
 
-        <!-- Home View -->
         <main class="tap-section" id="gameView">
             <div class="home-middle-section">
                 <div class="home-ref-banner">
@@ -660,13 +1050,14 @@
                 </div>
             </div>
 
-            <div class="coin-wrapper" id="coinButton">
-                <div class="coin-glow"></div>
-                <div class="coin-btn">
-                    <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin">
+            <!-- COIN WRAPPER - محسّن للنقر -->
+            <div class="coin-wrapper" id="coinWrapper">
+                <div class="coin-glow" id="coinGlow"></div>
+                <div class="coin-btn" id="coinBtn">
+                    <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" id="coinImage">
                 </div>
             </div>
-            
+
             <div class="energy-section-bottom">
                 <div class="energy-container">
                     <div class="energy-info">
@@ -681,9 +1072,8 @@
             </div>
         </main>
 
-        <!-- Upgrades View -->
         <div class="section-view" id="upgradesView" style="display: none;">
-            <h3>BOOSTERS</h3>
+            <h3>🚀 BOOSTERS</h3>
             <div class="upgrades-list">
                 <div class="upgrade-item">
                     <div class="upgrade-info">
@@ -692,13 +1082,19 @@
                     </div>
                     <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
                 </div>
+                <div class="upgrade-item" style="border-color:rgba(255,215,0,0.25);">
+                    <div class="upgrade-info">
+                        <h4>🤖 Auto-Miner</h4>
+                        <p id="minerStatus">Offline: +0 / min</p>
+                    </div>
+                    <button class="upgrade-btn" id="minerBtn" onclick="toggleMiner()">START</button>
+                </div>
             </div>
         </div>
 
-        <!-- Premium Shop View -->
         <div class="section-view" id="shopView" style="display: none;">
             <h3>💎 PREMIUM SHOP</h3>
-            <div class="shop-list">
+            <div class="shop-list" id="shopList">
                 <div class="shop-item">
                     <div class="shop-info">
                         <h4>+1,000 COINS</h4>
@@ -723,7 +1119,7 @@
                 </div>
                 <div class="shop-item">
                     <div class="shop-info">
-                        <h4>AUTO BOT</h4>
+                        <h4>🤖 AUTO BOT</h4>
                         <p>Farms 24h offline</p>
                     </div>
                     <div class="shop-price-row">
@@ -734,7 +1130,7 @@
                 </div>
                 <div class="shop-item">
                     <div class="shop-info">
-                        <h4>TURBO ENERGY</h4>
+                        <h4>⚡ TURBO ENERGY</h4>
                         <p>Infinite for 1h</p>
                     </div>
                     <div class="shop-price-row">
@@ -743,10 +1139,32 @@
                     </div>
                     <button class="shop-btn" id="shopTurboBtn" onclick="buyPremiumItem('turbo', 0.3)">BUY</button>
                 </div>
-                <div class="shop-item" style="grid-column: span 2;">
+                <div class="shop-item">
                     <div class="shop-info">
-                        <h4>👑 VIP CROWN BADGE</h4>
-                        <p>Golden crown title in Top 100 leaderboard!</p>
+                        <h4>🤖 SUPER BOT</h4>
+                        <p>Farms x2 speed</p>
+                    </div>
+                    <div class="shop-price-row">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" class="shop-coin-icon">
+                        <span class="shop-price-text">0.7 TON</span>
+                    </div>
+                    <button class="shop-btn" id="shopSuperBtn" onclick="buyPremiumItem('superBot', 0.7)">BUY</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-info">
+                        <h4>🛡️ ENERGY SHIELD</h4>
+                        <p>No energy drain 24h</p>
+                    </div>
+                    <div class="shop-price-row">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" class="shop-coin-icon">
+                        <span class="shop-price-text">0.6 TON</span>
+                    </div>
+                    <button class="shop-btn" id="shopShieldBtn" onclick="buyPremiumItem('shield', 0.6)">BUY</button>
+                </div>
+                <div class="shop-item full-width">
+                    <div class="shop-info">
+                        <h4>👑 VIP CROWN</h4>
+                        <p>Golden crown in leaderboard</p>
                     </div>
                     <div class="shop-price-row">
                         <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" class="shop-coin-icon">
@@ -757,19 +1175,17 @@
             </div>
         </div>
 
-        <!-- Daily Rewards View -->
         <div class="section-view" id="wheelView" style="display: none;">
-            <h3>DAILY REWARDS</h3>
+            <h3>🎁 DAILY REWARDS</h3>
             <div class="daily-rewards-container" id="dailyListContainer"></div>
         </div>
 
-        <!-- Tasks View -->
         <div class="section-view" id="tasksView" style="display: none;">
-            <h3>SOCIAL & WALLET</h3>
+            <h3>📋 SOCIAL & WALLET</h3>
             <div class="tasks-list">
                 <div class="wallet-section">
                     <h4>💎 CONNECT TON WALLET</h4>
-                    <p style="font-size: 9px; color: #ccc;">Connect your wallet to unlock shop purchases</p>
+                    <p>Required for shop purchases</p>
                     <div id="ton-connect-button"></div>
                 </div>
                 <div class="task-item">
@@ -777,26 +1193,25 @@
                         <h4>📢 Follow Telegram Channel</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <button class="task-btn" id="taskTgBtn" onclick="doTask('tg', 'https://t.me/BeboPixel', 500)">VISIT & CLAIM</button>
+                    <button class="task-btn" id="taskTgBtn" onclick="doTask('tg','https://t.me/BeboPixel',500)">VISIT & CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
                         <h4>🐦 Follow on X (Twitter)</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <button class="task-btn" id="taskXBtn" onclick="doTask('x', 'https://x.com/BeboCoin1', 500)">VISIT & CLAIM</button>
+                    <button class="task-btn" id="taskXBtn" onclick="doTask('x','https://x.com/BeboCoin1',500)">VISIT & CLAIM</button>
                 </div>
             </div>
         </div>
 
-        <!-- Friends / Referrals View -->
         <div class="section-view" id="friendsView" style="display: none;">
-            <h3>INVITE FRIENDS</h3>
+            <h3>👥 INVITE FRIENDS</h3>
             <div class="friends-container">
                 <div class="friend-box">
                     <p>Invite your friends and get <b>+1,000 Coins</b> for each referral!</p>
                     <div class="friend-link-input" id="refLinkText">Generating link...</div>
-                    <button class="friend-btn" onclick="copyReferralLink()">COPY LINK</button>
+                    <button class="friend-btn" onclick="copyReferralLink()">📋 COPY LINK</button>
                 </div>
                 <div class="friend-card">
                     <div class="daily-info">
@@ -807,7 +1222,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span><span>HOME</span>
@@ -827,7 +1241,6 @@
         </nav>
     </div>
 
-    <!-- Modal Leaderboard -->
     <div class="modal-overlay" id="leaderboardModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -840,7 +1253,12 @@
         </div>
     </div>
 
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
+        // =============================================
+        // FIREBASE CONFIG
+        // =============================================
         const firebaseConfig = {
             apiKey: "AIzaSyDCgqRzK-pBNZgCBFWuJJSv-fYPZ1qBQSk",
             authDomain: "bebo-3151b.firebaseapp.com",
@@ -855,8 +1273,30 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // =============================================
+        // TELEGRAM WEB APP
+        // =============================================
         const tg = window.Telegram.WebApp;
-        try { tg.expand(); } catch (e) {}
+        try {
+            tg.expand();
+            tg.enableClosingConfirmation();
+        } catch (e) {}
+
+        // =============================================
+        // USER ID
+        // =============================================
+        let telegramId = "";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+            telegramId = String(tg.initDataUnsafe.user.id);
+        } else {
+            telegramId = localStorage.getItem('bebo_local_id');
+            if (!telegramId) {
+                telegramId = "user_" + Math.floor(Math.random() * 900000 + 100000);
+                localStorage.setItem('bebo_local_id', telegramId);
+            }
+        }
+
+        const userRef = db.ref('users/' + telegramId);
 
         let botUsername = "bebocoin_bot";
         try {
@@ -868,582 +1308,979 @@
             }
         } catch (e) {}
 
-        let telegramId = "";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
-            telegramId = tg.initDataUnsafe.user.id;
-        } else {
-            telegramId = localStorage.getItem('bebo_local_id');
-            if (!telegramId) {
-                telegramId = "user_" + Math.floor(Math.random() * 900000 + 100000);
-                localStorage.setItem('bebo_local_id', telegramId);
-            }
-        }
-
-        let userRef = db.ref('users/' + telegramId);
-
-        let score = 0;
-        let maxEnergy = 1000;
-        let energy = 1000;
-        let tapPower = 1;
-        let tapCostVal = 1000;
-        let miningEndTime = 0;
-        let currentDay = 1;
-        let lastClaimTime = 0;
-        let completedTasks = {};
-        let referralCount = 0;
-        let invitedBy = "none";
-        let walletAddress = "";
-        let premiumItems = {};
-        let isDataLoaded = false;
-
+        // =============================================
+        // USER NAME
+        // =============================================
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
-            userName = tg.initDataUnsafe.user.first_name.toUpperCase();
+            userName = tg.initDataUnsafe.user.first_name.toUpperCase().slice(0, 14);
         } else {
-            userName = "BEBO_" + telegramId.substring(telegramId.length - 4);
+            userName = "BEBO_" + telegramId.slice(-4);
         }
         document.getElementById('username').textContent = userName;
 
-        const scoreElement = document.getElementById('score');
-        const coinButton = document.getElementById('coinButton');
-        const energyFill = document.getElementById('energyFill');
-        const energyText = document.getElementById('energyText');
-        const hintText = document.getElementById('hintText');
-        const tapLevelElem = document.getElementById('tapLevel');
-        const tapCostElem = document.getElementById('tapCost');
+        // =============================================
+        // GAME STATE
+        // =============================================
+        const G = {
+            score: 0,
+            energy: 1000,
+            maxEnergy: 1000,
+            tapPower: 1,
+            tapCost: 1000,
+            minerActive: false,
+            minerRate: 0,
+            miningEndTime: 0,
+            currentDay: 1,
+            lastClaimTime: 0,
+            completedTasks: {},
+            referralCount: 0,
+            invitedBy: "none",
+            walletAddress: "",
+            premiumItems: {},
+            lastTapTime: 0,
+            comboCount: 0,
+            shieldExpiry: 0,
+            turboExpiry: 0,
+            vipActive: false,
+            lastOnlineTime: Date.now(),
+        };
 
-        const dailyRewardsData = [
-            { day: 1, reward: 100 },
-            { day: 2, reward: 250 },
-            { day: 3, reward: 500 },
-            { day: 4, reward: 1000 },
-            { day: 5, reward: 2500 }
-        ];
+        // =============================================
+        // DOM REFS
+        // =============================================
+        const $ = (id) => document.getElementById(id);
+        const scoreEl = $('score');
+        const energyFill = $('energyFill');
+        const energyText = $('energyText');
+        const hintText = $('hintText');
+        const tapLevelEl = $('tapLevel');
+        const tapCostEl = $('tapCost');
+        const vipCrown = $('vipCrown');
+        const refLinkText = $('refLinkText');
+        const refCountText = $('refCountText');
+        const minerStatus = $('minerStatus');
+        const minerBtn = $('minerBtn');
+        const toastContainer = $('toastContainer');
+        const gameContainer = $('gameContainer');
+        const coinWrapper = $('coinWrapper');
+        const coinBtn = $('coinBtn');
+        const coinGlow = $('coinGlow');
+        const coinImage = $('coinImage');
 
-        let startParam = "";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
-            startParam = tg.initDataUnsafe.start_param;
+        // =============================================
+        // TOAST SYSTEM
+        // =============================================
+        function showToast(message, type = 'info', duration = 3000) {
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.textContent = message;
+            toastContainer.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.3s';
+                setTimeout(() => el.remove(), 350);
+            }, duration);
         }
 
-        userRef.on('value', (snapshot) => {
-            let data = snapshot.val();
+        // =============================================
+        // AUDIO
+        // =============================================
+        let audioCtx = null;
+
+        function playTapSound() {
+            try {
+                if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.06);
+                gain.gain.setValueAtTime(0.10, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.06);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.06);
+            } catch (_) {}
+        }
+
+        // =============================================
+        // PARTICLES (جزيئات متطايرة)
+        // =============================================
+        function spawnParticles(x, y, count = 12) {
+            const colors = ['#00ffff', '#ff0055', '#ffd700', '#00ff88', '#ff8800'];
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'particle';
+                const size = 4 + Math.random() * 6;
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 40 + Math.random() * 80;
+                const tx = Math.cos(angle) * dist;
+                const ty = Math.sin(angle) * dist - 30;
+                el.style.cssText = `
+                        left:${x}px; top:${y}px;
+                        width:${size}px; height:${size}px;
+                        background:${colors[Math.floor(Math.random() * colors.length)]};
+                        --tx:${tx}px; --ty:${ty}px;
+                        box-shadow: 0 0 ${size}px ${colors[Math.floor(Math.random() * colors.length)]};
+                    `;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 600);
+            }
+        }
+
+        // =============================================
+        // FLOATING NUMBER
+        // =============================================
+        function createFloatingNumber(x, y, text, color = '#00ffff') {
+            const el = document.createElement('div');
+            el.textContent = text;
+            el.style.cssText = `
+                    position:fixed; left:${x}px; top:${y-30}px;
+                    color:${color}; font-family:'Press Start 2P',cursive;
+                    font-size:10px; font-weight:700; pointer-events:none;
+                    z-index:999; text-shadow:0 0 15px ${color};
+                `;
+            document.body.appendChild(el);
+            el.animate([
+                { transform: 'translateY(0) scale(0.7)', opacity: 1 },
+                { transform: 'translateY(-55px) scale(1.2)', opacity: 0 }
+            ], { duration: 450 });
+            setTimeout(() => el.remove(), 480);
+        }
+
+        // =============================================
+        // COIN TAP HANDLER - واقعي بالكامل
+        // =============================================
+        let tapTimeout = null;
+
+        function handleCoinTap(e) {
+            e.preventDefault();
+
+            // تحديد مكان النقر
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX || window.innerWidth / 2;
+                clientY = e.clientY || window.innerHeight / 2;
+            }
+
+            // 1. تأثير الضغط الفوري
+            coinWrapper.classList.add('pressed');
+
+            // 2. إزالة تأثير الضغط بعد 100ms
+            if (tapTimeout) clearTimeout(tapTimeout);
+            tapTimeout = setTimeout(() => {
+                coinWrapper.classList.remove('pressed');
+                // 3. إضافة تأثير الارتداد (bump)
+                coinWrapper.classList.add('bump');
+                setTimeout(() => {
+                    coinWrapper.classList.remove('bump');
+                }, 220);
+            }, 100);
+
+            // 4. توهج العملة
+            coinWrapper.classList.add('flash');
+            setTimeout(() => {
+                coinWrapper.classList.remove('flash');
+            }, 400);
+
+            // 5. Ripple effect
+            const rect = coinWrapper.getBoundingClientRect();
+            const cx = clientX - rect.left;
+            const cy = clientY - rect.top;
+            const ripple = document.createElement('div');
+            ripple.className = 'tap-ripple';
+            ripple.style.left = cx + 'px';
+            ripple.style.top = cy + 'px';
+            coinWrapper.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+
+            // 6. جزيئات متطايرة
+            spawnParticles(clientX, clientY, 10);
+
+            // 7. صوت
+            playTapSound();
+
+            // 8. Haptic feedback
+            if (tg.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred('heavy'); } catch (_) {}
+            }
+
+            // 9. تنفيذ منطق اللعبة
+            processTap(clientX, clientY);
+        }
+
+        // =============================================
+        // PROCESS TAP - منطق اللعبة
+        // =============================================
+        function processTap(x, y) {
+            const now = Date.now();
+            const shieldActive = G.premiumItems.shield && G.shieldExpiry > now;
+            const turboActive = G.premiumItems.turbo && G.turboExpiry > now;
+
+            // فحص الطاقة
+            if (G.energy <= 0 && !shieldActive && !turboActive) {
+                if (G.miningEndTime === 0) {
+                    G.miningEndTime = now + 30 * 60 * 1000;
+                    saveToFirebase();
+                    showToast('⏳ Energy depleted! Reloading…', 'info', 2000);
+                }
+                return;
+            }
+
+            // استهلاك الطاقة (إلا إذا كان درع أو توربو)
+            if (!shieldActive && !turboActive) {
+                G.energy = Math.max(0, G.energy - G.tapPower);
+            }
+
+            // كومبو
+            if (now - G.lastTapTime < 800) {
+                G.comboCount = Math.min(G.comboCount + 1, 25);
+            } else {
+                G.comboCount = 0;
+            }
+            G.lastTapTime = now;
+
+            // حساب المكسب
+            const comboBonus = Math.floor(G.comboCount / 5) * 3;
+            let totalEarn = G.tapPower + comboBonus;
+            G.score += totalEarn;
+
+            // مكافأة التوربو
+            if (turboActive) {
+                const turboBonus = G.tapPower * 2;
+                G.score += turboBonus;
+                totalEarn += turboBonus;
+            }
+
+            // تحديث الـ UI
+            updateUI();
+            saveToFirebase();
+
+            // الرقم المتطاير
+            const color = turboActive ? '#ff8800' : (G.comboCount > 5 ? '#ffd700' : '#00ffff');
+            const label = turboActive ? `🔥 +${totalEarn}` : `+${totalEarn}`;
+            createFloatingNumber(x, y, label, color);
+
+            // عرض الكومبو
+            if (G.comboCount > 4) {
+                createFloatingNumber(x - 25, y - 45, `🔥 x${G.comboCount}`, '#ff8800');
+            }
+
+            // إعادة تعبئة الطاقة
+            if (G.energy <= 0 && !shieldActive && !turboActive) {
+                G.miningEndTime = now + 30 * 60 * 1000;
+                saveToFirebase();
+            }
+        }
+
+        // =============================================
+        // ربط الأحداث - استخدام pointer events للتوافق
+        // =============================================
+        coinWrapper.addEventListener('pointerdown', (e) => {
+            handleCoinTap(e);
+        });
+
+        // منع السلوك الافتراضي للتكبير
+        coinWrapper.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        // منع النقر المزدوج للتكبير
+        document.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+        });
+
+        // =============================================
+        // UPDATE UI
+        // =============================================
+        function updateUI() {
+            scoreEl.textContent = G.score.toLocaleString();
+            const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
+            energyFill.style.width = pct + '%';
+            energyText.textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
+            tapLevelEl.textContent = G.tapPower;
+            tapCostEl.textContent = `Cost: ${G.tapCost.toLocaleString()} Coins`;
+            refCountText.textContent = `${G.referralCount} Friends`;
+
+            if (G.premiumItems.vip || G.vipActive) {
+                vipCrown.style.display = 'inline';
+            } else {
+                vipCrown.style.display = 'none';
+            }
+
+            if (G.minerActive) {
+                const rate = G.premiumItems.superBot ? G.minerRate * 2 : G.minerRate;
+                minerStatus.textContent = `⚡ ${rate} / min active`;
+                minerBtn.textContent = '⏹ STOP';
+            } else {
+                minerStatus.textContent = `⏸ Offline: +${G.minerRate} / min`;
+                minerBtn.textContent = '▶ START';
+            }
+
+            renderDailyRewards();
+            renderTasks();
+            renderShop();
+
+            const now = Date.now();
+            if (G.energy <= 0 && G.miningEndTime > now) {
+                const rem = Math.ceil((G.miningEndTime - now) / 1000);
+                const m = Math.floor(rem / 60),
+                    s = rem % 60;
+                hintText.textContent = `⏳ RELOAD: ${m}m ${s}s`;
+            } else if (G.energy <= 0 && G.miningEndTime > 0 && G.miningEndTime <= now) {
+                G.energy = G.maxEnergy;
+                G.miningEndTime = 0;
+                hintText.textContent = '⚡ TAP TO EARN';
+                saveToFirebase();
+            } else if (G.energy > 0) {
+                hintText.textContent = G.turboExpiry > now ? '🔥 TURBO ACTIVE' : '⚡ TAP TO EARN';
+            } else {
+                hintText.textContent = '⏳ WAITING FOR ENERGY';
+            }
+        }
+
+        // =============================================
+        // SAVE TO FIREBASE
+        // =============================================
+        let saveTimer = null;
+
+        function saveToFirebase() {
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                const data = {
+                    username: userName + (G.premiumItems.vip || G.vipActive ? ' 👑' : ''),
+                    score: G.score,
+                    energy: G.energy,
+                    tapPower: G.tapPower,
+                    tapCost: G.tapCost,
+                    minerActive: G.minerActive,
+                    minerRate: G.minerRate,
+                    miningEndTime: G.miningEndTime,
+                    currentDay: G.currentDay,
+                    lastClaimTime: G.lastClaimTime,
+                    completedTasks: G.completedTasks,
+                    referralCount: G.referralCount,
+                    invitedBy: G.invitedBy,
+                    walletAddress: G.walletAddress,
+                    premiumItems: G.premiumItems,
+                    shieldExpiry: G.shieldExpiry,
+                    turboExpiry: G.turboExpiry,
+                    vipActive: G.vipActive,
+                    lastOnlineTime: G.lastOnlineTime,
+                };
+                userRef.set(data).catch(() => {});
+                saveTimer = null;
+            }, 300);
+        }
+
+        // =============================================
+        // LOAD FROM FIREBASE
+        // =============================================
+        userRef.once('value').then((snap) => {
+            const data = snap.val();
             if (data) {
-                if (data.score !== undefined) {
-                    score = data.score;
-                }
-                energy = data.energy !== undefined ? data.energy : 1000;
-                tapPower = data.tapPower || 1;
-                tapCostVal = data.tapCostVal || 1000;
-                miningEndTime = data.miningEndTime || 0;
-                currentDay = data.currentDay || 1;
-                lastClaimTime = data.lastClaimTime || 0;
-                completedTasks = data.completedTasks || {};
-                referralCount = data.referralCount || 0;
-                invitedBy = data.invitedBy || "none";
-                walletAddress = data.walletAddress || "";
-                premiumItems = data.premiumItems || {};
+                G.score = data.score || 0;
+                G.energy = data.energy ?? 1000;
+                G.tapPower = data.tapPower || 1;
+                G.tapCost = data.tapCost || 1000;
+                G.minerActive = data.minerActive || false;
+                G.minerRate = data.minerRate || 0;
+                G.miningEndTime = data.miningEndTime || 0;
+                G.currentDay = data.currentDay || 1;
+                G.lastClaimTime = data.lastClaimTime || 0;
+                G.completedTasks = data.completedTasks || {};
+                G.referralCount = data.referralCount || 0;
+                G.invitedBy = data.invitedBy || "none";
+                G.walletAddress = data.walletAddress || "";
+                G.premiumItems = data.premiumItems || {};
+                G.shieldExpiry = data.shieldExpiry || 0;
+                G.turboExpiry = data.turboExpiry || 0;
+                G.vipActive = data.vipActive || false;
+                G.lastOnlineTime = data.lastOnlineTime || Date.now();
 
-                isDataLoaded = true;
+                if (G.shieldExpiry > 0 && G.shieldExpiry < Date.now()) {
+                    G.shieldExpiry = 0;
+                    G.premiumItems.shield = false;
+                }
+                if (G.turboExpiry > 0 && G.turboExpiry < Date.now()) {
+                    G.turboExpiry = 0;
+                    G.premiumItems.turbo = false;
+                }
+                if (G.premiumItems.vip) G.vipActive = true;
+
+                const now = Date.now();
+                const offlineMs = now - G.lastOnlineTime;
+                if (offlineMs > 5000 && G.minerActive) {
+                    const rate = G.premiumItems.superBot ? G.minerRate * 2 : G.minerRate;
+                    const earned = Math.floor((offlineMs / 60000) * rate);
+                    if (earned > 0) {
+                        G.score += earned;
+                        showToast(`🤖 Offline mining: +${earned.toLocaleString()} coins!`, 'success', 3500);
+                    }
+                }
+                G.lastOnlineTime = now;
             } else {
-                invitedBy = (startParam && startParam !== String(telegramId)) ? startParam : "none";
-                saveToFirebase();
-                isDataLoaded = true;
-
-                if (invitedBy !== "none") {
-                    rewardReferrer(invitedBy);
+                const startParam = tg.initDataUnsafe?.start_param || '';
+                if (startParam && startParam !== String(telegramId)) {
+                    G.invitedBy = startParam;
+                    rewardReferrer(startParam);
                 }
+                G.lastOnlineTime = Date.now();
             }
-            updateDisplays();
+
+            updateUI();
             setupReferralLink();
-        }, (error) => {
-            console.error("Error reading data:", error);
+            startEnergyRegen();
+            startMinerLoop();
+            updatePremiumStatus();
+            saveToFirebase();
         });
 
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
-        });
-
-        tonConnectUI.onStatusChange(wallet => {
-            if (wallet) {
-                walletAddress = wallet.account.address;
-                saveToFirebase();
-            } else {
-                walletAddress = "";
-                saveToFirebase();
-            }
-        });
-
+        // =============================================
+        // REFERRAL
+        // =============================================
         function rewardReferrer(refId) {
             const refUserRef = db.ref('users/' + refId);
             refUserRef.once('value').then((snap) => {
                 if (snap.exists()) {
-                    let refData = snap.val();
-                    let refScore = refData.score || 0;
-                    let refCount = refData.referralCount || 0;
+                    const d = snap.val();
                     refUserRef.update({
-                        score: refScore + 1000,
-                        referralCount: refCount + 1
+                        score: (d.score || 0) + 1000,
+                        referralCount: (d.referralCount || 0) + 1
                     });
                 }
             });
         }
 
-        function saveToFirebase() {
-            if (!isDataLoaded) return;
-
-            let finalName = userName;
-            if (premiumItems['vip']) {
-                finalName = "👑 " + userName;
-            }
-            userRef.set({
-                username: finalName,
-                score: score,
-                energy: energy,
-                tapPower: tapPower,
-                tapCostVal: tapCostVal,
-                miningEndTime: miningEndTime,
-                currentDay: currentDay,
-                lastClaimTime: lastClaimTime,
-                completedTasks: completedTasks,
-                referralCount: referralCount,
-                invitedBy: invitedBy,
-                walletAddress: walletAddress,
-                premiumItems: premiumItems
-            });
-        }
-
         function setupReferralLink() {
-            const refLink = `https://t.me/${botUsername}?start=${telegramId}`;
-            document.getElementById('refLinkText').textContent = refLink;
-            document.getElementById('refCountText').textContent = `${referralCount} Friends`;
+            const link = `https://t.me/${botUsername}?start=${telegramId}`;
+            refLinkText.textContent = link;
+            refCountText.textContent = `${G.referralCount} Friends`;
         }
 
         function copyReferralLink() {
-            const refLink = `https://t.me/${botUsername}?start=${telegramId}`;
-            navigator.clipboard.writeText(refLink).then(() => {
-                if (tg.showAlert) {
-                    tg.showAlert("Referral link copied to clipboard! Share it with your friends. 🚀");
-                } else {
-                    alert("Referral link copied!");
-                }
+            const link = `https://t.me/${botUsername}?start=${telegramId}`;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('📋 Referral link copied!', 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = link;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('📋 Referral link copied!', 'success');
             });
         }
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playClickSound() {
+        // =============================================
+        // ENERGY REGEN
+        // =============================================
+        let energyRegenInterval = null;
+
+        function startEnergyRegen() {
+            if (energyRegenInterval) clearInterval(energyRegenInterval);
+            energyRegenInterval = setInterval(() => {
+                if (G.energy < G.maxEnergy) {
+                    G.energy = Math.min(G.maxEnergy, G.energy + 1);
+                    updateUI();
+                    saveToFirebase();
+                }
+                if (G.energy <= 0 && G.miningEndTime > 0 && G.miningEndTime <= Date.now()) {
+                    G.energy = G.maxEnergy;
+                    G.miningEndTime = 0;
+                    updateUI();
+                    saveToFirebase();
+                }
+            }, 3000);
+        }
+
+        // =============================================
+        // MINER LOOP
+        // =============================================
+        let minerLoopTimer = null;
+
+        function startMinerLoop() {
+            if (minerLoopTimer) clearInterval(minerLoopTimer);
+            minerLoopTimer = setInterval(() => {
+                if (G.minerActive) {
+                    const rate = G.premiumItems.superBot ? G.minerRate * 2 : G.minerRate;
+                    if (rate > 0) {
+                        const earned = Math.floor(rate / 60);
+                        if (earned > 0) {
+                            G.score += earned;
+                            updateUI();
+                            saveToFirebase();
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        // =============================================
+        // UPGRADES
+        // =============================================
+        function buyTapUpgrade() {
+            if (G.score >= G.tapCost) {
+                G.score -= G.tapCost;
+                G.tapPower += 1;
+                G.tapCost = Math.floor(G.tapCost * 2.2);
+                updateUI();
+                saveToFirebase();
+                showToast(`⚡ Multi‑Tap Lv.${G.tapPower}!`, 'success');
+            } else {
+                showToast(`❌ Need ${G.tapCost.toLocaleString()} coins`, 'error');
+            }
+        }
+
+        function toggleMiner() {
+            if (G.minerActive) {
+                G.minerActive = false;
+                showToast('⏹ Miner stopped', 'info');
+            } else {
+                if (G.score < 5000) {
+                    showToast('❌ Need 5,000 coins to start', 'error');
+                    return;
+                }
+                if (!G.minerRate) G.minerRate = 10;
+                G.minerActive = true;
+                G.score -= 5000;
+                showToast('🤖 Miner started! +10/min (Super Bot x2)', 'success');
+            }
+            updateUI();
+            saveToFirebase();
+        }
+
+        // =============================================
+        // DAILY REWARDS
+        // =============================================
+        const dailyRewardsData = [
+            { day: 1, reward: 100 },
+            { day: 2, reward: 250 },
+            { day: 3, reward: 500 },
+            { day: 4, reward: 1000 },
+            { day: 5, reward: 2500 },
+        ];
+
+        function renderDailyRewards() {
+            const container = $('dailyListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            const now = Date.now();
+            const oneDayMs = 86400000;
+            const diff = now - G.lastClaimTime;
+            const canClaim = G.lastClaimTime === 0 || diff >= oneDayMs;
+
+            dailyRewardsData.forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'daily-item';
+                let btnText, disabled = true;
+
+                if (item.day < G.currentDay) {
+                    btnText = '✅ CLAIMED';
+                    disabled = true;
+                } else if (item.day === G.currentDay) {
+                    if (canClaim && G.currentDay <= 5) {
+                        btnText = '🎁 CLAIM';
+                        disabled = false;
+                    } else if (G.currentDay > 5) {
+                        btnText = '🏁 COMPLETE';
+                        disabled = true;
+                    } else {
+                        const rem = Math.ceil((oneDayMs - diff) / 3600000);
+                        btnText = `⏳ ${rem}h`;
+                        disabled = true;
+                    }
+                } else {
+                    btnText = '🔒 LOCKED';
+                    disabled = true;
+                }
+
+                div.innerHTML = `
+                        <div class="daily-info">
+                            <h4>🎁 Day ${item.day}</h4>
+                            <p>+${item.reward.toLocaleString()} Coins</p>
+                        </div>
+                        <button class="daily-btn" ${disabled?'disabled':''} onclick="claimDaily(${item.day},${item.reward})">${btnText}</button>
+                    `;
+                container.appendChild(div);
+            });
+        }
+
+        function claimDaily(day, reward) {
+            if (day !== G.currentDay || G.currentDay > 5) return;
+            const now = Date.now();
+            const oneDayMs = 86400000;
+            if (G.lastClaimTime !== 0 && (now - G.lastClaimTime) < oneDayMs) {
+                showToast('⏳ Already claimed today!', 'error');
+                return;
+            }
+            G.lastClaimTime = now;
+            G.score += reward;
+            G.currentDay = Math.min(G.currentDay + 1, 5);
+            updateUI();
+            saveToFirebase();
+            showToast(`🎁 Day ${day} reward: +${reward.toLocaleString()} coins!`, 'success');
+        }
+
+        // =============================================
+        // TASKS
+        // =============================================
+        function renderTasks() {
+            const tgBtn = $('taskTgBtn');
+            const xBtn = $('taskXBtn');
+            if (G.completedTasks.tg) {
+                tgBtn.textContent = '✅ DONE';
+                tgBtn.classList.add('claimed');
+                tgBtn.disabled = true;
+            } else {
+                tgBtn.textContent = '📢 VISIT & CLAIM';
+                tgBtn.classList.remove('claimed');
+                tgBtn.disabled = false;
+            }
+            if (G.completedTasks.x) {
+                xBtn.textContent = '✅ DONE';
+                xBtn.classList.add('claimed');
+                xBtn.disabled = true;
+            } else {
+                xBtn.textContent = '🐦 VISIT & CLAIM';
+                xBtn.classList.remove('claimed');
+                xBtn.disabled = false;
+            }
+        }
+
+        function doTask(taskId, url, reward) {
+            if (G.completedTasks[taskId]) return;
             try {
-                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(450, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.08);
-            } catch (e) {}
+                if (tg.openLink) tg.openLink(url);
+                else window.open(url, '_blank');
+            } catch (_) { window.open(url, '_blank'); }
+            G.completedTasks[taskId] = true;
+            G.score += reward;
+            updateUI();
+            saveToFirebase();
+            showToast(`✅ Task complete! +${reward.toLocaleString()} coins`, 'success');
         }
 
-        function updateDisplays() {
-            scoreElement.textContent = score.toLocaleString();
-            let percentage = (energy / maxEnergy) * 100;
-            energyFill.style.width = percentage + '%';
-            energyText.textContent = `${energy} / ${maxEnergy}`;
-            tapLevelElem.textContent = tapPower;
-            tapCostElem.textContent = `Cost: ${tapCostVal.toLocaleString()} Coins`;
-            document.getElementById('refCountText').textContent = `${referralCount} Friends`;
-
-            renderDailyRewards();
-            renderTasks();
-            renderShop();
-        }
-
+        // =============================================
+        // SHOP
+        // =============================================
         function renderShop() {
-            let botBtn = document.getElementById('shopBotBtn');
-            let turboBtn = document.getElementById('shopTurboBtn');
-            let vipBtn = document.getElementById('shopVipBtn');
-
-            if (premiumItems['bot']) {
-                botBtn.textContent = "ACTIVATED ✓";
-                botBtn.classList.add('purchased');
-                botBtn.disabled = true;
-            }
-            if (premiumItems['turbo']) {
-                turboBtn.textContent = "ACTIVE 5X";
-                turboBtn.classList.add('purchased');
-                turboBtn.disabled = true;
-            }
-            if (premiumItems['vip']) {
-                vipBtn.textContent = "OWNED 👑";
-                vipBtn.classList.add('purchased');
-                vipBtn.disabled = true;
-            }
+            const items = ['bot', 'turbo', 'superBot', 'shield', 'vip'];
+            const map = {
+                bot: 'shopBotBtn',
+                turbo: 'shopTurboBtn',
+                superBot: 'shopSuperBtn',
+                shield: 'shopShieldBtn',
+                vip: 'shopVipBtn'
+            };
+            const labels = {
+                bot: '✅ ACTIVE',
+                turbo: '⚡ ACTIVE',
+                superBot: '✅ ACTIVE',
+                shield: '🛡️ ACTIVE',
+                vip: '👑 OWNED'
+            };
+            items.forEach((id) => {
+                const el = $(map[id]);
+                if (!el) return;
+                if (G.premiumItems[id]) {
+                    el.textContent = labels[id] || 'OWNED';
+                    el.classList.add('purchased');
+                    el.disabled = true;
+                } else {
+                    const defaultText = { bot: 'BUY', turbo: 'BUY', superBot: 'BUY', shield: 'BUY', vip: 'BUY' };
+                    el.textContent = defaultText[id] || 'BUY';
+                    el.classList.remove('purchased');
+                    el.disabled = false;
+                }
+            });
         }
 
         async function buyCoinPackage(coinsAmount, amountInTon) {
             if (!tonConnectUI.connected) {
-                if (tg.showAlert) {
-                    tg.showAlert("Please connect your TON Wallet first from the Tasks tab! 💎");
-                } else {
-                    alert("Please connect your TON Wallet first!");
-                }
+                showToast('💎 Connect TON wallet first!', 'error');
                 switchTab('tasks');
                 return;
             }
-
             try {
-                const nanoTonAmount = Math.floor(amountInTon * 1000000000).toString();
-                const destinationAddress = "UQCuewaUAwR8I4ECznl0HeQP-BhzxcJUtV_GT2NPJpu1N-fo"; 
-
-                const transaction = {
+                const nano = Math.floor(amountInTon * 1e9).toString();
+                const tx = {
                     validUntil: Math.floor(Date.now() / 1000) + 300,
-                    messages: [
-                        {
-                            address: destinationAddress,
-                            amount: nanoTonAmount
-                        }
-                    ]
+                    messages: [{ address: "UQCuewaUAwR8I4ECznl0HeQP-BhzxcJUtV_GT2NPJpu1N-fo", amount: nano }]
                 };
-
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
+                const result = await tonConnectUI.sendTransaction(tx);
                 if (result) {
-                    score += coinsAmount;
+                    G.score += coinsAmount;
+                    updateUI();
                     saveToFirebase();
-                    updateDisplays();
-
-                    if (tg.showAlert) {
-                        tg.showAlert(`Successfully purchased +${coinsAmount.toLocaleString()} Bebo Coins! 🎉🚀`);
-                    }
+                    showToast(`💰 +${coinsAmount.toLocaleString()} coins purchased!`, 'success');
                 }
             } catch (e) {
-                console.log(e);
-                if (tg.showAlert) {
-                    tg.showAlert("Transaction cancelled or failed.");
-                } else {
-                    alert("Transaction cancelled or failed.");
-                }
+                showToast('❌ Transaction cancelled or failed', 'error');
             }
         }
 
         async function buyPremiumItem(itemId, amountInTon) {
             if (!tonConnectUI.connected) {
-                if (tg.showAlert) {
-                    tg.showAlert("Please connect your TON Wallet first from the Tasks tab! 💎");
-                } else {
-                    alert("Please connect your TON Wallet first!");
-                }
+                showToast('💎 Connect TON wallet first!', 'error');
                 switchTab('tasks');
                 return;
             }
-
-            try {
-                const nanoTonAmount = Math.floor(amountInTon * 1000000000).toString();
-                const destinationAddress = "UQCuewaUAwR8I4ECznl0HeQP-BhzxcJUtV_GT2NPJpu1N-fo"; 
-
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 300,
-                    messages: [
-                        {
-                            address: destinationAddress,
-                            amount: nanoTonAmount
-                        }
-                    ]
-                };
-
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
-                if (result) {
-                    premiumItems[itemId] = true;
-                    
-                    if (itemId === 'turbo') {
-                        tapPower += 5; 
-                    }
-
-                    saveToFirebase();
-                    updateDisplays();
-
-                    if (tg.showAlert) {
-                        tg.showAlert(`Successfully purchased! Enjoy your elite upgrade! 🎉🚀`);
-                    }
-                }
-            } catch (e) {
-                console.log(e);
-                if (tg.showAlert) {
-                    tg.showAlert("Transaction cancelled or failed.");
-                } else {
-                    alert("Transaction cancelled or failed.");
-                }
-            }
-        }
-
-        function renderDailyRewards() {
-            const container = document.getElementById('dailyListContainer');
-            container.innerHTML = '';
-            
-            let now = Date.now();
-            let timeDiff = now - lastClaimTime;
-            let oneDayMs = 24 * 60 * 60 * 1000;
-            let canClaimNow = (lastClaimTime === 0) || (timeDiff >= oneDayMs);
-
-            dailyRewardsData.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'daily-item';
-                
-                let btnText = "CLAIM";
-                let isDisabled = true;
-                
-                if (item.day < currentDay) {
-                    btnText = "CLAIMED ✓";
-                    isDisabled = true;
-                } else if (item.day === currentDay) {
-                    if (canClaimNow) {
-                        btnText = "CLAIM";
-                        isDisabled = false;
-                    } else {
-                        let remainingHours = Math.ceil((oneDayMs - timeDiff) / (1000 * 60 * 60));
-                        btnText = `WAIT ${remainingHours}H`;
-                        isDisabled = true;
-                    }
-                } else {
-                    btnText = "LOCKED 🔒";
-                    isDisabled = true;
-                }
-
-                div.innerHTML = `
-                    <div class="daily-info">
-                        <h4>🎁 Day ${item.day} Reward</h4>
-                        <p>+${item.reward.toLocaleString()} Coins</p>
-                    </div>
-                    <button class="daily-btn" ${isDisabled ? 'disabled' : ''} onclick="claimDaily(${item.day}, ${item.reward})">${btnText}</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderTasks() {
-            let btnTg = document.getElementById('taskTgBtn');
-            let btnX = document.getElementById('taskXBtn');
-
-            if (completedTasks['tg']) {
-                btnTg.textContent = "DONE ✓";
-                btnTg.classList.add('claimed');
-                btnTg.disabled = true;
-            } else {
-                btnTg.textContent = "VISIT & CLAIM";
-                btnTg.classList.remove('claimed');
-                btnTg.disabled = false;
-            }
-
-            if (completedTasks['x']) {
-                btnX.textContent = "DONE ✓";
-                btnX.classList.add('claimed');
-                btnX.disabled = true;
-            } else {
-                btnX.textContent = "VISIT & CLAIM";
-                btnX.classList.remove('claimed');
-                btnX.disabled = false;
-            }
-        }
-
-        setInterval(() => {
-            let now = Date.now();
-            if (energy <= 0 && miningEndTime > now) {
-                let remainingSec = Math.ceil((miningEndTime - now) / 1000);
-                let mins = Math.floor(remainingSec / 60);
-                let secs = remainingSec % 60;
-                hintText.textContent = `RELOADING: ${mins}m ${secs}s`;
-            } else if (energy <= 0 && miningEndTime > 0 && miningEndTime <= now) {
-                energy = maxEnergy;
-                miningEndTime = 0;
-                hintText.textContent = "TAP TO EARN";
-                updateDisplays();
-                saveToFirebase();
-            }
-        }, 1000);
-
-        coinButton.addEventListener('click', (e) => {
-            playClickSound();
-            handleTap(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
-        });
-
-        function handleTap(x, y) {
-            let now = Date.now();
-            if (energy <= 0) {
-                if (miningEndTime === 0) {
-                    miningEndTime = now + (30 * 60 * 1000);
-                    saveToFirebase();
-                }
+            if (G.premiumItems[itemId]) {
+                showToast('✅ Already owned!', 'info');
                 return;
             }
-
-            energy = Math.max(0, energy - tapPower);
-            score += tapPower;
-            updateDisplays();
-            saveToFirebase();
-
-            if (energy <= 0) {
-                miningEndTime = now + (30 * 60 * 1000);
-                saveToFirebase();
-            }
-
-            if (tg.HapticFeedback) {
-                try { tg.HapticFeedback.impactOccurred('medium'); } catch (err) {}
-            }
-
-            createFloatingNumber(x, y, `+${tapPower}`);
-        }
-
-        function createFloatingNumber(x, y, text) {
-            const el = document.createElement('div');
-            el.textContent = text;
-            el.style.position = 'fixed';
-            el.style.left = `${x}px`;
-            el.style.top = `${y - 30}px`;
-            el.style.color = '#00ffff';
-            el.style.fontFamily = "'Press Start 2P', cursive";
-            el.style.fontSize = '11px';
-            el.style.fontWeight = 'bold';
-            el.style.pointerEvents = 'none';
-            el.style.zIndex = '999';
-            document.body.appendChild(el);
-            
-            el.animate([
-                { transform: 'translateY(0px) scale(0.8)', opacity: 1 },
-                { transform: 'translateY(-60px) scale(1.2)', opacity: 0 }
-            ], { duration: 400 });
-
-            setTimeout(() => el.remove(), 400);
-        }
-
-        function buyTapUpgrade() {
-            if (score >= tapCostVal) {
-                score -= tapCostVal;
-                tapPower += 1;
-                tapCostVal = Math.floor(tapCostVal * 2.5);
-                updateDisplays();
-                saveToFirebase();
-                if (tg.showAlert) tg.showAlert(`Upgrade Successful! +${tapPower} per tap`);
-            } else {
-                if (tg.showAlert) tg.showAlert("Not enough coins! Keep tapping.");
-            }
-        }
-
-        function claimDaily(day, reward) {
-            if (day !== currentDay) return;
-            
-            lastClaimTime = Date.now();
-            currentDay += 1;
-            if (currentDay > 5) currentDay = 5;
-
-            score += reward;
-            updateDisplays();
-            saveToFirebase();
-            if (tg.showAlert) tg.showAlert(`Successfully claimed Day ${day} reward (+${reward} Coins)! 🎉`);
-        }
-
-        function doTask(taskId, url, reward) {
-            if (completedTasks[taskId]) return;
-            
             try {
-                if (tg.openLink) {
-                    tg.openLink(url);
-                } else {
-                    window.open(url, '_blank');
+                const nano = Math.floor(amountInTon * 1e9).toString();
+                const tx = {
+                    validUntil: Math.floor(Date.now() / 1000) + 300,
+                    messages: [{ address: "UQCuewaUAwR8I4ECznl0HeQP-BhzxcJUtV_GT2NPJpu1N-fo", amount: nano }]
+                };
+                const result = await tonConnectUI.sendTransaction(tx);
+                if (result) {
+                    G.premiumItems[itemId] = true;
+                    if (itemId === 'turbo') {
+                        G.turboExpiry = Date.now() + 3600000;
+                        showToast('⚡ Turbo active for 1 hour!', 'success');
+                    }
+                    if (itemId === 'shield') {
+                        G.shieldExpiry = Date.now() + 86400000;
+                        showToast('🛡️ Shield active for 24 hours!', 'success');
+                    }
+                    if (itemId === 'vip') {
+                        G.vipActive = true;
+                        showToast('👑 VIP Crown unlocked!', 'success');
+                    }
+                    if (itemId === 'bot') {
+                        G.minerRate = Math.max(G.minerRate, 10);
+                        if (!G.minerActive) { G.minerActive = true;
+                            G.score -= 5000; }
+                        showToast('🤖 Auto‑Bot activated!', 'success');
+                    }
+                    if (itemId === 'superBot') {
+                        G.minerRate = Math.max(G.minerRate, 20);
+                        if (!G.minerActive) { G.minerActive = true;
+                            G.score -= 5000; }
+                        showToast('🤖 Super Bot activated! x2 speed', 'success');
+                    }
+                    updateUI();
+                    saveToFirebase();
+                    updatePremiumStatus();
                 }
             } catch (e) {
-                window.open(url, '_blank');
+                showToast('❌ Transaction cancelled or failed', 'error');
             }
+        }
 
-            completedTasks[taskId] = true;
-            score += reward;
-            updateDisplays();
+        function updatePremiumStatus() {
+            const now = Date.now();
+            if (G.premiumItems.turbo && G.turboExpiry > now) {
+                // active
+            } else if (G.premiumItems.turbo) {
+                G.turboExpiry = 0;
+                G.premiumItems.turbo = false;
+                saveToFirebase();
+            }
+            if (G.premiumItems.shield && G.shieldExpiry > now) {
+                // active
+            } else if (G.premiumItems.shield) {
+                G.shieldExpiry = 0;
+                G.premiumItems.shield = false;
+                saveToFirebase();
+            }
+            if (G.premiumItems.vip) G.vipActive = true;
+            updateUI();
+        }
+
+        // =============================================
+        // TON CONNECT
+        // =============================================
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        tonConnectUI.onStatusChange((wallet) => {
+            if (wallet) {
+                G.walletAddress = wallet.account.address;
+                showToast('💎 Wallet connected!', 'success');
+            } else {
+                G.walletAddress = '';
+            }
             saveToFirebase();
-            
-            setTimeout(() => {
-                if (tg.showAlert) tg.showAlert(`Task completed! +${reward} Coins added! 🎉`);
-            }, 500);
-        }
+        });
 
-        function switchTab(tab) {
-            const views = ['gameView', 'upgradesView', 'shopView', 'wheelView', 'tasksView', 'friendsView'];
-            const btns = ['btnHome', 'btnUpgrades', 'btnShop', 'btnWheel', 'btnTasks'];
-
-            views.forEach(v => {
-                let el = document.getElementById(v);
-                if (el) el.style.display = 'none';
-            });
-            btns.forEach(b => {
-                let el = document.getElementById(b);
-                if (el) el.classList.remove('active');
-            });
-
-            if (tab === 'home') {
-                document.getElementById('gameView').style.display = 'flex';
-                document.getElementById('btnHome').classList.add('active');
-            } else if (tab === 'upgrades') {
-                document.getElementById('upgradesView').style.display = 'flex';
-                document.getElementById('btnUpgrades').classList.add('active');
-            } else if (tab === 'shop') {
-                document.getElementById('shopView').style.display = 'flex';
-                document.getElementById('btnShop').classList.add('active');
-                renderShop();
-            } else if (tab === 'wheel') {
-                document.getElementById('wheelView').style.display = 'flex';
-                document.getElementById('btnWheel').classList.add('active');
-                renderDailyRewards();
-            } else if (tab === 'tasks') {
-                document.getElementById('tasksView').style.display = 'flex';
-                document.getElementById('btnTasks').classList.add('active');
-            } else if (tab === 'friends') {
-                document.getElementById('friendsView').style.display = 'flex';
-                setupReferralLink();
-            }
-        }
-
+        // =============================================
+        // LEADERBOARD
+        // =============================================
         function openLeaderboardModal() {
-            document.getElementById('leaderboardModal').style.display = 'flex';
-            loadTopHundredLeaders();
+            $('leaderboardModal').style.display = 'flex';
+            loadTopHundred();
         }
 
         function closeLeaderboardModal() {
-            document.getElementById('leaderboardModal').style.display = 'none';
+            $('leaderboardModal').style.display = 'none';
         }
 
-        function loadTopHundredLeaders() {
-            const container = document.getElementById('topHundredContainer');
-            container.innerHTML = `<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>`;
-            
-            db.ref('users').orderByChild('score').limitToLast(100).once('value').then((snapshot) => {
-                let leaders = [];
-                snapshot.forEach((childSnapshot) => {
-                    let userData = childSnapshot.val();
-                    leaders.push({ name: userData.username || "PLAYER", score: userData.score || 0 });
+        function loadTopHundred() {
+            const container = $('topHundredContainer');
+            container.innerHTML = '<div style="text-align:center;color:#888;font-size:10px;padding:20px;">Loading…</div>';
+            db.ref('users').orderByChild('score').limitToLast(100).once('value').then((snap) => {
+                const leaders = [];
+                snap.forEach((child) => {
+                    const d = child.val();
+                    leaders.push({ name: d.username || 'PLAYER', score: d.score || 0 });
                 });
                 leaders.sort((a, b) => b.score - a.score);
-                
-                container.innerHTML = "";
-                if (leaders.length === 0) {
-                    container.innerHTML = `<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">No players yet. Start tapping!</div>`;
+                container.innerHTML = '';
+                if (!leaders.length) {
+                    container.innerHTML =
+                        '<div style="text-align:center;color:#888;font-size:10px;padding:20px;">No players yet. Start tapping!</div>';
                     return;
                 }
-
-                leaders.forEach((item, index) => {
-                    let rankClass = index === 0 ? "gold" : (index === 1 ? "silver" : (index === 2 ? "bronze" : ""));
-                    let medalText = index === 0 ? "🥇 " : (index === 1 ? "🥈 " : (index === 2 ? "🥉 " : `#${index + 1} `));
-                    
-                    let row = document.createElement('div');
-                    row.className = `rank-row ${rankClass}`;
-                    row.innerHTML = `<span>${medalText}${item.name}</span> <span>${item.score.toLocaleString()}</span>`;
+                leaders.forEach((item, i) => {
+                    const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                    const medal = i === 0 ? '🥇 ' : i === 1 ? '🥈 ' : i === 2 ? '🥉 ' : `#${i+1} `;
+                    const row = document.createElement('div');
+                    row.className = `rank-row ${cls}`;
+                    row.innerHTML = `<span>${medal}${item.name}</span><span>${item.score.toLocaleString()}</span>`;
                     container.appendChild(row);
                 });
             });
         }
+
+        // =============================================
+        // TAB SWITCHING
+        // =============================================
+        const views = ['gameView', 'upgradesView', 'shopView', 'wheelView', 'tasksView', 'friendsView'];
+        const navBtns = ['btnHome', 'btnUpgrades', 'btnShop', 'btnWheel', 'btnTasks'];
+
+        function switchTab(tab) {
+            views.forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+            navBtns.forEach(id => { const el = $(id); if (el) el.classList.remove('active'); });
+
+            const map = {
+                home: { view: 'gameView', btn: 'btnHome' },
+                upgrades: { view: 'upgradesView', btn: 'btnUpgrades' },
+                shop: { view: 'shopView', btn: 'btnShop' },
+                wheel: { view: 'wheelView', btn: 'btnWheel' },
+                tasks: { view: 'tasksView', btn: 'btnTasks' },
+                friends: { view: 'friendsView', btn: 'btnTasks' }
+            };
+            const target = map[tab];
+            if (!target) return;
+            if (tab === 'friends') {
+                $(target.view).style.display = 'flex';
+                $('btnTasks').classList.add('active');
+                setupReferralLink();
+                return;
+            }
+            $(target.view).style.display = 'flex';
+            const btnEl = $(target.btn);
+            if (btnEl) btnEl.classList.add('active');
+            if (tab === 'shop') renderShop();
+            if (tab === 'wheel') renderDailyRewards();
+            if (tab === 'tasks') renderTasks();
+            if (tab === 'upgrades') updateUI();
+        }
+
+        // =============================================
+        // ADAPT TO VIEWPORT
+        // =============================================
+        function adaptToViewport() {
+            const vh = window.innerHeight;
+            const vw = window.innerWidth;
+            if (gameContainer) {
+                gameContainer.style.height = vh + 'px';
+                gameContainer.style.maxHeight = '100dvh';
+            }
+            try { tg.expand(); } catch (_) {}
+            const isSmall = vh < 650;
+            if (coinBtn && coinGlow) {
+                if (isSmall) {
+                    coinBtn.style.width = '100px';
+                    coinBtn.style.height = '100px';
+                    coinGlow.style.width = '130px';
+                    coinGlow.style.height = '130px';
+                } else {
+                    coinBtn.style.width = '';
+                    coinBtn.style.height = '';
+                    coinGlow.style.width = '';
+                    coinGlow.style.height = '';
+                }
+            }
+            updateUI();
+        }
+
+        window.addEventListener('resize', adaptToViewport);
+        window.addEventListener('orientationchange', () => setTimeout(adaptToViewport, 300));
+        try { tg.onEvent('viewportChanged', adaptToViewport); } catch (_) {}
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => setTimeout(adaptToViewport, 200));
+        }
+
+        // =============================================
+        // INIT
+        // =============================================
+        document.getElementById('username').textContent = userName;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                G.lastOnlineTime = Date.now();
+                saveToFirebase();
+            } else {
+                adaptToViewport();
+                userRef.once('value').then((snap) => {
+                    const data = snap.val();
+                    if (data) {
+                        G.score = data.score || 0;
+                        G.energy = data.energy ?? 1000;
+                        G.tapPower = data.tapPower || 1;
+                        G.tapCost = data.tapCost || 1000;
+                        G.minerActive = data.minerActive || false;
+                        G.minerRate = data.minerRate || 0;
+                        G.miningEndTime = data.miningEndTime || 0;
+                        G.currentDay = data.currentDay || 1;
+                        G.lastClaimTime = data.lastClaimTime || 0;
+                        G.completedTasks = data.completedTasks || {};
+                        G.referralCount = data.referralCount || 0;
+                        G.invitedBy = data.invitedBy || "none";
+                        G.walletAddress = data.walletAddress || "";
+                        G.premiumItems = data.premiumItems || {};
+                        G.shieldExpiry = data.shieldExpiry || 0;
+                        G.turboExpiry = data.turboExpiry || 0;
+                        G.vipActive = data.vipActive || false;
+                        G.lastOnlineTime = data.lastOnlineTime || Date.now();
+                        updateUI();
+                        updatePremiumStatus();
+                        setupReferralLink();
+                    }
+                });
+            }
+        });
+
+        $('leaderboardModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeLeaderboardModal();
+        });
+
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+
+        setTimeout(adaptToViewport, 100);
+        setTimeout(adaptToViewport, 500);
+
+        updateUI();
+        setupReferralLink();
+
+        console.log('🚀 Bebo Coin Game - Realistic Tap Enabled!');
+        console.log(`👤 User: ${userName} (${telegramId})`);
+        console.log('✅ All systems ready. Happy tapping! 😍😍😍');
     </script>
 </body>
 </html>
-
