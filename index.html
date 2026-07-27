@@ -383,34 +383,84 @@
         .wallet-section p { font-size: 7px; color: #aaa; }
         #ton-connect-button { display: flex; justify-content: center; width: 100%; }
 
+        /* ======================================== */
+        /* الأزرار السفلية - ثيم أسود احترافي كبير */
+        /* ======================================== */
         .footer-nav {
             display: flex;
             justify-content: space-around;
-            background-color: rgba(10, 10, 10, 0.92);
-            padding: 4px 4px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+            background: #0a0a0a;
+            padding: 10px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             flex-shrink: 0;
+            gap: 4px;
         }
 
         .nav-btn {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 7px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #666;
+            font-size: 10px;
             cursor: pointer;
             font-weight: 800;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            padding: 4px 8px;
-            border-radius: 10px;
+            gap: 4px;
+            padding: 10px 18px;
+            border-radius: 14px;
             font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            flex: 1;
+            min-width: 60px;
+            letter-spacing: 0.5px;
         }
-        .nav-icon { font-size: 13px; }
-        .nav-btn.active { color: #fff; background: rgba(0, 255, 255, 0.12); border: 1px solid rgba(0, 255, 255, 0.3); text-shadow: 0 0 8px rgba(0, 255, 255, 0.8); }
+
+        .nav-btn .nav-icon {
+            font-size: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-btn span:last-child {
+            font-size: 8px;
+            opacity: 0.8;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(145deg, rgba(0, 255, 255, 0.12), rgba(0, 255, 255, 0.04));
+            border-color: rgba(0, 255, 255, 0.3);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.08), inset 0 0 20px rgba(0, 255, 255, 0.03);
+        }
+
+        .nav-btn.active .nav-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.4));
+        }
+
+        .nav-btn.active::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            border-radius: 0 0 4px 4px;
+            filter: blur(2px);
+        }
 
         .modal-overlay {
             position: fixed;
@@ -507,7 +557,7 @@
                 <div class="energy-container">
                     <div class="energy-info">
                         <span>⚡ ENERGY</span>
-                        <span id="energyText">1000 / 1000</span>
+                        <span id="energyText">100 / 100</span>
                     </div>
                     <div class="energy-bar-bg">
                         <div class="energy-bar-fill" id="energyFill"></div>
@@ -526,13 +576,6 @@
                         <p id="tapCost">Cost: 1,000 Coins</p>
                     </div>
                     <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
-                </div>
-                <div class="upgrade-item" style="border-color:rgba(255,215,0,0.25);">
-                    <div class="upgrade-info">
-                        <h4>🤖 Auto-Miner</h4>
-                        <p id="minerStatus">Cost: 5,000 Coins (+10/min)</p>
-                    </div>
-                    <button class="upgrade-btn" id="minerBtn" onclick="toggleMiner()">BUY / START</button>
                 </div>
             </div>
         </div>
@@ -585,11 +628,24 @@
             </div>
         </div>
 
+        <!-- الأزرار السفلية - ثيم أسود كبير -->
         <nav class="footer-nav">
-            <button class="nav-btn active" id="btnHome" onclick="switchTab('home')"><span class="nav-icon">⚡</span><span>HOME</span></button>
-            <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')"><span class="nav-icon">🚀</span><span>BOOST</span></button>
-            <button class="nav-btn" id="btnShop" onclick="switchTab('shop')"><span class="nav-icon">💎</span><span>SHOP</span></button>
-            <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')"><span class="nav-icon">📋</span><span>TASKS</span></button>
+            <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
+                <span class="nav-icon">⚡</span>
+                <span>HOME</span>
+            </button>
+            <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')">
+                <span class="nav-icon">🚀</span>
+                <span>BOOST</span>
+            </button>
+            <button class="nav-btn" id="btnShop" onclick="switchTab('shop')">
+                <span class="nav-icon">💎</span>
+                <span>SHOP</span>
+            </button>
+            <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')">
+                <span class="nav-icon">📋</span>
+                <span>TASKS</span>
+            </button>
         </nav>
     </div>
 
@@ -647,12 +703,10 @@
 
         const G = {
             score: 0,
-            energy: 1000,
-            maxEnergy: 1000,
+            energy: 100,
+            maxEnergy: 100,
             tapPower: 1,
             tapCost: 1000,
-            minerActive: false,
-            minerRate: 0,
             currentDay: 1,
             lastClaimTime: 0,
             completedTasks: {},
@@ -672,19 +726,47 @@
             setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, duration);
         }
 
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn("Web Audio API not supported");
+                    return false;
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return true;
+        }
+
         function playTapSound() {
             try {
-                let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (!initAudio()) return;
+                if (!audioCtx) return;
+
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
+                
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(520, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.06);
-                gain.gain.setValueAtTime(0.10, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.06);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.06);
-            } catch (_) {}
+                osc.frequency.setValueAtTime(620, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.07);
+                
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.005, audioCtx.currentTime + 0.07);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.07);
+                
+            } catch (error) {
+                console.log("Sound error:", error);
+            }
         }
 
         function spawnParticles(x, y, count = 8) {
@@ -734,6 +816,9 @@
         const coinWrapper = $('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
+            
+            initAudio();
+
             const clientX = e.clientX || (e.touches ? e.touches[0].clientX : window.innerWidth/2);
             const clientY = e.clientY || (e.touches ? e.touches[0].clientY : window.innerHeight/2);
 
@@ -775,33 +860,6 @@
             $('tapLevel').textContent = G.tapPower;
             $('tapCost').textContent = `Cost: ${G.tapCost.toLocaleString()} Coins`;
             $('refCountText').textContent = `${G.referralCount} Friends`;
-
-            if (G.minerActive) {
-                $('minerStatus').textContent = `⚡ Active: +${G.minerRate}/min`;
-                $('minerBtn').textContent = '⏹ ACTIVE';
-                $('minerBtn').style.background = '#28a745';
-            } else {
-                $('minerStatus').textContent = `Cost: 5,000 Coins (+10/min)`;
-                $('minerBtn').textContent = 'BUY / START';
-                $('minerBtn').style.background = '';
-            }
-        }
-
-        function toggleMiner() {
-            if (G.minerActive) {
-                showToast('🤖 Auto-Miner is already running!', 'info');
-                return;
-            }
-            if (G.score < 5000) {
-                showToast('❌ Need 5,000 coins to buy Auto-Miner!', 'error');
-                return;
-            }
-            G.score -= 5000;
-            G.minerActive = true;
-            G.minerRate = 10;
-            updateUI();
-            saveToFirebase();
-            showToast('🎉 Auto-Miner successfully purchased and activated!', 'success');
         }
 
         function buyTapUpgrade() {
@@ -817,15 +875,12 @@
             }
         }
 
-        // دالة الحفظ المزدوجة (محلياً وفي Firebase لمنع الرجوع للصفر)
         function saveToFirebase() {
             const localData = {
                 score: G.score,
                 energy: G.energy,
                 tapPower: G.tapPower,
                 tapCost: G.tapCost,
-                minerActive: G.minerActive,
-                minerRate: G.minerRate,
                 currentDay: G.currentDay,
                 lastClaimTime: G.lastClaimTime,
                 completedTasks: G.completedTasks,
@@ -844,17 +899,14 @@
             });
         }
 
-        // استرجاع البيانات محلياً أولاً لمنع رجوع الرصيد للصفر فوراً
         const savedLocal = localStorage.getItem('bebo_game_save');
         if (savedLocal) {
             try {
                 const data = JSON.parse(savedLocal);
                 G.score = data.score || 0;
-                G.energy = data.energy ?? 1000;
+                G.energy = data.energy ?? 100;
                 G.tapPower = data.tapPower || 1;
                 G.tapCost = data.tapCost || 1000;
-                G.minerActive = data.minerActive || false;
-                G.minerRate = data.minerRate || 0;
                 G.currentDay = data.currentDay || 1;
                 G.lastClaimTime = data.lastClaimTime || 0;
                 G.completedTasks = data.completedTasks || {};
@@ -870,26 +922,15 @@
             const data = snap.val();
             if (data && (data.score >= G.score)) {
                 G.score = data.score || 0;
-                G.energy = data.energy ?? 1000;
+                G.energy = data.energy ?? 100;
                 G.tapPower = data.tapPower || 1;
                 G.tapCost = data.tapCost || 1000;
-                G.minerActive = data.minerActive || false;
-                G.minerRate = data.minerRate || 0;
                 G.currentDay = data.currentDay || 1;
                 G.lastClaimTime = data.lastClaimTime || 0;
                 G.completedTasks = data.completedTasks || {};
                 G.referralCount = data.referralCount || 0;
                 G.walletAddress = data.walletAddress || "";
                 G.premiumItems = data.premiumItems || {};
-
-                const offlineMs = Date.now() - (data.lastOnlineTime || Date.now());
-                if (offlineMs > 5000 && G.minerActive && G.minerRate > 0) {
-                    const earned = Math.floor((offlineMs / 60000) * G.minerRate);
-                    if (earned > 0) {
-                        G.score += earned;
-                        showToast(`🤖 Auto-Miner collected +${earned.toLocaleString()} coins while away!`, 'success', 4000);
-                    }
-                }
             } else {
                 const startParam = tg.initDataUnsafe?.start_param || '';
                 if (startParam && startParam !== String(telegramId)) {
@@ -911,12 +952,8 @@
         });
 
         setInterval(() => {
-            if (G.minerActive && G.minerRate > 0) {
-                G.score += G.minerRate / 60;
-                updateUI();
-            }
             if (G.energy < G.maxEnergy) {
-                G.energy = Math.min(G.maxEnergy, G.energy + 2);
+                G.energy = Math.min(G.maxEnergy, G.energy + 0.5);
                 updateUI();
             }
             saveToFirebase();
