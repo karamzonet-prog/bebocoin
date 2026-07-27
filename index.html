@@ -240,6 +240,7 @@
             font-weight: 800;
         }
 
+        /* Daily Rewards UI */
         .daily-rewards-container {
             width: 100%;
             max-width: 340px;
@@ -478,6 +479,7 @@
             </div>
         </header>
 
+        <!-- Home View -->
         <main class="tap-section" id="gameView">
             <div class="coin-wrapper" id="coinButton">
                 <div class="coin-glow"></div>
@@ -500,6 +502,7 @@
             </div>
         </main>
 
+        <!-- Upgrades View -->
         <div class="section-view" id="upgradesView" style="display: none;">
             <h3>BOOSTERS</h3>
             <div class="upgrades-list">
@@ -513,11 +516,15 @@
             </div>
         </div>
 
+        <!-- Daily Rewards View (Fixed Streak System) -->
         <div class="section-view" id="wheelView" style="display: none;">
             <h3>DAILY REWARDS</h3>
-            <div class="daily-rewards-container" id="dailyListContainer"></div>
+            <div class="daily-rewards-container" id="dailyListContainer">
+                <!-- Generated dynamically via JS for strict 1-day interval -->
+            </div>
         </div>
 
+        <!-- Tasks View (Fixed Telegram & X link handling) -->
         <div class="section-view" id="tasksView" style="display: none;">
             <h3>SOCIAL TASKS</h3>
             <div class="tasks-list">
@@ -538,11 +545,13 @@
             </div>
         </div>
 
+        <!-- Rank View -->
         <div class="section-view" id="rankView" style="display: none;">
             <h3>LEADERBOARD</h3>
             <div class="ranking-list" id="rankingList"></div>
         </div>
 
+        <!-- Footer -->
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span><span>HOME</span>
@@ -582,8 +591,10 @@
         let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 5000;
         let miningEndTime = localStorage.getItem('b3bo_miningEndTime') ? parseInt(localStorage.getItem('b3bo_miningEndTime')) : 0;
         
+        // Daily Streak variables
         let currentDay = localStorage.getItem('b3bo_currentDay') ? parseInt(localStorage.getItem('b3bo_currentDay')) : 1;
         let lastClaimTime = localStorage.getItem('b3bo_lastClaimTime') ? parseInt(localStorage.getItem('b3bo_lastClaimTime')) : 0;
+        
         let completedTasks = JSON.parse(localStorage.getItem('b3bo_completedTasks')) || {};
 
         const scoreElement = document.getElementById('score');
@@ -791,7 +802,7 @@
             
             lastClaimTime = Date.now();
             currentDay += 1;
-            if (currentDay > 5) currentDay = 5;
+            if (currentDay > 5) currentDay = 5; // إعادة التدوير أو التثبيت عند اليوم الخامس
 
             localStorage.setItem('b3bo_lastClaimTime', lastClaimTime);
             localStorage.setItem('b3bo_currentDay', currentDay);
@@ -804,6 +815,7 @@
         function doTask(taskId, url, reward) {
             if (completedTasks[taskId]) return;
             
+            // فتح الرابط خارج التيليجرام بشكل صحيح وآمن
             try {
                 if (tg.openLink) {
                     tg.openLink(url);
@@ -814,6 +826,7 @@
                 window.open(url, '_blank');
             }
 
+            // منح المكافأة مباشرة بعد النقر والتوجه للمهمة
             completedTasks[taskId] = true;
             localStorage.setItem('b3bo_completedTasks', JSON.stringify(completedTasks));
             score += reward;
