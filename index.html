@@ -327,6 +327,21 @@
             flex-shrink: 0;
         }
 
+        .shop-item-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .shop-coin-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+        }
+
         .upgrade-info h4, .daily-info h4, .task-info h4 { font-size: 9px; color: #fff; margin-bottom: 2px; text-align: left; }
         .upgrade-info p, .daily-info p, .task-info p { font-size: 8px; color: #00ffff; text-align: left; }
 
@@ -383,7 +398,6 @@
         .wallet-section p { font-size: 7px; color: #aaa; }
         #ton-connect-button { display: flex; justify-content: center; width: 100%; }
 
-        /* الأزرار السفلية */
         .footer-nav {
             display: flex;
             justify-content: space-around;
@@ -581,24 +595,62 @@
         <div class="section-view" id="shopView" style="display: none;">
             <h3>💎 PREMIUM SHOP</h3>
             <div class="shop-list">
+                <!-- عرض 1000 بيبو -->
                 <div class="upgrade-item">
-                    <div class="upgrade-info">
-                        <h4>💰 1,000 Bebo Coins</h4>
-                        <p>Instant reward package</p>
+                    <div class="shop-item-left">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <div class="upgrade-info">
+                            <h4>1,000 Bebo Coins</h4>
+                            <p>Starter Pack</p>
+                        </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(1000, 0.1)">0.1 TON</button>
                 </div>
+
+                <!-- عرض 5000 بيبو -->
                 <div class="upgrade-item">
-                    <div class="upgrade-info">
-                        <h4>💰 5,000 Bebo Coins</h4>
-                        <p>Special value bundle</p>
+                    <div class="shop-item-left">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <div class="upgrade-info">
+                            <h4>5,000 Bebo Coins</h4>
+                            <p>Popular Bundle</p>
+                        </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(5000, 0.4)">0.4 TON</button>
                 </div>
+
+                <!-- عرض 15,000 بيبو -->
                 <div class="upgrade-item">
-                    <div class="upgrade-info">
-                        <h4>🤖 AUTO BOT (24h)</h4>
-                        <p>Farms offline automatically</p>
+                    <div class="shop-item-left">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <div class="upgrade-info">
+                            <h4>15,000 Bebo Coins</h4>
+                            <p>Mega Booster Pack</p>
+                        </div>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyCoinsWithTon(15000, 1.0)">1.0 TON</button>
+                </div>
+
+                <!-- عرض 50,000 بيبو -->
+                <div class="upgrade-item">
+                    <div class="shop-item-left">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <div class="upgrade-info">
+                            <h4>50,000 Bebo Coins</h4>
+                            <p>Whale Bundle</p>
+                        </div>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyCoinsWithTon(50000, 3.0)">3.0 TON</button>
+                </div>
+
+                <!-- بوت التعدين التلقائي -->
+                <div class="upgrade-item">
+                    <div class="shop-item-left">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <div class="upgrade-info">
+                            <h4>AUTO BOT (24h)</h4>
+                            <p>Farms offline automatically</p>
+                        </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyPremiumItem('bot', 0.5)">0.5 TON</button>
                 </div>
@@ -878,7 +930,6 @@
             $('tapCost').textContent = `Cost: ${G.tapCost.toLocaleString()} Coins`;
             $('refCountText').textContent = `${G.referralCount} Friends`;
 
-            // تحديث حالة أزرار المهام إذا تم إنجازها
             if (G.completedTasks['tg']) {
                 const btn = $('taskTg');
                 if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
@@ -978,8 +1029,7 @@
             saveToFirebase();
         });
 
-        // تجديد الطاقة بالكامل خلال ساعة واحدة (100 طاقة في 3600 ثانية = ~0.0277 طاقة بالكل مللي/ثانية أو إضافة بمعدل دقيق كل ثانية)
-        // 100 طاقة / 3600 ثانية = 0.02777 لكل ثانية -> أو كل ثانية نضيف ~0.028 ليتجدد بالكامل في ساعة.
+        // تجديد الطاقة بالكامل خلال ساعة واحدة
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 3600));
@@ -1029,7 +1079,6 @@
             }
             try { tg.openLink ? tg.openLink(url) : window.open(url, '_blank'); } catch(_) { window.open(url, '_blank'); }
             
-            // منح المكافأة مباشرة بعد النقر والتوجيه
             G.completedTasks[taskId] = true;
             G.score += reward;
             updateUI();
