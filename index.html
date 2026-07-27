@@ -737,12 +737,9 @@
             maxEnergy: 100,
             tapPower: 1,
             tapCost: 1000,
-            currentDay: 1,
-            lastClaimTime: 0,
             completedTasks: {},
             referralCount: 0,
-            walletAddress: "",
-            lastOnlineTime: Date.now()
+            walletAddress: ""
         };
 
         const $ = (id) => document.getElementById(id);
@@ -825,6 +822,13 @@
         const coinWrapper = $('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
+            
+            // تحقق صارم من نفاد الطاقة قبل السماح بالضغط
+            if (G.energy < G.tapPower) {
+                showToast('⏳ Energy depleted! Wait for recharge.', 'error', 1500);
+                return;
+            }
+
             initAudio();
             const clientX = e.clientX || (e.touches ? e.touches[0].clientX : window.innerWidth/2);
             const clientY = e.clientY || (e.touches ? e.touches[0].clientY : window.innerHeight/2);
@@ -847,7 +851,7 @@
         });
 
         function processTap(x, y) {
-            if (G.energy <= 0) {
+            if (G.energy < G.tapPower) {
                 showToast('⏳ Energy depleted! Wait for recharge.', 'error', 1500);
                 return;
             }
@@ -897,23 +901,20 @@
                 energy: G.energy,
                 tapPower: G.tapPower,
                 tapCost: G.tapCost,
-                currentDay: G.currentDay,
-                lastClaimTime: G.lastClaimTime,
                 completedTasks: G.completedTasks,
                 referralCount: G.referralCount,
-                walletAddress: G.walletAddress,
-                lastOnlineTime: Date.now()
+                walletAddress: G.walletAddress
             };
-            localStorage.setItem('bebo_game_save', JSON.stringify(localData));
+            localStorage.setItem('bebo_game_save_' + telegramId, JSON.stringify(localData));
 
-            userRef.set({
+            userRef.update({
                 username: userName,
                 ...localData
             }).catch((err) => {});
         }
 
-        // 1. التحميل أولاً من الذاكرة المحلية (LocalStorage) لضمان ظهور الرصيد فوراً ودون انتظار
-        const savedLocal = localStorage.getItem('bebo_game_save');
+        // جلب البيانات من الذاكرة المحلية الخاصة بهذا المستخدم فقط لمنع تداخل الحسابات
+        const savedLocal = localStorage.getItem('bebo_game_save_' + telegramId);
         if (savedLocal) {
             try {
                 const data = JSON.parse(savedLocal);
@@ -921,8 +922,6 @@
                 G.energy = data.energy ?? 100;
                 G.tapPower = data.tapPower || 1;
                 G.tapCost = data.tapCost || 1000;
-                G.currentDay = data.currentDay || 1;
-                G.lastClaimTime = data.lastClaimTime || 0;
                 G.completedTasks = data.completedTasks || {};
                 G.referralCount = data.referralCount || 0;
                 G.walletAddress = data.walletAddress || "";
@@ -930,22 +929,28 @@
         }
         updateUI();
 
-        // 2. المزامنة مع قاعدة البيانات باختيار القيمة الأعلى (الأكبر رصيداً) لمنع تصفير الأرقام
+        // مزامنة دقيقة مع قاعدة البيانات
         userRef.once('value').then((snap) => {
             const data = snap.val();
             if (data) {
-                if ((data.score || 0) > G.score) {
-                    G.score = data.score;
-                    G.energy = data.energy ?? 100;
-                    G.tapPower = data.tapPower || 1;
-                    G.tapCost = data.tapCost || 1000;
-                    G.currentDay = data.currentDay || 1;
-                    G.lastClaimTime = data.lastClaimTime || 0;
-                    G.completedTasks = data.completedTasks || {};
-                    G.referralCount = data.referralCount || 0;
-                    G.walletAddress = data.walletAddress || "";
-                }
+                // إذا كان المستخدم موجوداً بقاعدة البيانات نأخذ البيانات المخزنة له
+                if (data.score !== undefined) G.score = data.score;
+                if (data.energy !== undefined) G.energy = data.energy;
+                if (data.tapPower !== undefined) G.tapPower = data.tapPower;
+                if (data.tapCost !== undefined) G.tapCost = data.tapCost;
+                if (data.completedTasks) G.completedTasks = data.completedTasks;
+                if (data.referralCount !== undefined) G.referralCount = data.referralCount;
+                if (data.walletAddress) G.walletAddress = data.walletAddress;
             } else {
+                // لاعب جديد تماماً: يبدأ من الصفر تماماً وبدون أي رصيد وهمي
+                G.score = 0;
+                G.energy = 100;
+                G.tapPower = 1;
+                G.tapCost = 1000;
+                G.completedTasks = {};
+                G.referralCount = 0;
+                G.walletAddress = "";
+
                 const startParam = tg.initDataUnsafe?.start_param || '';
                 if (startParam && startParam !== String(telegramId)) {
                     db.ref('users/' + startParam).once('value').then((refSnap) => {
@@ -965,6 +970,7 @@
             saveToFirebase();
         });
 
+        // نظام تعبئة الطاقة تدريجياً بمرور الوقت
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 3600));
