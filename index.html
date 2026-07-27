@@ -447,15 +447,16 @@
     </div>
 
     <script>
+        // إعدادات مشروعك الجديد في Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyCv_3P1hcqpPieCC6_xf-pOrD3cuyQ9nis",
-            authDomain: "bebo-4039e.firebaseapp.com",
-            databaseURL: "https://bebo-4039e-default-rtdb.firebaseio.com",
-            projectId: "bebo-4039e",
-            storageBucket: "bebo-4039e.firebasestorage.app",
-            messagingSenderId: "320695644050",
-            appId: "1:320695644050:web:2a4e17bb43b779ef499b4b",
-            measurementId: "G-3SW93GXR3P"
+            apiKey: "AIzaSyDCgqRzK-pBNZgCBFWuJJSv-fYPZ1qBQSk",
+            authDomain: "bebo-3151b.firebaseapp.com",
+            databaseURL: "https://bebo-3151b-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "bebo-3151b",
+            storageBucket: "bebo-3151b.firebasestorage.app",
+            messagingSenderId: "66729600420",
+            appId: "1:66729600420:web:8fdda598a6eca525058d31",
+            measurementId: "G-YYCJJJH7C2"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -464,7 +465,7 @@
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        // جلب أو تثبيت معرف المستخدم (ثابت لمنع التصفير عند التجربة المتكررة)
+        // معرف ثابت لمنع التصفير عند الخروج والدخول
         let telegramId = "";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
             telegramId = tg.initDataUnsafe.user.id;
