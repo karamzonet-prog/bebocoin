@@ -464,8 +464,18 @@
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        // تسجيل الدخول التلقائي عبر يوزر التيليجرام
-        let telegramId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "guest_" + Math.floor(Math.random() * 100000);
+        // جلب أو تثبيت معرف المستخدم (ثابت لمنع التصفير عند التجربة المتكررة)
+        let telegramId = "";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+            telegramId = tg.initDataUnsafe.user.id;
+        } else {
+            telegramId = localStorage.getItem('bebo_local_id');
+            if (!telegramId) {
+                telegramId = "user_" + Math.floor(Math.random() * 900000 + 100000);
+                localStorage.setItem('bebo_local_id', telegramId);
+            }
+        }
+
         let userRef = db.ref('users/' + telegramId);
 
         let score = 0;
@@ -481,6 +491,8 @@
         let userName = "PLAYER";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
             userName = tg.initDataUnsafe.user.first_name.toUpperCase();
+        } else {
+            userName = "BEBO_" + telegramId.substring(telegramId.length - 4);
         }
         document.getElementById('username').textContent = userName;
 
