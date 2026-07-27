@@ -373,8 +373,10 @@
 
         .coin-glow {
             position: absolute;
-            width: 180px;
-            height: 180px;
+            width: 220px;
+            /* Increased size */
+            height: 220px;
+            /* Increased size */
             background: radial-gradient(circle, rgba(0, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
             border-radius: 50%;
             pointer-events: none;
@@ -384,8 +386,10 @@
 
         /* تأثير الضغط على العملة */
         .coin-btn {
-            width: 140px;
-            height: 140px;
+            width: 180px;
+            /* Increased size */
+            height: 180px;
+            /* Increased size */
             background-color: rgba(13, 13, 13, 0.9);
             border: 4px solid #333;
             border-radius: 50%;
@@ -973,12 +977,12 @@
 
         @media (max-width: 380px) {
             .coin-btn {
-                width: 110px;
-                height: 110px;
+                width: 130px;
+                height: 130px;
             }
             .coin-glow {
-                width: 140px;
-                height: 140px;
+                width: 160px;
+                height: 160px;
             }
             .score-board span {
                 font-size: 16px;
@@ -1062,7 +1066,7 @@
                 <div class="energy-container">
                     <div class="energy-info">
                         <span>⚡ ENERGY</span>
-                        <span id="energyText">1000 / 1000</span>
+                        <span id="energyText">100 / 100</span>
                     </div>
                     <div class="energy-bar-bg">
                         <div class="energy-bar-fill" id="energyFill"></div>
@@ -1082,13 +1086,7 @@
                     </div>
                     <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
                 </div>
-                <div class="upgrade-item" style="border-color:rgba(255,215,0,0.25);">
-                    <div class="upgrade-info">
-                        <h4>🤖 Auto-Miner</h4>
-                        <p id="minerStatus">Offline: +0 / min</p>
-                    </div>
-                    <button class="upgrade-btn" id="minerBtn" onclick="toggleMiner()">START</button>
-                </div>
+                <!-- تم إزالة خيار Auto-Miner بالكامل -->
             </div>
         </div>
 
@@ -1324,8 +1322,8 @@
         // =============================================
         const G = {
             score: 0,
-            energy: 1000,
-            maxEnergy: 1000,
+            energy: 100, // Changed to 100
+            maxEnergy: 100, // Changed to 100
             tapPower: 1,
             tapCost: 1000,
             minerActive: false,
@@ -1359,8 +1357,6 @@
         const vipCrown = $('vipCrown');
         const refLinkText = $('refLinkText');
         const refCountText = $('refCountText');
-        const minerStatus = $('minerStatus');
-        const minerBtn = $('minerBtn');
         const toastContainer = $('toastContainer');
         const gameContainer = $('gameContainer');
         const coinWrapper = $('coinWrapper');
@@ -1614,14 +1610,7 @@
                 vipCrown.style.display = 'none';
             }
 
-            if (G.minerActive) {
-                const rate = G.premiumItems.superBot ? G.minerRate * 2 : G.minerRate;
-                minerStatus.textContent = `⚡ ${rate} / min active`;
-                minerBtn.textContent = '⏹ STOP';
-            } else {
-                minerStatus.textContent = `⏸ Offline: +${G.minerRate} / min`;
-                minerBtn.textContent = '▶ START';
-            }
+            // Removed miner status and button updates
 
             renderDailyRewards();
             renderTasks();
@@ -1659,8 +1648,8 @@
                     energy: G.energy,
                     tapPower: G.tapPower,
                     tapCost: G.tapCost,
-                    minerActive: G.minerActive,
-                    minerRate: G.minerRate,
+                    minerActive: false,
+                    minerRate: 0,
                     miningEndTime: G.miningEndTime,
                     currentDay: G.currentDay,
                     lastClaimTime: G.lastClaimTime,
@@ -1686,11 +1675,11 @@
             const data = snap.val();
             if (data) {
                 G.score = data.score || 0;
-                G.energy = data.energy ?? 1000;
+                G.energy = data.energy ?? 100;
                 G.tapPower = data.tapPower || 1;
                 G.tapCost = data.tapCost || 1000;
-                G.minerActive = data.minerActive || false;
-                G.minerRate = data.minerRate || 0;
+                G.minerActive = false;
+                G.minerRate = 0;
                 G.miningEndTime = data.miningEndTime || 0;
                 G.currentDay = data.currentDay || 1;
                 G.lastClaimTime = data.lastClaimTime || 0;
@@ -1716,14 +1705,7 @@
 
                 const now = Date.now();
                 const offlineMs = now - G.lastOnlineTime;
-                if (offlineMs > 5000 && G.minerActive) {
-                    const rate = G.premiumItems.superBot ? G.minerRate * 2 : G.minerRate;
-                    const earned = Math.floor((offlineMs / 60000) * rate);
-                    if (earned > 0) {
-                        G.score += earned;
-                        showToast(`🤖 Offline mining: +${earned.toLocaleString()} coins!`, 'success', 3500);
-                    }
-                }
+                // Removed offline mining logic
                 G.lastOnlineTime = now;
             } else {
                 const startParam = tg.initDataUnsafe?.start_param || '';
@@ -1737,23 +1719,24 @@
             updateUI();
             setupReferralLink();
             startEnergyRegen();
-            startMinerLoop();
             updatePremiumStatus();
             saveToFirebase();
         });
 
         // =============================================
-        // REFERRAL
+        // REFERRAL - FIXED
         // =============================================
         function rewardReferrer(refId) {
             const refUserRef = db.ref('users/' + refId);
             refUserRef.once('value').then((snap) => {
                 if (snap.exists()) {
                     const d = snap.val();
+                    // Add 1000 coins and increment referral count for the referrer
                     refUserRef.update({
                         score: (d.score || 0) + 1000,
                         referralCount: (d.referralCount || 0) + 1
                     });
+                    showToast('🎉 Referral reward +1000 coins!', 'success');
                 }
             });
         }
@@ -1761,7 +1744,11 @@
         function setupReferralLink() {
             const link = `https://t.me/${botUsername}?start=${telegramId}`;
             refLinkText.textContent = link;
-            refCountText.textContent = `${G.referralCount} Friends`;
+            // Update referral count display from Firebase data
+            userRef.child('referralCount').once('value').then((snap) => {
+                G.referralCount = snap.val() || 0;
+                refCountText.textContent = `${G.referralCount} Friends`;
+            });
         }
 
         function copyReferralLink() {
@@ -1802,28 +1789,6 @@
         }
 
         // =============================================
-        // MINER LOOP
-        // =============================================
-        let minerLoopTimer = null;
-
-        function startMinerLoop() {
-            if (minerLoopTimer) clearInterval(minerLoopTimer);
-            minerLoopTimer = setInterval(() => {
-                if (G.minerActive) {
-                    const rate = G.premiumItems.superBot ? G.minerRate * 2 : G.minerRate;
-                    if (rate > 0) {
-                        const earned = Math.floor(rate / 60);
-                        if (earned > 0) {
-                            G.score += earned;
-                            updateUI();
-                            saveToFirebase();
-                        }
-                    }
-                }
-            }, 1000);
-        }
-
-        // =============================================
         // UPGRADES
         // =============================================
         function buyTapUpgrade() {
@@ -1839,23 +1804,7 @@
             }
         }
 
-        function toggleMiner() {
-            if (G.minerActive) {
-                G.minerActive = false;
-                showToast('⏹ Miner stopped', 'info');
-            } else {
-                if (G.score < 5000) {
-                    showToast('❌ Need 5,000 coins to start', 'error');
-                    return;
-                }
-                if (!G.minerRate) G.minerRate = 10;
-                G.minerActive = true;
-                G.score -= 5000;
-                showToast('🤖 Miner started! +10/min (Super Bot x2)', 'success');
-            }
-            updateUI();
-            saveToFirebase();
-        }
+        // Removed toggleMiner function
 
         // =============================================
         // DAILY REWARDS
@@ -2058,17 +2007,14 @@
                         G.vipActive = true;
                         showToast('👑 VIP Crown unlocked!', 'success');
                     }
-                    if (itemId === 'bot') {
-                        G.minerRate = Math.max(G.minerRate, 10);
-                        if (!G.minerActive) { G.minerActive = true;
-                            G.score -= 5000; }
-                        showToast('🤖 Auto‑Bot activated!', 'success');
-                    }
-                    if (itemId === 'superBot') {
-                        G.minerRate = Math.max(G.minerRate, 20);
-                        if (!G.minerActive) { G.minerActive = true;
-                            G.score -= 5000; }
-                        showToast('🤖 Super Bot activated! x2 speed', 'success');
+                    if (itemId === 'bot' || itemId === 'superBot') {
+                        // Bot activation now only sets the premium flag and grants a bonus
+                        if (itemId === 'superBot') {
+                            showToast('🤖 Super Bot activated! x2 speed boost for miners (if any).', 'success');
+                        } else {
+                            showToast('🤖 Auto‑Bot activated!', 'success');
+                        }
+                        // Removed auto-miner start logic
                     }
                     updateUI();
                     saveToFirebase();
@@ -2205,15 +2151,15 @@
             const isSmall = vh < 650;
             if (coinBtn && coinGlow) {
                 if (isSmall) {
-                    coinBtn.style.width = '100px';
-                    coinBtn.style.height = '100px';
-                    coinGlow.style.width = '130px';
-                    coinGlow.style.height = '130px';
+                    coinBtn.style.width = '130px';
+                    coinBtn.style.height = '130px';
+                    coinGlow.style.width = '160px';
+                    coinGlow.style.height = '160px';
                 } else {
-                    coinBtn.style.width = '';
-                    coinBtn.style.height = '';
-                    coinGlow.style.width = '';
-                    coinGlow.style.height = '';
+                    coinBtn.style.width = '180px';
+                    coinBtn.style.height = '180px';
+                    coinGlow.style.width = '220px';
+                    coinGlow.style.height = '220px';
                 }
             }
             updateUI();
@@ -2241,11 +2187,11 @@
                     const data = snap.val();
                     if (data) {
                         G.score = data.score || 0;
-                        G.energy = data.energy ?? 1000;
+                        G.energy = data.energy ?? 100;
                         G.tapPower = data.tapPower || 1;
                         G.tapCost = data.tapCost || 1000;
-                        G.minerActive = data.minerActive || false;
-                        G.minerRate = data.minerRate || 0;
+                        G.minerActive = false;
+                        G.minerRate = 0;
                         G.miningEndTime = data.miningEndTime || 0;
                         G.currentDay = data.currentDay || 1;
                         G.lastClaimTime = data.lastClaimTime || 0;
@@ -2283,4 +2229,4 @@
         console.log('✅ All systems ready. Happy tapping! 😍😍😍');
     </script>
 </body>
-</html>
+                        </html>
