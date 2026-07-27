@@ -516,49 +516,15 @@
             </div>
         </div>
 
-        <!-- Daily Rewards View (Replaced Wheel) -->
+        <!-- Daily Rewards View (Fixed Streak System) -->
         <div class="section-view" id="wheelView" style="display: none;">
             <h3>DAILY REWARDS</h3>
-            <div class="daily-rewards-container">
-                <div class="daily-item">
-                    <div class="daily-info">
-                        <h4>🎁 Day 1 Reward</h4>
-                        <p>+250 Coins</p>
-                    </div>
-                    <button class="daily-btn" id="dailyBtn1" onclick="claimDaily(1, 250)">CLAIM</button>
-                </div>
-                <div class="daily-item">
-                    <div class="daily-info">
-                        <h4>🎁 Day 2 Reward</h4>
-                        <p>+500 Coins</p>
-                    </div>
-                    <button class="daily-btn" id="dailyBtn2" onclick="claimDaily(2, 500)">CLAIM</button>
-                </div>
-                <div class="daily-item">
-                    <div class="daily-info">
-                        <h4>🎁 Day 3 Reward</h4>
-                        <p>+1,000 Coins</p>
-                    </div>
-                    <button class="daily-btn" id="dailyBtn3" onclick="claimDaily(3, 1000)">CLAIM</button>
-                </div>
-                <div class="daily-item">
-                    <div class="daily-info">
-                        <h4>🎁 Day 4 Reward</h4>
-                        <p>+2,500 Coins</p>
-                    </div>
-                    <button class="daily-btn" id="dailyBtn4" onclick="claimDaily(4, 2500)">CLAIM</button>
-                </div>
-                <div class="daily-item">
-                    <div class="daily-info">
-                        <h4>🎁 Day 5 Reward</h4>
-                        <p>+5,000 Coins</p>
-                    </div>
-                    <button class="daily-btn" id="dailyBtn5" onclick="claimDaily(5, 5000)">CLAIM</button>
-                </div>
+            <div class="daily-rewards-container" id="dailyListContainer">
+                <!-- Generated dynamically via JS for strict 1-day interval -->
             </div>
         </div>
 
-        <!-- Tasks View with requested links -->
+        <!-- Tasks View (Fixed Telegram & X link handling) -->
         <div class="section-view" id="tasksView" style="display: none;">
             <h3>SOCIAL TASKS</h3>
             <div class="tasks-list">
@@ -567,14 +533,14 @@
                         <h4>📢 Follow Telegram Channel</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <a href="https://t.me/BeboPixel" target="_blank" class="task-btn" id="taskTgBtn" onclick="completeTask('tg', 500)">VISIT & CLAIM</a>
+                    <button class="task-btn" id="taskTgBtn" onclick="doTask('tg', 'https://t.me/BeboPixel', 500)">VISIT & CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
                         <h4>🐦 Follow on X (Twitter)</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <a href="https://x.com/BeboCoin1" target="_blank" class="task-btn" id="taskXBtn" onclick="completeTask('x', 500)">VISIT & CLAIM</a>
+                    <button class="task-btn" id="taskXBtn" onclick="doTask('x', 'https://x.com/BeboCoin1', 500)">VISIT & CLAIM</button>
                 </div>
             </div>
         </div>
@@ -625,7 +591,10 @@
         let tapCostVal = localStorage.getItem('b3bo_tapCost') ? parseInt(localStorage.getItem('b3bo_tapCost')) : 5000;
         let miningEndTime = localStorage.getItem('b3bo_miningEndTime') ? parseInt(localStorage.getItem('b3bo_miningEndTime')) : 0;
         
-        let claimedDays = JSON.parse(localStorage.getItem('b3bo_claimedDays')) || {};
+        // Daily Streak variables
+        let currentDay = localStorage.getItem('b3bo_currentDay') ? parseInt(localStorage.getItem('b3bo_currentDay')) : 1;
+        let lastClaimTime = localStorage.getItem('b3bo_lastClaimTime') ? parseInt(localStorage.getItem('b3bo_lastClaimTime')) : 0;
+        
         let completedTasks = JSON.parse(localStorage.getItem('b3bo_completedTasks')) || {};
 
         const scoreElement = document.getElementById('score');
@@ -636,6 +605,14 @@
         const hintText = document.getElementById('hintText');
         const tapLevelElem = document.getElementById('tapLevel');
         const tapCostElem = document.getElementById('tapCost');
+
+        const dailyRewardsData = [
+            { day: 1, reward: 250 },
+            { day: 2, reward: 500 },
+            { day: 3, reward: 1000 },
+            { day: 4, reward: 2500 },
+            { day: 5, reward: 5000 }
+        ];
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
@@ -668,29 +645,66 @@
             localStorage.setItem('b3bo_tapPower', tapPower);
             localStorage.setItem('b3bo_tapCost', tapCostVal);
 
-            // Update Daily Buttons state
-            for (let i = 1; i <= 5; i++) {
-                let btn = document.getElementById(`dailyBtn${i}`);
-                if (btn) {
-                    if (claimedDays[i]) {
-                        btn.textContent = "CLAIMED ✓";
-                        btn.disabled = true;
-                    }
-                }
-            }
+            renderDailyRewards();
+            renderTasks();
+        }
 
-            // Update Tasks state
+        function renderDailyRewards() {
+            const container = document.getElementById('dailyListContainer');
+            container.innerHTML = '';
+            
+            let now = Date.now();
+            let timeDiff = now - lastClaimTime;
+            let oneDayMs = 24 * 60 * 60 * 1000;
+            let canClaimNow = (lastClaimTime === 0) || (timeDiff >= oneDayMs);
+
+            dailyRewardsData.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'daily-item';
+                
+                let btnText = "CLAIM";
+                let isDisabled = true;
+                
+                if (item.day < currentDay) {
+                    btnText = "CLAIMED ✓";
+                    isDisabled = true;
+                } else if (item.day === currentDay) {
+                    if (canClaimNow) {
+                        btnText = "CLAIM";
+                        isDisabled = false;
+                    } else {
+                        let remainingHours = Math.ceil((oneDayMs - timeDiff) / (1000 * 60 * 60));
+                        btnText = `WAIT ${remainingHours}H`;
+                        isDisabled = true;
+                    }
+                } else {
+                    btnText = "LOCKED 🔒";
+                    isDisabled = true;
+                }
+
+                div.innerHTML = `
+                    <div class="daily-info">
+                        <h4>🎁 Day ${item.day} Reward</h4>
+                        <p>+${item.reward.toLocaleString()} Coins</p>
+                    </div>
+                    <button class="daily-btn" ${isDisabled ? 'disabled' : ''} onclick="claimDaily(${item.day}, ${item.reward})">${btnText}</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderTasks() {
             if (completedTasks['tg']) {
                 let btnTg = document.getElementById('taskTgBtn');
                 btnTg.textContent = "DONE ✓";
                 btnTg.classList.add('claimed');
-                btnTg.removeAttribute('href');
+                btnTg.disabled = true;
             }
             if (completedTasks['x']) {
                 let btnX = document.getElementById('taskXBtn');
                 btnX.textContent = "DONE ✓";
                 btnX.classList.add('claimed');
-                btnX.removeAttribute('href');
+                btnX.disabled = true;
             }
         }
 
@@ -784,21 +798,43 @@
         }
 
         function claimDaily(day, reward) {
-            if (claimedDays[day]) return;
-            claimedDays[day] = true;
-            localStorage.setItem('b3bo_claimedDays', JSON.stringify(claimedDays));
+            if (day !== currentDay) return;
+            
+            lastClaimTime = Date.now();
+            currentDay += 1;
+            if (currentDay > 5) currentDay = 5; // إعادة التدوير أو التثبيت عند اليوم الخامس
+
+            localStorage.setItem('b3bo_lastClaimTime', lastClaimTime);
+            localStorage.setItem('b3bo_currentDay', currentDay);
+
             score += reward;
             updateDisplays();
             if (tg.showAlert) tg.showAlert(`Successfully claimed Day ${day} reward (+${reward} Coins)! 🎉`);
         }
 
-        function completeTask(taskId, reward) {
+        function doTask(taskId, url, reward) {
             if (completedTasks[taskId]) return;
+            
+            // فتح الرابط خارج التيليجرام بشكل صحيح وآمن
+            try {
+                if (tg.openLink) {
+                    tg.openLink(url);
+                } else {
+                    window.open(url, '_blank');
+                }
+            } catch (e) {
+                window.open(url, '_blank');
+            }
+
+            // منح المكافأة مباشرة بعد النقر والتوجه للمهمة
             completedTasks[taskId] = true;
             localStorage.setItem('b3bo_completedTasks', JSON.stringify(completedTasks));
             score += reward;
             updateDisplays();
-            if (tg.showAlert) tg.showAlert(`Task completed! +${reward} Coins added! 🎉`);
+            
+            setTimeout(() => {
+                if (tg.showAlert) tg.showAlert(`Task completed! +${reward} Coins added! 🎉`);
+            }, 500);
         }
 
         function switchTab(tab) {
@@ -817,6 +853,7 @@
             } else if (tab === 'wheel') {
                 document.getElementById('wheelView').style.display = 'flex';
                 document.getElementById('btnWheel').classList.add('active');
+                renderDailyRewards();
             } else if (tab === 'tasks') {
                 document.getElementById('tasksView').style.display = 'flex';
                 document.getElementById('btnTasks').classList.add('active');
