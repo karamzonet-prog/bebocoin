@@ -100,11 +100,6 @@
             letter-spacing: 1px;
         }
 
-        .user-badge .vip-crown {
-            font-size: 12px;
-            margin-left: 3px;
-        }
-
         .header {
             text-align: center;
             flex-shrink: 0;
@@ -310,7 +305,7 @@
         .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #ff0055, #00ffff); border-radius: 3px; width: 100%; transition: width 0.1s linear; }
         .hint { margin-top: 3px; font-size: 7px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; min-height: 16px; }
 
-        .upgrades-list, .daily-rewards-container, .tasks-list, .friends-container {
+        .upgrades-list, .tasks-list, .friends-container {
             width: 100%;
             flex: 1;
             overflow-y: auto;
@@ -321,7 +316,7 @@
             min-height: 0;
         }
 
-        .upgrade-item, .daily-item, .task-item, .friend-card {
+        .upgrade-item, .task-item, .friend-card {
             background: rgba(0, 0, 0, 0.65);
             padding: 8px 12px;
             border-radius: 12px;
@@ -335,7 +330,7 @@
         .upgrade-info h4, .daily-info h4, .task-info h4 { font-size: 9px; color: #fff; margin-bottom: 2px; text-align: left; }
         .upgrade-info p, .daily-info p, .task-info p { font-size: 8px; color: #00ffff; text-align: left; }
 
-        .upgrade-btn, .daily-btn, .task-btn, .friend-btn {
+        .upgrade-btn, .task-btn, .friend-btn {
             background: linear-gradient(135deg, #00ffff, #0077ff);
             color: #000;
             border: none;
@@ -471,7 +466,6 @@
                 <div class="user-badge">
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
-                    <span class="vip-crown" id="vipCrown" style="display:none;">👑</span>
                 </div>
             </div>
             <div class="score-board">
@@ -545,20 +539,15 @@
 
         <div class="section-view" id="shopView" style="display: none;">
             <h3>💎 PREMIUM SHOP</h3>
-            <div class="shop-list" id="shopList" style="width:100%; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+            <div class="shop-list" style="width:100%; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
                 <div class="upgrade-item">
                     <div class="upgrade-info">
                         <h4>🤖 AUTO BOT (24h)</h4>
                         <p>Farms offline automatically</p>
                     </div>
-                    <button class="upgrade-btn" id="shopBotBtn" onclick="buyPremiumItem('bot', 0.5)">0.5 TON</button>
+                    <button class="upgrade-btn" onclick="buyPremiumItem('bot', 0.5)">0.5 TON</button>
                 </div>
             </div>
-        </div>
-
-        <div class="section-view" id="wheelView" style="display: none;">
-            <h3>🎁 DAILY REWARDS</h3>
-            <div class="daily-rewards-container" id="dailyListContainer"></div>
         </div>
 
         <div class="section-view" id="tasksView" style="display: none;">
@@ -574,7 +563,7 @@
                         <h4>📢 Follow Telegram Channel</h4>
                         <p>+500 Coins</p>
                     </div>
-                    <button class="task-btn" id="taskTgBtn" onclick="doTask('tg','https://t.me/BeboPixel',500)">VISIT & CLAIM</button>
+                    <button class="task-btn" onclick="doTask('tg','https://t.me/BeboPixel',500)">VISIT & CLAIM</button>
                 </div>
             </div>
         </div>
@@ -600,7 +589,6 @@
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')"><span class="nav-icon">⚡</span><span>HOME</span></button>
             <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')"><span class="nav-icon">🚀</span><span>BOOST</span></button>
             <button class="nav-btn" id="btnShop" onclick="switchTab('shop')"><span class="nav-icon">💎</span><span>SHOP</span></button>
-            <button class="nav-btn" id="btnWheel" onclick="switchTab('wheel')"><span class="nav-icon">🎁</span><span>DAILY</span></button>
             <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')"><span class="nav-icon">📋</span><span>TASKS</span></button>
         </nav>
     </div>
@@ -829,10 +817,9 @@
             }
         }
 
-        // دالة الحفظ الفوري واللحظي لمنع رجوع الرصيد للصفر
+        // دالة الحفظ المزدوجة (محلياً وفي Firebase لمنع الرجوع للصفر)
         function saveToFirebase() {
-            userRef.set({
-                username: userName,
+            const localData = {
                 score: G.score,
                 energy: G.energy,
                 tapPower: G.tapPower,
@@ -846,14 +833,42 @@
                 walletAddress: G.walletAddress,
                 premiumItems: G.premiumItems,
                 lastOnlineTime: Date.now()
+            };
+            localStorage.setItem('bebo_game_save', JSON.stringify(localData));
+
+            userRef.set({
+                username: userName,
+                ...localData
             }).catch((err) => {
                 console.error("Failed to save data:", err);
             });
         }
 
+        // استرجاع البيانات محلياً أولاً لمنع رجوع الرصيد للصفر فوراً
+        const savedLocal = localStorage.getItem('bebo_game_save');
+        if (savedLocal) {
+            try {
+                const data = JSON.parse(savedLocal);
+                G.score = data.score || 0;
+                G.energy = data.energy ?? 1000;
+                G.tapPower = data.tapPower || 1;
+                G.tapCost = data.tapCost || 1000;
+                G.minerActive = data.minerActive || false;
+                G.minerRate = data.minerRate || 0;
+                G.currentDay = data.currentDay || 1;
+                G.lastClaimTime = data.lastClaimTime || 0;
+                G.completedTasks = data.completedTasks || {};
+                G.referralCount = data.referralCount || 0;
+                G.walletAddress = data.walletAddress || "";
+                G.premiumItems = data.premiumItems || {};
+            } catch (e) {
+                console.error("Error parsing local save", e);
+            }
+        }
+
         userRef.once('value').then((snap) => {
             const data = snap.val();
-            if (data) {
+            if (data && (data.score >= G.score)) {
                 G.score = data.score || 0;
                 G.energy = data.energy ?? 1000;
                 G.tapPower = data.tapPower || 1;
@@ -963,8 +978,8 @@
             });
         }
 
-        const views = ['gameView', 'upgradesView', 'shopView', 'wheelView', 'tasksView', 'friendsView'];
-        const navBtns = ['btnHome', 'btnUpgrades', 'btnShop', 'btnWheel', 'btnTasks'];
+        const views = ['gameView', 'upgradesView', 'shopView', 'tasksView', 'friendsView'];
+        const navBtns = ['btnHome', 'btnUpgrades', 'btnShop', 'btnTasks'];
 
         function switchTab(tab) {
             views.forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
@@ -974,7 +989,6 @@
                 home: { view: 'gameView', btn: 'btnHome' },
                 upgrades: { view: 'upgradesView', btn: 'btnUpgrades' },
                 shop: { view: 'shopView', btn: 'btnShop' },
-                wheel: { view: 'wheelView', btn: 'btnWheel' },
                 tasks: { view: 'tasksView', btn: 'btnTasks' },
                 friends: { view: 'friendsView', btn: 'btnTasks' }
             };
@@ -997,4 +1011,3 @@
     </script>
 </body>
 </html>
-
