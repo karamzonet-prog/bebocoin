@@ -563,7 +563,7 @@
                         <div class="energy-bar-fill" id="energyFill"></div>
                     </div>
                 </div>
-                <p class="hint" id="hintText">TAP TO EARN</p>
+                <p class="hint" id="hintText">RECHARGING: 30:00</p>
             </div>
         </main>
 
@@ -739,7 +739,8 @@
             tapCost: 1000,
             completedTasks: {},
             referralCount: 0,
-            walletAddress: ""
+            walletAddress: "",
+            lastTime: Date.now()
         };
 
         const $ = (id) => document.getElementById(id);
@@ -867,6 +868,20 @@
             const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
             $('energyFill').style.width = pct + '%';
             $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
+            
+            // حساب الوقت المتبقي بالدقائق والثواني ليكتمل الشريط بالكامل
+            const missingEnergy = G.maxEnergy - G.energy;
+            const secondsLeft = Math.max(0, Math.ceil((missingEnergy / G.maxEnergy) * 1800));
+            const mins = Math.floor(secondsLeft / 60);
+            const secs = secondsLeft % 60;
+            const timeFormatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            
+            if (G.energy >= G.maxEnergy) {
+                $('hintText').textContent = '⚡ FULLY CHARGED';
+            } else {
+                $('hintText').textContent = `RECHARGING: ${timeFormatted}`;
+            }
+
             $('tapLevel').textContent = G.tapPower;
             $('tapCost').textContent = `Cost: ${G.tapCost.toLocaleString()} Coins`;
             $('refCountText').textContent = `${G.referralCount} Friends`;
@@ -895,6 +910,7 @@
         }
 
         function saveToFirebase() {
+            G.lastTime = Date.now();
             const localData = {
                 score: G.score,
                 energy: G.energy,
@@ -902,13 +918,21 @@
                 tapCost: G.tapCost,
                 completedTasks: G.completedTasks,
                 referralCount: G.referralCount,
-                walletAddress: G.walletAddress
+                walletAddress: G.walletAddress,
+                lastTime: G.lastTime
             };
             localStorage.setItem('bebo_game_save_' + telegramId, JSON.stringify(localData));
 
             userRef.update({
                 username: userName,
-                ...localData
+                score: G.score,
+                energy: G.energy,
+                tapPower: G.tapPower,
+                tapCost: G.tapCost,
+                completedTasks: G.completedTasks,
+                referralCount: G.referralCount,
+                walletAddress: G.walletAddress,
+                lastTime: G.lastTime
             }).catch((err) => {});
         }
 
@@ -923,6 +947,14 @@
                 G.completedTasks = data.completedTasks || {};
                 G.referralCount = data.referralCount || 0;
                 G.walletAddress = data.walletAddress || "";
+                G.lastTime = data.lastTime || Date.now();
+
+                // حساب الوقت المنقضي أثناء الخروج من التطبيق وإضافة الطاقة المناسبة
+                const elapsedSeconds = (Date.now() - G.lastTime) / 1000;
+                if (elapsedSeconds > 0) {
+                    const energyToAdd = (elapsedSeconds / 1800) * 100;
+                    G.energy = Math.min(G.maxEnergy, G.energy + energyToAdd);
+                }
             } catch (e) {}
         }
         updateUI();
@@ -931,12 +963,17 @@
             const data = snap.val();
             if (data) {
                 if (data.score !== undefined) G.score = data.score;
-                if (data.energy !== undefined) G.energy = data.energy;
                 if (data.tapPower !== undefined) G.tapPower = data.tapPower;
                 if (data.tapCost !== undefined) G.tapCost = data.tapCost;
                 if (data.completedTasks) G.completedTasks = data.completedTasks;
                 if (data.referralCount !== undefined) G.referralCount = data.referralCount;
                 if (data.walletAddress) G.walletAddress = data.walletAddress;
+
+                if (data.energy !== undefined && data.lastTime !== undefined) {
+                    const elapsedSeconds = (Date.now() - data.lastTime) / 1000;
+                    const calculatedEnergy = data.energy + ((elapsedSeconds / 1800) * 100);
+                    G.energy = Math.min(G.maxEnergy, calculatedEnergy);
+                }
             } else {
                 G.score = 0;
                 G.energy = 100;
@@ -965,10 +1002,9 @@
             saveToFirebase();
         });
 
-        // نظام تعبئة الطاقة لتمتلئ بالكامل خلال نصف ساعة بالضبط (1800 ثانية)
+        // حلقة التحديث المستمر للطاقة والوقت كل ثانية
         setInterval(() => {
             if (G.energy < G.maxEnergy) {
-                // الزيادة في كل ثانية = 100 تقسيم 1800 (نصف ساعة) لتكتمل بدقة
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 1800));
                 updateUI();
             }
