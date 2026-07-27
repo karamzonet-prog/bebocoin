@@ -699,7 +699,6 @@
         <div class="section-view" id="shopView" style="display: none;">
             <h3>💎 PREMIUM SHOP</h3>
             <div class="shop-list">
-                <!-- حزمة 1 -->
                 <div class="shop-item">
                     <div class="shop-info">
                         <h4>+1,000 COINS</h4>
@@ -711,7 +710,6 @@
                     </div>
                     <button class="shop-btn" onclick="buyCoinPackage(1000, 0.1)">BUY</button>
                 </div>
-                <!-- حزمة 2 -->
                 <div class="shop-item">
                     <div class="shop-info">
                         <h4>+10,000 COINS</h4>
@@ -723,7 +721,6 @@
                     </div>
                     <button class="shop-btn" onclick="buyCoinPackage(10000, 0.8)">BUY</button>
                 </div>
-                <!-- بوت التعدين -->
                 <div class="shop-item">
                     <div class="shop-info">
                         <h4>AUTO BOT</h4>
@@ -735,7 +732,6 @@
                     </div>
                     <button class="shop-btn" id="shopBotBtn" onclick="buyPremiumItem('bot', 0.5)">BUY</button>
                 </div>
-                <!-- طاقة تيربو -->
                 <div class="shop-item">
                     <div class="shop-info">
                         <h4>TURBO ENERGY</h4>
@@ -747,7 +743,6 @@
                     </div>
                     <button class="shop-btn" id="shopTurboBtn" onclick="buyPremiumItem('turbo', 0.3)">BUY</button>
                 </div>
-                <!-- تاج VIP -->
                 <div class="shop-item" style="grid-column: span 2;">
                     <div class="shop-info">
                         <h4>👑 VIP CROWN BADGE</h4>
@@ -832,7 +827,7 @@
         </nav>
     </div>
 
-    <!-- نافذة المتصدرين -->
+    <!-- Modal Leaderboard -->
     <div class="modal-overlay" id="leaderboardModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -929,7 +924,8 @@
             startParam = tg.initDataUnsafe.start_param;
         }
 
-        userRef.once('value').then((snapshot) => {
+        // تم تعديل الاتصال هنا لضمان مزامنة البيانات وعدم تصفيرها
+        userRef.on('value', (snapshot) => {
             let data = snapshot.val();
             if (data) {
                 score = data.score || 0;
@@ -954,6 +950,8 @@
             }
             updateDisplays();
             setupReferralLink();
+        }, (error) => {
+            console.error("Error reading data:", error);
         });
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
