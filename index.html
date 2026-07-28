@@ -709,22 +709,32 @@
                 if (localDataSaved) localParsed = JSON.parse(localDataSaved);
             } catch(e) {}
 
-            let serverScore = (serverData && serverData.score !== undefined) ? Number(serverData.score) : -1;
-            let localScore = (localParsed && localParsed.score !== undefined) ? Number(localParsed.score) : 0;
+            // تعديل المنطق للاعتماد على فايربيس كمرجع أساسي
+            if (serverData && serverData.score !== undefined) {
+                G.score = Number(serverData.score) || 0;
+                G.energy = serverData.energy ?? 100;
+                G.tapPower = Number(serverData.tapPower) || 1;
+                G.tapCost = Number(serverData.tapCost) || 1000;
+                G.completedTasks = serverData.completedTasks || {};
+                G.referralCount = Number(serverData.referralCount) || 0;
+                G.walletAddress = serverData.walletAddress || "";
 
-            let bestScore = Math.max(serverScore, localScore);
-
-            if (bestScore > 0) {
-                const source = (serverScore >= localScore) ? serverData : localParsed;
-                G.score = Number(source.score) || 0;
-                G.energy = source.energy ?? 100;
-                G.tapPower = Number(source.tapPower) || 1;
-                G.tapCost = Number(source.tapCost) || 1000;
-                G.completedTasks = source.completedTasks || {};
-                G.referralCount = Number(source.referralCount) || 0;
-                G.walletAddress = source.walletAddress || "";
-
-                const lastSaveTime = source.lastSaveTime || Date.now();
+                const lastSaveTime = serverData.lastSaveTime || Date.now();
+                const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
+                if (secondsPassed > 0 && G.energy < G.maxEnergy) {
+                    const energyGained = (secondsPassed / 1800) * 100;
+                    G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
+                }
+            } else if (localParsed) {
+                G.score = Number(localParsed.score) || 0;
+                G.energy = localParsed.energy ?? 100;
+                G.tapPower = Number(localParsed.tapPower) || 1;
+                G.tapCost = Number(localParsed.tapCost) || 1000;
+                G.completedTasks = localParsed.completedTasks || {};
+                G.referralCount = Number(localParsed.referralCount) || 0;
+                G.walletAddress = localParsed.walletAddress || "";
+                
+                const lastSaveTime = localParsed.lastSaveTime || Date.now();
                 const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
                 if (secondsPassed > 0 && G.energy < G.maxEnergy) {
                     const energyGained = (secondsPassed / 1800) * 100;
@@ -1082,9 +1092,3 @@
 </body>
 </html>
 
-<head>
-    <meta property="og:title" content="BeboCoin — Raccoon Colony">
-    <meta property="og:description" content="Join the Raccoon colony, tap to earn Bebo Coins, and climb the leaderboard!">
-    <meta property="og:image" content="https://ibb.co/HfBBVsVX">
-    <meta property="og:url" content="https://t.me/bebocoin_bot">
-</head>
