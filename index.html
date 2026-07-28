@@ -698,7 +698,6 @@
 
         const saveKey = 'bebo_save_' + telegramId;
         
-        // جلب البيانات من فايربيس أولاً واعتمادها كمرجع رئيسي
         userRef.once('value', (snapshot) => {
             const serverData = snapshot.val();
             if (serverData) {
@@ -710,7 +709,6 @@
                 G.referralCount = Number(serverData.referralCount) || 0;
                 G.walletAddress = serverData.walletAddress || "";
                 
-                // تحديث الذاكرة المحلية لتطابق فايربيس تماماً
                 localStorage.setItem(saveKey, JSON.stringify({
                     score: G.score,
                     energy: G.energy,
@@ -1043,3 +1041,4 @@
     </script>
 </body>
 </html>
+
