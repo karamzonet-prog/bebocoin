@@ -697,29 +697,61 @@
         }
 
         const saveKey = 'bebo_save_' + telegramId;
-        let localDataSaved = localStorage.getItem(saveKey);
         
-        if (localDataSaved) {
-            try {
-                const parsed = JSON.parse(localDataSaved);
-                G.score = parsed.score || 0;
-                G.energy = parsed.energy ?? 100;
-                G.tapPower = parsed.tapPower || 1;
-                G.tapCost = parsed.tapCost || 1000;
-                G.completedTasks = parsed.completedTasks || {};
-                G.referralCount = parsed.referralCount || 0;
-                G.walletAddress = parsed.walletAddress || "";
-            } catch(e) {}
-        }
+        // جلب البيانات أولاً من فايربيس مباشرة لضمان المزامنة الحية
+        userRef.once('value', (snapshot) => {
+            const serverData = snapshot.val();
+            if (serverData) {
+                G.score = Number(serverData.score) || 0;
+                G.energy = serverData.energy ?? 100;
+                G.tapPower = Number(serverData.tapPower) || 1;
+                G.tapCost = Number(serverData.tapCost) || 1000;
+                G.completedTasks = serverData.completedTasks || {};
+                G.referralCount = Number(serverData.referralCount) || 0;
+                G.walletAddress = serverData.walletAddress || "";
+            } else {
+                let localDataSaved = localStorage.getItem(saveKey);
+                if (localDataSaved) {
+                    try {
+                        const parsed = JSON.parse(localDataSaved);
+                        G.score = parsed.score || 0;
+                        G.energy = parsed.energy ?? 100;
+                        G.tapPower = parsed.tapPower || 1;
+                        G.tapCost = parsed.tapCost || 1000;
+                        G.completedTasks = parsed.completedTasks || {};
+                        G.referralCount = parsed.referralCount || 0;
+                        G.walletAddress = parsed.walletAddress || "";
+                    } catch(e) {}
+                }
+            }
+            updateUI();
+            saveGame();
+        }, (error) => {
+            let localDataSaved = localStorage.getItem(saveKey);
+            if (localDataSaved) {
+                try {
+                    const parsed = JSON.parse(localDataSaved);
+                    G.score = parsed.score || 0;
+                    G.energy = parsed.energy ?? 100;
+                    G.tapPower = parsed.tapPower || 1;
+                    G.tapCost = parsed.tapCost || 1000;
+                    G.completedTasks = parsed.completedTasks || {};
+                    G.referralCount = parsed.referralCount || 0;
+                    G.walletAddress = parsed.walletAddress || "";
+                } catch(e) {}
+            }
+            updateUI();
+            saveGame();
+        });
 
         function saveGame() {
             const dataToSave = {
-                score: G.score,
-                energy: G.energy,
-                tapPower: G.tapPower,
-                tapCost: G.tapCost,
+                score: Number(G.score),
+                energy: Number(G.energy),
+                tapPower: Number(G.tapPower),
+                tapCost: Number(G.tapCost),
                 completedTasks: G.completedTasks,
-                referralCount: G.referralCount,
+                referralCount: Number(G.referralCount),
                 walletAddress: G.walletAddress,
                 username: userName
             };
@@ -820,7 +852,7 @@
         });
 
         function updateUI() {
-            $('score').textContent = G.score.toLocaleString();
+            $('score').textContent = Math.floor(G.score).toLocaleString();
             const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
             $('energyFill').style.width = pct + '%';
             $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
@@ -838,7 +870,7 @@
             }
 
             $('tapLevel').textContent = G.tapPower;
-            $('tapCost').textContent = `Cost: ${G.tapCost.toLocaleString()} Coins`;
+            $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
             $('refCountText').textContent = `${G.referralCount} Friends`;
 
             if (G.completedTasks['tg']) {
@@ -860,7 +892,7 @@
                 saveGame();
                 showToast(`⚡ Multi-Tap upgraded to Lv.${G.tapPower}!`, 'success');
             } else {
-                showToast(`❌ Need ${G.tapCost.toLocaleString()} coins`, 'error');
+                showToast(`❌ Need ${Math.floor(G.tapCost).toLocaleString()} coins`, 'error');
             }
         }
 
@@ -923,17 +955,23 @@
             showToast(`✅ +${reward} coins claimed!`, 'success');
         }
 
-        function openLeaderboardModal() { $('leaderboardModal').style.display = 'flex'; loadTopHundred(); }
-        function closeLeaderboardModal() { $('leaderboardModal').style.display = 'none'; }
+        function openLeaderboardModal() { 
+            $('leaderboardModal').style.display = 'flex'; 
+            loadTopHundred(); 
+        }
+        
+        function closeLeaderboardModal() { 
+            $('leaderboardModal').style.display = 'none'; 
+        }
 
         function loadTopHundred() {
             const container = $('topHundredContainer');
             container.innerHTML = '<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>';
             
-            db.ref('users').once('value').then((snap) => {
+            db.ref('users').once('value', (snapshot) => {
                 const leaders = [];
-                snap.forEach((child) => {
-                    const d = child.val();
+                snapshot.forEach((childSnap) => {
+                    const d = childSnap.val();
                     if (d) {
                         leaders.push({ 
                             name: d.username || 'PLAYER', 
@@ -950,14 +988,14 @@
                     return;
                 }
 
-                leaders.forEach((item, i) => {
+                leaders.slice(0, 100).forEach((item, i) => {
                     const cls = i === 0 ? 'gold' : '';
                     const row = document.createElement('div');
                     row.className = `rank-row ${cls}`;
                     row.innerHTML = `<span>#${i+1} ${item.name}</span><span>${item.score.toLocaleString()}</span>`;
                     container.appendChild(row);
                 });
-            }).catch(() => {
+            }, (error) => {
                 container.innerHTML = '<div style="text-align: center; color: #ff4466; font-size: 10px; padding: 15px;">Failed to load rankings</div>';
             });
         }
@@ -990,9 +1028,7 @@
             if (tab === 'friends') setupReferralLink();
         }
 
-        updateUI();
         setupReferralLink();
-        saveGame();
     </script>
 </body>
 </html>
