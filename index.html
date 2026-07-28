@@ -698,7 +698,7 @@
 
         const saveKey = 'bebo_save_' + telegramId;
         
-        // جلب البيانات أولاً من فايربيس مباشرة لضمان المزامنة الحية
+        // جلب البيانات من فايربيس أولاً واعتمادها كمرجع رئيسي
         userRef.once('value', (snapshot) => {
             const serverData = snapshot.val();
             if (serverData) {
@@ -709,6 +709,18 @@
                 G.completedTasks = serverData.completedTasks || {};
                 G.referralCount = Number(serverData.referralCount) || 0;
                 G.walletAddress = serverData.walletAddress || "";
+                
+                // تحديث الذاكرة المحلية لتطابق فايربيس تماماً
+                localStorage.setItem(saveKey, JSON.stringify({
+                    score: G.score,
+                    energy: G.energy,
+                    tapPower: G.tapPower,
+                    tapCost: G.tapCost,
+                    completedTasks: G.completedTasks,
+                    referralCount: G.referralCount,
+                    walletAddress: G.walletAddress,
+                    username: userName
+                }));
             } else {
                 let localDataSaved = localStorage.getItem(saveKey);
                 if (localDataSaved) {
@@ -723,9 +735,9 @@
                         G.walletAddress = parsed.walletAddress || "";
                     } catch(e) {}
                 }
+                saveGame();
             }
             updateUI();
-            saveGame();
         }, (error) => {
             let localDataSaved = localStorage.getItem(saveKey);
             if (localDataSaved) {
@@ -741,7 +753,6 @@
                 } catch(e) {}
             }
             updateUI();
-            saveGame();
         });
 
         function saveGame() {
@@ -1032,4 +1043,3 @@
     </script>
 </body>
 </html>
-
