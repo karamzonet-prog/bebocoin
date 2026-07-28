@@ -765,7 +765,6 @@
 
         function saveGame(force = false) {
             if (!isLoadedFromServer && !force) return;
-            if (G.score <= 0 && !force) return;
 
             const dataToSave = {
                 score: Number(G.score),
@@ -778,8 +777,14 @@
                 username: userName,
                 lastSaveTime: Date.now()
             };
+            
             localStorage.setItem(saveKey, JSON.stringify(dataToSave));
-            userRef.set(dataToSave).catch(() => {});
+
+            if (force) {
+                userRef.update(dataToSave).catch(() => {});
+            } else {
+                userRef.set(dataToSave).catch(() => {});
+            }
         }
 
         let audioCtx = null;
@@ -930,11 +935,15 @@
             saveGame();
         }, 1000);
 
-        // حفظ البيانات فور تصغير التطبيق أو الخروج منه لحساب الوقت بدقة
+        // أحداث الخروج والتبديل لضمان حفظ الوقت والطاقة المكتسبة فوراً
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 saveGame(true);
             }
+        });
+
+        window.addEventListener('pagehide', () => {
+            saveGame(true);
         });
 
         window.addEventListener('beforeunload', () => {
