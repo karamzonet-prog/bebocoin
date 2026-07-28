@@ -724,6 +724,7 @@
                 G.referralCount = Number(source.referralCount) || 0;
                 G.walletAddress = source.walletAddress || "";
 
+                // حساب الوقت الفائت وزيادة الطاقة بشكل كامل أو تدريجي بناءً على الثواني (معدل الشحن الكامل 1800 ثانية = 30 دقيقة)
                 const lastSaveTime = source.lastSaveTime || Date.now();
                 const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
                 if (secondsPassed > 0 && G.energy < G.maxEnergy) {
@@ -775,7 +776,7 @@
                 referralCount: Number(G.referralCount),
                 walletAddress: G.walletAddress,
                 username: userName,
-                lastSaveTime: Date.now()
+                lastSaveTime: Date.now() // تحديث وقت الحفظ بدقة ليكون مرجعاً عند الخروج القادم
             };
             
             localStorage.setItem(saveKey, JSON.stringify(dataToSave));
@@ -935,7 +936,7 @@
             saveGame();
         }, 1000);
 
-        // أحداث الخروج والتبديل لضمان حفظ الوقت والطاقة المكتسبة فوراً
+        // أحداث الخروج الفوري لضمان حفظ الوقت الحالي في قاعدة البيانات وتحديث الطاقة لاحقاً
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 saveGame(true);
