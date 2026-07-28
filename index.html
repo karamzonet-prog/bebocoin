@@ -637,14 +637,16 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        // إعدادات قاعدة البيانات الجديدة (b3bo-57b15)
         const firebaseConfig = {
-            apiKey: "AIzaSyDCgqRzK-pBNZgCBFWuJJSv-fYPZ1qBQSk",
-            authDomain: "bebo-3151b.firebaseapp.com",
-            databaseURL: "https://bebo-3151b-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "bebo-3151b",
-            storageBucket: "bebo-3151b.firebasestorage.app",
-            messagingSenderId: "66729600420",
-            appId: "1:66729600420:web:8fdda598a6eca525058d31"
+            apiKey: "AIzaSyBsmlE_PDrLhi_UNKfOdBUZU0mLnqTSeR4",
+            authDomain: "b3bo-57b15.firebaseapp.com",
+            databaseURL: "https://b3bo-57b15-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "b3bo-57b15",
+            storageBucket: "b3bo-57b15.firebasestorage.app",
+            messagingSenderId: "518954121296",
+            appId: "1:518954121296:web:0fcca119f9e2cd28ed3955",
+            measurementId: "G-240CSXWWRL"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -723,11 +725,12 @@
                 G.referralCount = Number(source.referralCount) || 0;
                 G.walletAddress = source.walletAddress || "";
 
-                // حساب وقت الخروج وشحن الطاقة تلقائياً بناءً على الوقت المنقضي
+                // حساب وقت الخروج وشحن الطاقة تلقائياً بناءً على الوقت المنقضي بدقة
                 const lastSaveTime = source.lastSaveTime || Date.now();
-                const timePassed = (Date.now() - lastSaveTime) / 1000; // الثواني التي مرت
-                if (timePassed > 0) {
-                    const energyGained = (timePassed / 1800) * 100; // شحن كامل الطاقة يستغرق 30 دقيقة (1800 ثانية)
+                const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
+                if (secondsPassed > 0 && G.energy < G.maxEnergy) {
+                    // شحن كامل الطاقة (100) يستغرق 1800 ثانية (30 دقيقة) -> معدل الشحن لكل ثانية
+                    const energyGained = (secondsPassed / 1800) * 100;
                     G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
                 }
             } else {
@@ -750,6 +753,14 @@
                     G.completedTasks = parsed.completedTasks || {};
                     G.referralCount = Number(parsed.referralCount) || 0;
                     G.walletAddress = parsed.walletAddress || "";
+                    
+                    // حساب الطاقة محلياً في حال عدم الاتصال بالسيرفر
+                    const lastSaveTime = parsed.lastSaveTime || Date.now();
+                    const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
+                    if (secondsPassed > 0 && G.energy < G.maxEnergy) {
+                        const energyGained = (secondsPassed / 1800) * 100;
+                        G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
+                    }
                 } catch(e) {}
             }
             isLoadedFromServer = true;
@@ -914,6 +925,7 @@
             }
         }
 
+        // حلقة التحديث المستمر للطاقة داخل التطبيق ووقت الخروج
         setInterval(() => {
             if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
@@ -922,6 +934,11 @@
             }
             saveGame();
         }, 1000);
+
+        // حفظ وقت الخروج بدقة عند إغلاق أو مغادرة الصفحة
+        window.addEventListener('beforeunload', () => {
+            saveGame(true);
+        });
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
