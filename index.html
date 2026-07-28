@@ -637,7 +637,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // إعدادات قاعدة البيانات الجديدة (b3bo-57b15)
         const firebaseConfig = {
             apiKey: "AIzaSyBsmlE_PDrLhi_UNKfOdBUZU0mLnqTSeR4",
             authDomain: "b3bo-57b15.firebaseapp.com",
@@ -725,7 +724,6 @@
                 G.referralCount = Number(source.referralCount) || 0;
                 G.walletAddress = source.walletAddress || "";
 
-                // حساب الوقت المنقضي وشحن الطاقة تلقائياً بدقة عند العودة للبوت أو فتحه
                 const lastSaveTime = source.lastSaveTime || Date.now();
                 const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
                 if (secondsPassed > 0 && G.energy < G.maxEnergy) {
@@ -931,6 +929,13 @@
             }
             saveGame();
         }, 1000);
+
+        // حفظ البيانات فور تصغير التطبيق أو الخروج منه لحساب الوقت بدقة
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                saveGame(true);
+            }
+        });
 
         window.addEventListener('beforeunload', () => {
             saveGame(true);
