@@ -699,38 +699,42 @@
         const saveKey = 'bebo_save_' + telegramId;
         let isLoadedFromServer = false;
 
-        // جلب البيانات من فايربيس بشكل أساسي ونهائي
+        // تحميل البيانات بذكاء مطلق ومنع الكتابة العكسية قطعيًا
         userRef.once('value', (snapshot) => {
             const serverData = snapshot.val();
-            if (serverData && serverData.score !== undefined) {
-                // إذا وجدنا بيانات في السيرفر نعتمدها هي فقط
-                G.score = Number(serverData.score) || 0;
-                G.energy = serverData.energy ?? 100;
-                G.tapPower = Number(serverData.tapPower) || 1;
-                G.tapCost = Number(serverData.tapCost) || 1000;
-                G.completedTasks = serverData.completedTasks || {};
-                G.referralCount = Number(serverData.referralCount) || 0;
-                G.walletAddress = serverData.walletAddress || "";
+            let localDataSaved = localStorage.getItem(saveKey);
+            let localParsed = null;
+            
+            try {
+                if (localDataSaved) localParsed = JSON.parse(localDataSaved);
+            } catch(e) {}
+
+            // نقارن السكور بين السيرفر والذاكرة المحلية، وناخذ الأكبر دائماً لضمان عدم ضياع أي نقرة أو تقدم سابق!
+            let serverScore = (serverData && serverData.score !== undefined) ? Number(serverData.score) : -1;
+            let localScore = (localParsed && localParsed.score !== undefined) ? Number(localParsed.score) : 0;
+
+            let bestScore = Math.max(serverScore, localScore);
+
+            if (bestScore > 0) {
+                // نعتمد بيانات السيرفر إذا كانت موجودة، وإلا نعتمد المحلية المتاحة
+                const source = (serverScore >= localScore) ? serverData : localParsed;
+                G.score = Number(source.score) || 0;
+                G.energy = source.energy ?? 100;
+                G.tapPower = Number(source.tapPower) || 1;
+                G.tapCost = Number(source.tapCost) || 1000;
+                G.completedTasks = source.completedTasks || {};
+                G.referralCount = Number(source.referralCount) || 0;
+                G.walletAddress = source.walletAddress || "";
             } else {
-                // إذا لم يكن هناك أي بيانات في السيرفر، نبدأ بالصفر أو الذاكرة المحلية لأول مرة فقط
-                let localDataSaved = localStorage.getItem(saveKey);
-                if (localDataSaved) {
-                    try {
-                        const parsed = JSON.parse(localDataSaved);
-                        G.score = parsed.score || 0;
-                        G.energy = parsed.energy ?? 100;
-                        G.tapPower = parsed.tapPower || 1;
-                        G.tapCost = parsed.tapCost || 1000;
-                        G.completedTasks = parsed.completedTasks || {};
-                        G.referralCount = parsed.referralCount || 0;
-                        G.walletAddress = parsed.walletAddress || "";
-                    } catch(e) {}
-                }
-                saveGame(true); // حفظ أولي للسيرفر
+                G.score = 0;
+                G.energy = 100;
             }
+
             isLoadedFromServer = true;
             updateUI();
+            saveGame(true); // تثبيت النسخة الآمنة بالسيرفر فوراً
         }, (error) => {
+            // في حال فشل الاتصال، نعتمد الذاكرة المحلية كبديل آمن تام
             let localDataSaved = localStorage.getItem(saveKey);
             if (localDataSaved) {
                 try {
@@ -740,7 +744,7 @@
                     G.tapPower = parsed.tapPower || 1;
                     G.tapCost = parsed.tapCost || 1000;
                     G.completedTasks = parsed.completedTasks || {};
-                    G.referralCount = parsed.referralCount || 0;
+                    G.referralCount = Number(parsed.referralCount) || 0;
                     G.walletAddress = parsed.walletAddress || "";
                 } catch(e) {}
             }
@@ -749,8 +753,9 @@
         });
 
         function saveGame(force = false) {
-            // منع الحفظ العكسي إذا لم يتم تحميل السيرفر بعد لتفادي تصفير الرصيد
             if (!isLoadedFromServer && !force) return;
+            // حماية قصوى: منع حفظ سكور صفر نهائياً إذا كان اللاعب لديه نقاط سابقة
+            if (G.score <= 0 && !force) return;
 
             const dataToSave = {
                 score: Number(G.score),
@@ -834,7 +839,7 @@
         const coinWrapper = $('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            if (!isLoadedFromServer) return; // منع الضغط قبل اكتمال التحميل
+            if (!isLoadedFromServer) return;
 
             if (G.energy < G.tapPower) {
                 showToast('⏳ Energy depleted!', 'error', 1500);
