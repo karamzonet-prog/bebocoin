@@ -725,11 +725,10 @@
                 G.referralCount = Number(source.referralCount) || 0;
                 G.walletAddress = source.walletAddress || "";
 
-                // حساب وقت الخروج وشحن الطاقة تلقائياً بناءً على الوقت المنقضي بدقة
+                // حساب الوقت المنقضي وشحن الطاقة تلقائياً بدقة عند العودة للبوت أو فتحه
                 const lastSaveTime = source.lastSaveTime || Date.now();
                 const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
                 if (secondsPassed > 0 && G.energy < G.maxEnergy) {
-                    // شحن كامل الطاقة (100) يستغرق 1800 ثانية (30 دقيقة) -> معدل الشحن لكل ثانية
                     const energyGained = (secondsPassed / 1800) * 100;
                     G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
                 }
@@ -754,7 +753,6 @@
                     G.referralCount = Number(parsed.referralCount) || 0;
                     G.walletAddress = parsed.walletAddress || "";
                     
-                    // حساب الطاقة محلياً في حال عدم الاتصال بالسيرفر
                     const lastSaveTime = parsed.lastSaveTime || Date.now();
                     const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
                     if (secondsPassed > 0 && G.energy < G.maxEnergy) {
@@ -925,7 +923,6 @@
             }
         }
 
-        // حلقة التحديث المستمر للطاقة داخل التطبيق ووقت الخروج
         setInterval(() => {
             if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
@@ -935,7 +932,6 @@
             saveGame();
         }, 1000);
 
-        // حفظ وقت الخروج بدقة عند إغلاق أو مغادرة الصفحة
         window.addEventListener('beforeunload', () => {
             saveGame(true);
         });
