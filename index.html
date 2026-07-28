@@ -699,7 +699,6 @@
         const saveKey = 'bebo_save_' + telegramId;
         let isLoadedFromServer = false;
 
-        // تحميل البيانات بذكاء مطلق ومنع الكتابة العكسية قطعيًا
         userRef.once('value', (snapshot) => {
             const serverData = snapshot.val();
             let localDataSaved = localStorage.getItem(saveKey);
@@ -709,14 +708,12 @@
                 if (localDataSaved) localParsed = JSON.parse(localDataSaved);
             } catch(e) {}
 
-            // نقارن السكور بين السيرفر والذاكرة المحلية، وناخذ الأكبر دائماً لضمان عدم ضياع أي نقرة أو تقدم سابق!
             let serverScore = (serverData && serverData.score !== undefined) ? Number(serverData.score) : -1;
             let localScore = (localParsed && localParsed.score !== undefined) ? Number(localParsed.score) : 0;
 
             let bestScore = Math.max(serverScore, localScore);
 
             if (bestScore > 0) {
-                // نعتمد بيانات السيرفر إذا كانت موجودة، وإلا نعتمد المحلية المتاحة
                 const source = (serverScore >= localScore) ? serverData : localParsed;
                 G.score = Number(source.score) || 0;
                 G.energy = source.energy ?? 100;
@@ -725,6 +722,14 @@
                 G.completedTasks = source.completedTasks || {};
                 G.referralCount = Number(source.referralCount) || 0;
                 G.walletAddress = source.walletAddress || "";
+
+                // حساب وقت الخروج وشحن الطاقة تلقائياً بناءً على الوقت المنقضي
+                const lastSaveTime = source.lastSaveTime || Date.now();
+                const timePassed = (Date.now() - lastSaveTime) / 1000; // الثواني التي مرت
+                if (timePassed > 0) {
+                    const energyGained = (timePassed / 1800) * 100; // شحن كامل الطاقة يستغرق 30 دقيقة (1800 ثانية)
+                    G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
+                }
             } else {
                 G.score = 0;
                 G.energy = 100;
@@ -732,9 +737,8 @@
 
             isLoadedFromServer = true;
             updateUI();
-            saveGame(true); // تثبيت النسخة الآمنة بالسيرفر فوراً
+            saveGame(true);
         }, (error) => {
-            // في حال فشل الاتصال، نعتمد الذاكرة المحلية كبديل آمن تام
             let localDataSaved = localStorage.getItem(saveKey);
             if (localDataSaved) {
                 try {
@@ -754,7 +758,6 @@
 
         function saveGame(force = false) {
             if (!isLoadedFromServer && !force) return;
-            // حماية قصوى: منع حفظ سكور صفر نهائياً إذا كان اللاعب لديه نقاط سابقة
             if (G.score <= 0 && !force) return;
 
             const dataToSave = {
@@ -765,7 +768,8 @@
                 completedTasks: G.completedTasks,
                 referralCount: Number(G.referralCount),
                 walletAddress: G.walletAddress,
-                username: userName
+                username: userName,
+                lastSaveTime: Date.now()
             };
             localStorage.setItem(saveKey, JSON.stringify(dataToSave));
             userRef.set(dataToSave).catch(() => {});
