@@ -724,7 +724,6 @@
                 G.referralCount = Number(source.referralCount) || 0;
                 G.walletAddress = source.walletAddress || "";
 
-                // حساب الوقت الفائت وزيادة الطاقة بشكل كامل أو تدريجي بناءً على الثواني (معدل الشحن الكامل 1800 ثانية = 30 دقيقة)
                 const lastSaveTime = source.lastSaveTime || Date.now();
                 const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
                 if (secondsPassed > 0 && G.energy < G.maxEnergy) {
@@ -776,7 +775,7 @@
                 referralCount: Number(G.referralCount),
                 walletAddress: G.walletAddress,
                 username: userName,
-                lastSaveTime: Date.now() // تحديث وقت الحفظ بدقة ليكون مرجعاً عند الخروج القادم
+                lastSaveTime: Date.now()
             };
             
             localStorage.setItem(saveKey, JSON.stringify(dataToSave));
@@ -936,7 +935,6 @@
             saveGame();
         }, 1000);
 
-        // أحداث الخروج الفوري لضمان حفظ الوقت الحالي في قاعدة البيانات وتحديث الطاقة لاحقاً
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 saveGame(true);
@@ -971,21 +969,25 @@
                 return;
             }
             try {
-                showToast('⏳ Opening wallet...', 'info');
+                showToast('⏳ Waiting for payment approval...', 'info');
                 const nanoTon = Math.floor(amountInTon * 1000000000).toString();
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 360,
                     messages: [{ address: recipientWallet, amount: nanoTon }]
                 };
+                
                 const result = await tonConnectUI.sendTransaction(transaction);
-                if (result) {
+                
+                if (result && result.boc) {
                     G.score += coins;
                     updateUI();
                     saveGame();
-                    showToast(`✅ +${coins.toLocaleString()} Coins added!`, 'success');
+                    showToast(`✅ Payment confirmed! +${coins.toLocaleString()} Coins added!`, 'success', 4000);
+                } else {
+                    showToast('❌ Payment was not completed', 'error');
                 }
             } catch (error) {
-                showToast('❌ Payment cancelled', 'error');
+                showToast('❌ Payment cancelled or failed', 'error');
             }
         }
 
