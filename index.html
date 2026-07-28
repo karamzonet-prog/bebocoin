@@ -697,10 +697,13 @@
         }
 
         const saveKey = 'bebo_save_' + telegramId;
-        
+        let isLoadedFromServer = false;
+
+        // جلب البيانات من فايربيس بشكل أساسي ونهائي
         userRef.once('value', (snapshot) => {
             const serverData = snapshot.val();
-            if (serverData) {
+            if (serverData && serverData.score !== undefined) {
+                // إذا وجدنا بيانات في السيرفر نعتمدها هي فقط
                 G.score = Number(serverData.score) || 0;
                 G.energy = serverData.energy ?? 100;
                 G.tapPower = Number(serverData.tapPower) || 1;
@@ -708,18 +711,8 @@
                 G.completedTasks = serverData.completedTasks || {};
                 G.referralCount = Number(serverData.referralCount) || 0;
                 G.walletAddress = serverData.walletAddress || "";
-                
-                localStorage.setItem(saveKey, JSON.stringify({
-                    score: G.score,
-                    energy: G.energy,
-                    tapPower: G.tapPower,
-                    tapCost: G.tapCost,
-                    completedTasks: G.completedTasks,
-                    referralCount: G.referralCount,
-                    walletAddress: G.walletAddress,
-                    username: userName
-                }));
             } else {
+                // إذا لم يكن هناك أي بيانات في السيرفر، نبدأ بالصفر أو الذاكرة المحلية لأول مرة فقط
                 let localDataSaved = localStorage.getItem(saveKey);
                 if (localDataSaved) {
                     try {
@@ -733,8 +726,9 @@
                         G.walletAddress = parsed.walletAddress || "";
                     } catch(e) {}
                 }
-                saveGame();
+                saveGame(true); // حفظ أولي للسيرفر
             }
+            isLoadedFromServer = true;
             updateUI();
         }, (error) => {
             let localDataSaved = localStorage.getItem(saveKey);
@@ -750,10 +744,14 @@
                     G.walletAddress = parsed.walletAddress || "";
                 } catch(e) {}
             }
+            isLoadedFromServer = true;
             updateUI();
         });
 
-        function saveGame() {
+        function saveGame(force = false) {
+            // منع الحفظ العكسي إذا لم يتم تحميل السيرفر بعد لتفادي تصفير الرصيد
+            if (!isLoadedFromServer && !force) return;
+
             const dataToSave = {
                 score: Number(G.score),
                 energy: Number(G.energy),
@@ -836,6 +834,8 @@
         const coinWrapper = $('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
+            if (!isLoadedFromServer) return; // منع الضغط قبل اكتمال التحميل
+
             if (G.energy < G.tapPower) {
                 showToast('⏳ Energy depleted!', 'error', 1500);
                 return;
@@ -906,6 +906,7 @@
         }
 
         setInterval(() => {
+            if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 1800));
                 updateUI();
