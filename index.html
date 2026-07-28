@@ -99,6 +99,22 @@
             letter-spacing: 1px;
         }
 
+        .rank-badge-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 4px;
+        }
+        .rank-badge-box span {
+            font-size: 8px;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+        }
+
         .header {
             text-align: center;
             flex-shrink: 0;
@@ -462,6 +478,9 @@
                     <h2 id="username">PLAYER</h2>
                 </div>
             </div>
+            <div class="rank-badge-box">
+                <span>🏆 <span id="currentRankName">BRONZE</span></span>
+            </div>
             <div class="score-board">
                 <span id="score">0</span>
                 <p>BEBO COIN</p>
@@ -665,8 +684,14 @@
         }
 
         let userName = "PLAYER";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
-            userName = tg.initDataUnsafe.user.first_name.toUpperCase().slice(0, 14);
+        let userPhoto = "";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            if (tg.initDataUnsafe.user.first_name) {
+                userName = tg.initDataUnsafe.user.first_name.toUpperCase().slice(0, 14);
+            }
+            if (tg.initDataUnsafe.user.photo_url) {
+                userPhoto = tg.initDataUnsafe.user.photo_url;
+            }
         } else {
             userName = "BEBO_" + telegramId.slice(-4);
         }
@@ -686,6 +711,27 @@
             referralCount: 0,
             walletAddress: ""
         };
+
+        const ranks = [
+            { name: 'BRONZE', minScore: 0, icon: '🥉' },
+            { name: 'SILVER', minScore: 10000, icon: '🥈' },
+            { name: 'GOLD', minScore: 50000, icon: '🥇' },
+            { name: 'PLATINUM', minScore: 200000, icon: '💎' },
+            { name: 'DIAMOND', minScore: 1000000, icon: '👑' }
+        ];
+
+        function checkAndUpdateRank() {
+            let currentRank = ranks[0];
+            for (let i = 0; i < ranks.length; i++) {
+                if (G.score >= ranks[i].minScore) {
+                    currentRank = ranks[i];
+                }
+            }
+            const rankElement = $('currentRankName');
+            if (rankElement) {
+                rankElement.textContent = `${currentRank.icon} ${currentRank.name}`;
+            }
+        }
 
         const $ = (id) => document.getElementById(id);
 
@@ -709,7 +755,6 @@
                 if (localDataSaved) localParsed = JSON.parse(localDataSaved);
             } catch(e) {}
 
-            // تعديل المنطق للاعتماد على فايربيس كمرجع أساسي
             if (serverData && serverData.score !== undefined) {
                 G.score = Number(serverData.score) || 0;
                 G.energy = serverData.energy ?? 100;
@@ -785,6 +830,7 @@
                 referralCount: Number(G.referralCount),
                 walletAddress: G.walletAddress,
                 username: userName,
+                photo: userPhoto,
                 lastSaveTime: Date.now()
             };
             
@@ -893,6 +939,8 @@
 
         function updateUI() {
             $('score').textContent = Math.floor(G.score).toLocaleString();
+            checkAndUpdateRank();
+
             const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
             $('energyFill').style.width = pct + '%';
             $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
@@ -1034,7 +1082,8 @@
                     if (d) {
                         leaders.push({ 
                             name: d.username || 'PLAYER', 
-                            score: Number(d.score) || 0 
+                            score: Number(d.score) || 0,
+                            photo: d.photo || ''
                         });
                     }
                 });
@@ -1051,7 +1100,18 @@
                     const cls = i === 0 ? 'gold' : '';
                     const row = document.createElement('div');
                     row.className = `rank-row ${cls}`;
-                    row.innerHTML = `<span>#${i+1} ${item.name}</span><span>${item.score.toLocaleString()}</span>`;
+                    
+                    const defaultAvatar = 'https://i.ibb.co/3y69MMWz/image.png';
+                    const playerImg = item.photo ? item.photo : defaultAvatar;
+
+                    row.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>#${i+1}</span>
+                            <img src="${playerImg}" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,255,0.4);" onerror="this.src='${defaultAvatar}'">
+                            <span>${item.name}</span>
+                        </div>
+                        <span>${item.score.toLocaleString()}</span>
+                    `;
                     container.appendChild(row);
                 });
             }, (error) => {
