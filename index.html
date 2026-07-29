@@ -801,6 +801,13 @@
                     </div>
                     <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
                 </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <h4>🔋 Energy Limit (<span id="energyLimitText">100</span> Max)</h4>
+                        <p id="energyUpgradeCost">Cost: 2,000 Coins</p>
+                    </div>
+                    <button class="upgrade-btn" id="energyUpgradeBtn" onclick="buyEnergyUpgrade()">UPGRADE</button>
+                </div>
             </div>
         </div>
 
@@ -1032,6 +1039,8 @@
             score: 0,
             energy: 100,
             maxEnergy: 100,
+            energyLevel: 0, // 0: 100, 1: 200, 2: 400 (Max 3 upgrades total)
+            energyUpgradeCost: 2000,
             tapPower: 1,
             tapCost: 1000,
             completedTasks: {},
@@ -1090,13 +1099,29 @@
                 
                 const baseData = (serverScore >= localScore && serverData) ? serverData : (localParsed || serverData);
                 if (baseData) {
-                    G.energy = baseData.energy ?? 100;
+                    G.energyLevel = Number(baseData.energyLevel) || Number(localParsed?.energyLevel) || 0;
+                    // تحديد maxEnergy بناءً على مستوى الطاقة
+                    if (G.energyLevel === 1) G.maxEnergy = 200;
+                    else if (G.energyLevel >= 2) G.maxEnergy = 400;
+                    else G.maxEnergy = 100;
+
+                    G.energyUpgradeCost = Number(baseData.energyUpgradeCost) || Number(localParsed?.energyUpgradeCost) || 2000;
+                    G.energy = baseData.energy ?? G.maxEnergy;
                     G.tapPower = Number(baseData.tapPower) || Number(localParsed?.tapPower) || 1;
                     G.tapCost = Number(baseData.tapCost) || Number(localParsed?.tapCost) || 1000;
                     G.completedTasks = baseData.completedTasks || localParsed?.completedTasks || {};
                     G.referralCount = Math.max(Number(baseData.referralCount) || 0, Number(localParsed?.referralCount) || 0);
                     G.walletAddress = baseData.walletAddress || localParsed?.walletAddress || "";
                     G.tonBalance = Math.max(Number(baseData.tonBalance) || 0, Number(localParsed?.tonBalance) || 0);
+
+                    const lastSaveTime = baseData.lastSaveTime || 0;
+                    if (lastSaveTime > 0) {
+                        const elapsedSeconds = (Date.now() - lastSaveTime) / 1000;
+                        if (elapsedSeconds > 0) {
+                            const energyToAdd = (elapsedSeconds / 1800) * G.maxEnergy;
+                            G.energy = Math.min(G.maxEnergy, G.energy + energyToAdd);
+                        }
+                    }
                 }
 
                 isLoadedFromServer = true;
@@ -1105,13 +1130,28 @@
             }, () => {
                 if (localParsed) {
                     G.score = Number(localParsed.score) || 0;
-                    G.energy = localParsed.energy ?? 100;
+                    G.energyLevel = Number(localParsed.energyLevel) || 0;
+                    if (G.energyLevel === 1) G.maxEnergy = 200;
+                    else if (G.energyLevel >= 2) G.maxEnergy = 400;
+                    else G.maxEnergy = 100;
+
+                    G.energyUpgradeCost = Number(localParsed.energyUpgradeCost) || 2000;
+                    G.energy = localParsed.energy ?? G.maxEnergy;
                     G.tapPower = Number(localParsed.tapPower) || 1;
                     G.tapCost = Number(localParsed.tapCost) || 1000;
                     G.completedTasks = localParsed.completedTasks || {};
                     G.referralCount = Number(localParsed.referralCount) || 0;
                     G.walletAddress = localParsed.walletAddress || "";
                     G.tonBalance = Number(localParsed.tonBalance) || 0;
+
+                    const lastSaveTime = localParsed.lastSaveTime || 0;
+                    if (lastSaveTime > 0) {
+                        const elapsedSeconds = (Date.now() - lastSaveTime) / 1000;
+                        if (elapsedSeconds > 0) {
+                            const energyToAdd = (elapsedSeconds / 1800) * G.maxEnergy;
+                            G.energy = Math.min(G.maxEnergy, G.energy + energyToAdd);
+                        }
+                    }
                 }
                 isLoadedFromServer = true;
                 updateUI();
@@ -1124,6 +1164,9 @@
             const dataToSave = {
                 score: Number(G.score),
                 energy: Number(G.energy),
+                maxEnergy: Number(G.maxEnergy),
+                energyLevel: Number(G.energyLevel),
+                energyUpgradeCost: Number(G.energyUpgradeCost),
                 tapPower: Number(G.tapPower),
                 tapCost: Number(G.tapCost),
                 completedTasks: G.completedTasks,
@@ -1281,13 +1324,25 @@
 
             $('tapLevel').textContent = G.tapPower;
             $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
+            
+            // تحديث واجهة ترقية سعة الطاقة
+            $('energyLimitText').textContent = G.maxEnergy;
+            if (G.energyLevel >= 2) {
+                $('energyUpgradeCost').textContent = 'MAXED OUT';
+                $('energyUpgradeBtn').textContent = 'MAX';
+                $('energyUpgradeBtn').style.opacity = '0.5';
+            } else {
+                $('energyUpgradeCost').textContent = `Cost: ${Math.floor(G.energyUpgradeCost).toLocaleString()} Coins`;
+                $('energyUpgradeBtn').textContent = 'UPGRADE';
+                $('energyUpgradeBtn').style.opacity = '1';
+            }
+
             $('refCountText').textContent = `${G.referralCount} Friends`;
 
-            // Update Task buttons UI if completed
             ['tg', 'x', 'coffee', 'easycoin', 'atf'].forEach(taskId => {
                 if (G.completedTasks[taskId]) {
                     const btn = $('task' + taskId.charAt(0).toUpperCase() + taskId.slice(1)) || 
-                                (taskId === 'coffee' ? $('taskCoffee') : taskId === 'easycoin' ? $('taskEasyCoin') : taskId === 'atf' ? $('taskAtf') : null);
+                                (taskId === 'coffee' ? $('taskCoffee') : taskId === 'easycoin' ? $('taskEasyCoin') : taskId === 'atf' ? $('taskAtf' ) : null);
                     if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
                 }
             });
@@ -1303,6 +1358,34 @@
                 showToast(`⚡ Multi-Tap upgraded to Lv.${G.tapPower}!`, 'success');
             } else {
                 showToast(`❌ Need ${Math.floor(G.tapCost).toLocaleString()} coins`, 'error');
+            }
+        }
+
+        function buyEnergyUpgrade() {
+            if (G.energyLevel >= 2) {
+                showToast('⚠️ Energy limit is already at maximum (400)!', 'error');
+                return;
+            }
+
+            if (G.score >= G.energyUpgradeCost) {
+                G.score -= G.energyUpgradeCost;
+                G.energyLevel += 1;
+                
+                if (G.energyLevel === 1) {
+                    G.maxEnergy = 200;
+                    G.energyUpgradeCost = 5000; // مضاعفة التكلفة للتطوير التالي
+                } else if (G.energyLevel === 2) {
+                    G.maxEnergy = 400;
+                }
+
+                // تعبئة الطاقة للحد الأقصى الجديد عند الترقية
+                G.energy = G.maxEnergy;
+
+                updateUI();
+                saveGame(true);
+                showToast(`🔋 Energy limit upgraded to ${G.maxEnergy}!`, 'success');
+            } else {
+                showToast(`❌ Need ${Math.floor(G.energyUpgradeCost).toLocaleString()} coins`, 'error');
             }
         }
 
@@ -1337,7 +1420,7 @@
         setInterval(() => {
             if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
-                G.energy = Math.min(G.maxEnergy, G.energy + (100 / 1800));
+                G.energy = Math.min(G.maxEnergy, G.energy + (G.maxEnergy / 1800));
                 updateUI();
             }
             saveGame(true);
