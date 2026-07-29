@@ -953,7 +953,6 @@
         const saveKey = 'bebo_save_' + telegramId;
         let isLoadedFromServer = false;
 
-        // دالة لجلب البيانات ودمجها بذكاء لمنع تصفير النقاط
         function loadGameData() {
             let localDataSaved = localStorage.getItem(saveKey);
             let localParsed = null;
@@ -967,7 +966,6 @@
                 let serverScore = serverData && serverData.score !== undefined ? Number(serverData.score) : 0;
                 let localScore = localParsed && localParsed.score !== undefined ? Number(localParsed.score) : 0;
 
-                // اختيار السكور الأعلى بين السيرفر والمحلي لضمان عدم ضياع أي نقرة
                 G.score = Math.max(serverScore, localScore);
                 
                 const baseData = serverData && serverData.score !== undefined ? serverData : localParsed;
@@ -984,7 +982,6 @@
                 updateUI();
                 saveGame(true);
             }, () => {
-                // إذا فشل الاتصال بالسيرفر، نعتمد على التخزين المحلي تماماً
                 if (localParsed) {
                     G.score = Number(localParsed.score) || 0;
                     G.energy = localParsed.energy ?? 100;
@@ -999,7 +996,7 @@
             });
         }
 
-        function saveGame(immediate = false) {
+        async function saveGame(immediate = false) {
             if (!isLoadedFromServer) return;
 
             const dataToSave = {
@@ -1015,14 +1012,16 @@
                 lastSaveTime: Date.now()
             };
             
-            // حفظ فوري في التخزين المحلي
             localStorage.setItem(saveKey, JSON.stringify(dataToSave));
 
-            // إرسال البيانات للسيرفر (تحديث فوري أو هادئ)
-            if (immediate) {
-                userRef.set(dataToSave).catch(() => {});
-            } else {
-                userRef.update(dataToSave).catch(() => {});
+            try {
+                if (immediate) {
+                    await userRef.set(dataToSave);
+                } else {
+                    userRef.update(dataToSave);
+                }
+            } catch (err) {
+                console.log("Sync error, saved locally.");
             }
         }
 
@@ -1195,7 +1194,6 @@
             }
         }
 
-        // الحفظ التلقائي كل 3 ثوانٍ وضبط الطاقة
         setInterval(() => {
             if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
@@ -1205,7 +1203,6 @@
             saveGame(true);
         }, 3000);
 
-        // الحفظ الفوري عند إغلاق التطبيق أو مغادرته
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) saveGame(true);
         });
