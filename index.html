@@ -99,45 +99,27 @@
             letter-spacing: 1px;
         }
 
-        .rank-badge-box {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin: 4px auto 2px auto;
-            cursor: pointer;
-            transition: transform 0.1s ease, background 0.2s ease;
-        }
-        .rank-badge-box:active { transform: scale(0.95); }
-        .rank-badge-box span {
-            font-size: 8px;
-            color: #ffd700;
-            font-family: 'Press Start 2P', cursive;
-        }
-
         .header {
             text-align: center;
             flex-shrink: 0;
         }
 
+        /* تكبير السكور وجعله أوضح */
         .score-board span {
             font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
+            font-size: 32px;
             color: #fff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
-            letter-spacing: 2px;
-            margin-bottom: 2px;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 4px 4px 0px #ff0055, -4px -4px 0px #00ffff;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
             display: inline-block;
         }
 
         .score-board p {
-            font-size: 8px;
+            font-size: 10px;
             color: #ccc;
             font-weight: 800;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
         }
 
         .tap-section, .section-view {
@@ -263,6 +245,7 @@
             position: relative;
             z-index: 2;
             transition: transform 0.06s ease, border-color 0.15s ease;
+            pointer-events: auto;
         }
 
         .coin-btn img {
@@ -290,6 +273,65 @@
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.5); }
         }
 
+        /* شريط التقييم في الأسفل فوق شريط الطاقة */
+        .rating-container {
+            width: 100%;
+            max-width: 350px;
+            margin: 2px auto 4px auto;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            flex-shrink: 0;
+        }
+
+        .rating-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+
+        .rating-info .rank-label {
+            font-size: 7px;
+            color: #aaa;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .rating-info .rank-value {
+            font-size: 10px;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .rating-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .rating-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff8c00, #ffd700, #ffec8b);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .rating-next {
+            text-align: right;
+            font-size: 6px;
+            color: #888;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
         .energy-section-bottom {
             width: 100%;
             display: flex;
@@ -300,10 +342,10 @@
         }
 
         .energy-container { width: 100%; max-width: 300px; }
-        .energy-info { display: flex; justify-content: space-between; font-size: 8px; color: #00ffff; margin-bottom: 2px; font-weight: bold; }
-        .energy-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); overflow: hidden; padding: 1px; }
-        .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #ff0055, #00ffff); border-radius: 3px; width: 100%; transition: width 0.1s linear; }
-        .hint { margin-top: 3px; font-size: 7px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; min-height: 16px; }
+        .energy-info { display: flex; justify-content: space-between; font-size: 8px; color: #ffd700; margin-bottom: 2px; font-weight: bold; }
+        .energy-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.3); overflow: hidden; padding: 1px; }
+        .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #ff8c00, #ffd700); border-radius: 3px; width: 100%; transition: width 0.1s linear; }
+        .hint { margin-top: 3px; font-size: 7px; color: #ffd700; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; min-height: 16px; }
 
         .upgrades-list, .tasks-list, .friends-container, .shop-list {
             width: 100%;
@@ -481,11 +523,6 @@
                     <h2 id="username">PLAYER</h2>
                 </div>
             </div>
-            
-            <!-- زر الرتب والتقييم الجديد المصمم باحترافية أعلى النقاط -->
-            <div class="rank-badge-box" onclick="openRanksModal()">
-                <span>🏆 <span id="currentRankName">BRONZE</span></span>
-            </div>
 
             <div class="score-board">
                 <span id="score">0</span>
@@ -520,6 +557,18 @@
                 <div class="coin-btn" id="coinBtn">
                     <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" id="coinImage">
                 </div>
+            </div>
+
+            <!-- شريط التقييم في الأسفل فوق شريط الطاقة -->
+            <div class="rating-container">
+                <div class="rating-info">
+                    <span class="rank-label">🎯 RATING</span>
+                    <span class="rank-value" id="ratingDisplay">BRONZE</span>
+                </div>
+                <div class="rating-bar-bg">
+                    <div class="rating-bar-fill" id="ratingFill"></div>
+                </div>
+                <div class="rating-next" id="ratingNext">Next: SILVER • 0 / 10,000</div>
             </div>
 
             <div class="energy-section-bottom">
@@ -660,16 +709,14 @@
         </div>
     </div>
 
-    <!-- نافذة شريط الرتب والتقييمات الجديدة -->
+    <!-- نافذة الرتب -->
     <div class="modal-overlay" id="ranksModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>🎖️ RANKS & TIERS</h3>
                 <button class="close-modal" onclick="closeRanksModal()">✕</button>
             </div>
-            <div class="ranking-scroll-list" id="ranksListContainer">
-                <!-- سيتم تعبئتها تلقائياً عبر الكود -->
-            </div>
+            <div class="ranking-scroll-list" id="ranksListContainer"></div>
         </div>
     </div>
 
@@ -733,23 +780,53 @@
         };
 
         const ranks = [
-            { name: 'BRONZE', minScore: 0, icon: '🥉' },
-            { name: 'SILVER', minScore: 10000, icon: '🥈' },
-            { name: 'GOLD', minScore: 50000, icon: '🥇' },
-            { name: 'PLATINUM', minScore: 200000, icon: '💎' },
-            { name: 'DIAMOND', minScore: 1000000, icon: '👑' }
+            { name: 'BRONZE', minScore: 0, icon: '🥉', next: 'SILVER' },
+            { name: 'SILVER', minScore: 10000, icon: '🥈', next: 'GOLD' },
+            { name: 'GOLD', minScore: 50000, icon: '🥇', next: 'PLATINUM' },
+            { name: 'PLATINUM', minScore: 200000, icon: '💎', next: 'DIAMOND' },
+            { name: 'DIAMOND', minScore: 1000000, icon: '👑', next: 'MAX' }
         ];
 
-        function checkAndUpdateRank() {
-            let currentRank = ranks[0];
+        function getCurrentRank() {
+            let current = ranks[0];
             for (let i = 0; i < ranks.length; i++) {
                 if (G.score >= ranks[i].minScore) {
-                    currentRank = ranks[i];
+                    current = ranks[i];
                 }
             }
-            const rankElement = $('currentRankName');
-            if (rankElement) {
-                rankElement.textContent = `${currentRank.icon} ${currentRank.name}`;
+            return current;
+        }
+
+        function getNextRank() {
+            const current = getCurrentRank();
+            const index = ranks.indexOf(current);
+            if (index < ranks.length - 1) {
+                return ranks[index + 1];
+            }
+            return null;
+        }
+
+        function updateRatingUI() {
+            const current = getCurrentRank();
+            const next = getNextRank();
+            
+            const ratingDisplay = document.getElementById('ratingDisplay');
+            ratingDisplay.textContent = `${current.icon} ${current.name}`;
+            
+            const fill = document.getElementById('ratingFill');
+            if (next) {
+                const currentMin = current.minScore;
+                const nextMin = next.minScore;
+                const progress = (G.score - currentMin) / (nextMin - currentMin);
+                const percent = Math.min(100, Math.max(0, progress * 100));
+                fill.style.width = percent + '%';
+                
+                const nextText = document.getElementById('ratingNext');
+                const remaining = Math.max(0, nextMin - G.score);
+                nextText.textContent = `Next: ${next.name} • ${remaining.toLocaleString()} coins needed`;
+            } else {
+                fill.style.width = '100%';
+                document.getElementById('ratingNext').textContent = '🏆 MAXIMUM RANK ACHIEVED!';
             }
         }
 
@@ -759,7 +836,7 @@
             const el = document.createElement('div');
             el.className = `toast ${type}`;
             el.textContent = message;
-            $('toastContainer').appendChild(el);
+            document.getElementById('toastContainer').appendChild(el);
             setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, duration);
         }
 
@@ -912,8 +989,8 @@
 
         function setupReferralLink() {
             const link = `https://t.me/${botUsername}?start=${telegramId}`;
-            $('refLinkText').textContent = link;
-            $('refCountText').textContent = `${G.referralCount} Friends`;
+            document.getElementById('refLinkText').textContent = link;
+            document.getElementById('refCountText').textContent = `${G.referralCount} Friends`;
         }
 
         function shareReferralLink() {
@@ -928,9 +1005,12 @@
             }
         }
 
-        const coinWrapper = $('coinWrapper');
-        coinWrapper.addEventListener('pointerdown', (e) => {
+        const coinBtn = document.getElementById('coinBtn');
+        const coinWrapper = document.getElementById('coinWrapper');
+        
+        coinBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             if (!isLoadedFromServer) return;
 
             if (G.energy < G.tapPower) {
@@ -939,8 +1019,9 @@
             }
 
             initAudio();
-            const clientX = e.clientX || (e.touches ? e.touches[0].clientX : window.innerWidth/2);
-            const clientY = e.clientY || (e.touches ? e.touches[0].clientY : window.innerHeight/2);
+            const rect = coinBtn.getBoundingClientRect();
+            const clientX = rect.left + rect.width / 2;
+            const clientY = rect.top + rect.height / 2;
 
             coinWrapper.classList.add('pressed');
             setTimeout(() => coinWrapper.classList.remove('pressed'), 100);
@@ -957,13 +1038,20 @@
             createFloatingNumber(clientX, clientY, `+${G.tapPower}`, '#00ffff');
         });
 
+        coinWrapper.addEventListener('pointerdown', (e) => {
+            if (e.target === coinWrapper || e.target === document.getElementById('coinGlow')) {
+                e.preventDefault();
+                return;
+            }
+        });
+
         function updateUI() {
-            $('score').textContent = Math.floor(G.score).toLocaleString();
-            checkAndUpdateRank();
+            document.getElementById('score').textContent = Math.floor(G.score).toLocaleString();
+            updateRatingUI();
 
             const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
-            $('energyFill').style.width = pct + '%';
-            $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
+            document.getElementById('energyFill').style.width = pct + '%';
+            document.getElementById('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
             
             const missingEnergy = G.maxEnergy - G.energy;
             const secondsLeft = Math.max(0, Math.ceil((missingEnergy / G.maxEnergy) * 1800));
@@ -972,21 +1060,21 @@
             const timeFormatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             
             if (G.energy >= G.maxEnergy) {
-                $('hintText').textContent = '⚡ FULLY CHARGED';
+                document.getElementById('hintText').textContent = '⚡ FULLY CHARGED';
             } else {
-                $('hintText').textContent = `RECHARGING: ${timeFormatted}`;
+                document.getElementById('hintText').textContent = `RECHARGING: ${timeFormatted}`;
             }
 
-            $('tapLevel').textContent = G.tapPower;
-            $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
-            $('refCountText').textContent = `${G.referralCount} Friends`;
+            document.getElementById('tapLevel').textContent = G.tapPower;
+            document.getElementById('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
+            document.getElementById('refCountText').textContent = `${G.referralCount} Friends`;
 
             if (G.completedTasks['tg']) {
-                const btn = $('taskTg');
+                const btn = document.getElementById('taskTg');
                 if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
             }
             if (G.completedTasks['x']) {
-                const btn = $('taskX');
+                const btn = document.getElementById('taskX');
                 if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
             }
         }
@@ -1083,35 +1171,24 @@
         }
 
         function openLeaderboardModal() { 
-            $('leaderboardModal').style.display = 'flex'; 
+            document.getElementById('leaderboardModal').style.display = 'flex'; 
             loadTopHundred(); 
         }
         
         function closeLeaderboardModal() { 
-            $('leaderboardModal').style.display = 'none'; 
+            document.getElementById('leaderboardModal').style.display = 'none'; 
         }
 
-        // دوال فتح وإغلاق نافذة الرتب مع عرض الشروط والعملات المطلوبة
         function openRanksModal() {
-            $('ranksModal').style.display = 'flex';
-            const container = $('ranksListContainer');
+            document.getElementById('ranksModal').style.display = 'flex';
+            const container = document.getElementById('ranksListContainer');
             container.innerHTML = '';
+
+            const current = getCurrentRank();
 
             ranks.forEach((r) => {
                 const row = document.createElement('div');
-                let isCurrent = false;
-                
-                // تحديد الرتبة الحالية للاعب لتوضيحها في القائمة
-                let currentRankObj = ranks[0];
-                for (let i = 0; i < ranks.length; i++) {
-                    if (G.score >= ranks[i].minScore) {
-                        currentRankObj = ranks[i];
-                    }
-                }
-                if (currentRankObj.name === r.name) {
-                    isCurrent = true;
-                }
-
+                const isCurrent = (current.name === r.name);
                 row.className = `rank-row ${isCurrent ? 'gold' : ''}`;
                 row.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -1125,11 +1202,11 @@
         }
 
         function closeRanksModal() {
-            $('ranksModal').style.display = 'none';
+            document.getElementById('ranksModal').style.display = 'none';
         }
 
         function loadTopHundred() {
-            const container = $('topHundredContainer');
+            const container = document.getElementById('topHundredContainer');
             container.innerHTML = '<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>';
             
             db.ref('users').once('value', (snapshot) => {
@@ -1180,8 +1257,8 @@
         const navBtns = ['btnHome', 'btnUpgrades', 'btnShop', 'btnTasks'];
 
         function switchTab(tab) {
-            views.forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
-            navBtns.forEach(id => { const el = $(id); if (el) el.classList.remove('active'); });
+            views.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+            navBtns.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
 
             const map = {
                 home: { view: 'gameView', btn: 'btnHome' },
@@ -1193,13 +1270,13 @@
             const target = map[tab];
             if (!target) return;
             if (tab === 'friends') {
-                $(target.view).style.display = 'flex';
-                $('btnTasks').classList.add('active');
+                document.getElementById(target.view).style.display = 'flex';
+                document.getElementById('btnTasks').classList.add('active');
                 setupReferralLink();
                 return;
             }
-            $(target.view).style.display = 'flex';
-            const btnEl = $(target.btn);
+            document.getElementById(target.view).style.display = 'flex';
+            const btnEl = document.getElementById(target.btn);
             if (btnEl) btnEl.classList.add('active');
             if (tab === 'friends') setupReferralLink();
         }
@@ -1208,4 +1285,3 @@
     </script>
 </body>
 </html>
-
