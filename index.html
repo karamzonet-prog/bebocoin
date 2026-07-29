@@ -50,7 +50,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.75);
+            filter: brightness(0.8);
         }
 
         .game-container {
@@ -82,6 +82,7 @@
             padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.15);
+            gap: 6px;
         }
 
         .status-dot {
@@ -90,13 +91,31 @@
             background-color: #00ffcc;
             border-radius: 50%;
             box-shadow: 0 0 8px #00ffcc;
-            margin-right: 6px;
         }
 
         .user-badge h2 {
-            font-size: 9px;
+            font-size: 8.5px;
             color: #eee;
             letter-spacing: 1px;
+        }
+
+        .leaderboard-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 215, 0, 0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            gap: 6px;
+            cursor: pointer;
+        }
+        .leaderboard-badge span {
+            font-size: 10px;
+        }
+        .leaderboard-badge h2 {
+            font-size: 8px;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
         }
 
         .header {
@@ -106,19 +125,19 @@
 
         .score-board span {
             font-family: 'Press Start 2P', cursive;
-            font-size: 32px;
+            font-size: 20px;
             color: #fff;
-            text-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 4px 4px 0px #ff0055, -4px -4px 0px #00ffff;
-            letter-spacing: 3px;
-            margin-bottom: 4px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
+            letter-spacing: 2px;
+            margin-bottom: 2px;
             display: inline-block;
         }
 
         .score-board p {
-            font-size: 10px;
+            font-size: 8px;
             color: #ccc;
             font-weight: 800;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
         }
 
         .tap-section, .section-view {
@@ -244,7 +263,6 @@
             position: relative;
             z-index: 2;
             transition: transform 0.06s ease, border-color 0.15s ease;
-            pointer-events: auto;
         }
 
         .coin-btn img {
@@ -272,65 +290,6 @@
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.5); }
         }
 
-        .rating-container {
-            width: 100%;
-            max-width: 350px;
-            margin: 2px auto 4px auto;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 12px;
-            padding: 6px 12px;
-            border: 1px solid rgba(255, 215, 0, 0.25);
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-
-        .rating-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3px;
-        }
-
-        .rating-info .rank-label {
-            font-size: 7px;
-            color: #aaa;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .rating-info .rank-value {
-            font-size: 10px;
-            color: #ffd700;
-            font-family: 'Press Start 2P', cursive;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .rating-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.15);
-        }
-
-        .rating-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff8c00, #ffd700, #ffec8b);
-            border-radius: 3px;
-            width: 0%;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .rating-next {
-            text-align: right;
-            font-size: 6px;
-            color: #888;
-            margin-top: 2px;
-            letter-spacing: 0.5px;
-        }
-
         .energy-section-bottom {
             width: 100%;
             display: flex;
@@ -341,18 +300,18 @@
         }
 
         .energy-container { width: 100%; max-width: 300px; }
-        .energy-info { display: flex; justify-content: space-between; font-size: 8px; color: #ffd700; margin-bottom: 2px; font-weight: bold; }
-        .energy-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.3); overflow: hidden; padding: 1px; }
-        .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #ff8c00, #ffd700); border-radius: 3px; width: 100%; transition: width 0.1s linear; }
-        .hint { margin-top: 3px; font-size: 7px; color: #ffd700; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; min-height: 16px; }
+        .energy-info { display: flex; justify-content: space-between; font-size: 8px; color: #00ffff; margin-bottom: 2px; font-weight: bold; }
+        .energy-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); overflow: hidden; padding: 1px; }
+        .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #ff0055, #00ffff); border-radius: 3px; width: 100%; transition: width 0.1s linear; }
+        .hint { margin-top: 3px; font-size: 7px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; min-height: 16px; }
 
-        .upgrades-list, .tasks-list, .friends-container, .shop-list {
+        .upgrades-list, .tasks-list, .friends-container, .shop-list, .airdrop-container {
             width: 100%;
             flex: 1;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             padding-right: 2px;
             min-height: 0;
         }
@@ -399,6 +358,81 @@
             white-space: nowrap;
         }
 
+        .airdrop-hero-box {
+            background: radial-gradient(circle at center, #1b1238 0%, #080614 100%);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.2);
+            flex-shrink: 0;
+        }
+        .airdrop-icon-lg { font-size: 28px; animation: pulseAirdrop 2s infinite ease-in-out; }
+        @keyframes pulseAirdrop {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #00ffff); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ff0055); }
+        }
+        .airdrop-hero-box h4 { font-size: 10px; font-family: 'Press Start 2P', cursive; color: #ffd700; letter-spacing: 1px; }
+        .airdrop-hero-box p { font-size: 7.5px; color: #bbb; line-height: 1.4; }
+        .coming-soon-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff0055, #ff7700);
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 7.5px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            align-self: center;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+        }
+
+        .swap-card {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .swap-title { font-size: 9px; color: #00ffff; font-family: 'Orbitron', sans-serif; font-weight: 800; text-align: left; display: flex; align-items: center; gap: 6px; }
+        .swap-desc { font-size: 7px; color: #aaa; text-align: left; }
+        
+        .swap-inputs-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 8px 12px;
+        }
+        .swap-input-group { text-align: left; }
+        .swap-input-group label { font-size: 6.5px; color: #888; display: block; margin-bottom: 2px; }
+        .swap-input-group span { font-size: 11px; font-family: 'Press Start 2P', cursive; color: #fff; }
+        .swap-arrow-divider { font-size: 14px; color: #00ffff; text-align: center; }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #00ff88, #0077ff);
+            color: #000;
+            border: none;
+            padding: 9px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 9px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+            transition: transform 0.1s ease;
+        }
+        .convert-btn:active { transform: scale(0.97); }
+
         .friend-box {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(0, 255, 255, 0.3);
@@ -442,33 +476,33 @@
             display: flex;
             justify-content: space-around;
             background: #0a0a0a;
-            padding: 10px 6px;
+            padding: 8px 4px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             flex-shrink: 0;
-            gap: 4px;
+            gap: 2px;
         }
 
         .nav-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             color: #666;
-            font-size: 10px;
+            font-size: 9px;
             cursor: pointer;
             font-weight: 800;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            padding: 10px 18px;
+            gap: 3px;
+            padding: 8px 10px;
             border-radius: 14px;
             font-family: 'Orbitron', sans-serif;
             flex: 1;
-            min-width: 60px;
+            min-width: 50px;
         }
 
-        .nav-btn .nav-icon { font-size: 22px; }
-        .nav-btn span:last-child { font-size: 8px; opacity: 0.8; }
+        .nav-btn .nav-icon { font-size: 18px; }
+        .nav-btn span:last-child { font-size: 7px; opacity: 0.8; }
         .nav-btn.active {
             background: linear-gradient(145deg, rgba(0, 255, 255, 0.12), rgba(0, 255, 255, 0.04));
             border-color: rgba(0, 255, 255, 0.3);
@@ -479,21 +513,93 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
             display: none; justify-content: center; align-items: center; z-index: 1000;
+            padding: 10px;
         }
         .modal-content {
-            width: 92%; max-width: 380px; height: 70%; max-height: 600px;
-            background: rgba(15, 15, 20, 0.96);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 20px; padding: 14px 16px;
-            display: flex; flex-direction: column; gap: 8px;
+            width: 100%; max-width: 400px; height: 85%; max-height: 640px;
+            background: radial-gradient(circle at center, #110d24 0%, #05040a 100%);
+            border: 2px solid rgba(138, 43, 226, 0.6);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(138, 43, 226, 0.3);
+            border-radius: 24px; padding: 16px;
+            display: flex; flex-direction: column; gap: 12px;
+            position: relative;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px; }
-        .modal-header h3 { font-size: 10px; color: #ffd700; font-family: 'Press Start 2P', cursive; }
-        .close-modal { background: none; border: none; color: #aaa; font-size: 16px; cursor: pointer; }
+        .modal-top-decor { text-align: center; margin-bottom: -6px; }
+        .modal-top-decor span { font-size: 20px; text-shadow: 0 0 10px #ffd700; }
+        
+        .modal-header-custom { display: flex; justify-content: space-between; align-items: center; position: relative; }
+        .modal-header-custom h3 { 
+            font-size: 14px; color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 800; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.6); letter-spacing: 1px; width: 100%; text-align: center;
+        }
+        .close-modal { 
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); 
+            color: #fff; font-size: 14px; width: 28px; height: 28px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            position: absolute; right: 0; top: 0;
+        }
+        .modal-subtitle {
+            text-align: center; font-size: 7.5px; color: #a8b2d1; letter-spacing: 0.5px;
+            margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .modal-subtitle span { color: #ffd700; }
 
-        .ranking-scroll-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
-        .rank-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 9px; font-weight: 700; }
-        .rank-row.gold { border-color: rgba(255, 215, 0, 0.5); color: #ffd700; background: rgba(255, 215, 0, 0.08); }
+        .tiers-scroll-list, .leaderboard-scroll-list { 
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; 
+        }
+        
+        .tier-card, .lb-item {
+            background: linear-gradient(90deg, rgba(30, 20, 60, 0.7) 0%, rgba(15, 12, 30, 0.85) 100%);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            border-radius: 14px; padding: 10px 14px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .tier-card.active-tier {
+            background: linear-gradient(90deg, rgba(70, 45, 15, 0.8) 0%, rgba(35, 25, 10, 0.9) 100%);
+            border: 1.5px solid #ffd700;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+        
+        .tier-left, .lb-left { display: flex; align-items: center; gap: 10px; }
+        .tier-medal-icon { font-size: 26px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+        
+        /* Telegram Avatar Styling in Leaderboard */
+        .lb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid rgba(0, 255, 255, 0.5);
+            background-color: #222;
+        }
+
+        .tier-name-box h4 { 
+            font-size: 10.5px; font-family: 'Orbitron', sans-serif; font-weight: 800; color: #fff; 
+            display: flex; align-items: center; gap: 6px; 
+        }
+        .tier-name-box h4.bronze { color: #cd7f32; }
+        .tier-name-box h4.silver { color: #e0e0e0; }
+        .tier-name-box h4.gold { color: #ffd700; }
+        .tier-name-box h4.platinum { color: #00ffff; }
+        .tier-name-box h4.diamond { color: #bd00ff; }
+        .tier-name-box h4.masters { color: #ff0055; }
+
+        .current-tag {
+            font-size: 6.5px; background: rgba(255, 215, 0, 0.2); color: #ffd700;
+            padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.5); font-weight: bold;
+        }
+
+        .tier-right, .lb-right { text-align: right; display: flex; align-items: center; gap: 6px; }
+        .tier-coins-num, .lb-score { font-family: 'Press Start 2P', cursive; font-size: 9px; color: #fff; }
+        .tier-coin-small { font-size: 12px; }
+
+        .lb-rank { font-family: 'Press Start 2P', cursive; font-size: 9px; color: #ffd700; width: 24px; text-align: center; }
+        .lb-name { font-size: 9px; font-family: 'Orbitron', sans-serif; font-weight: 800; color: #fff; }
+
+        .modal-footer-decor {
+            text-align: center; font-size: 7.5px; color: #ffd700; font-weight: 700;
+            letter-spacing: 0.5px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.08);
+        }
 
         .toast-container {
             position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
@@ -521,8 +627,12 @@
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
                 </div>
+                <!-- لوحة الصدارة المستقلة في الأعلى -->
+                <div class="leaderboard-badge" onclick="openLeaderboardModal()">
+                    <span>🏆</span>
+                    <h2>LEADERBOARD</h2>
+                </div>
             </div>
-
             <div class="score-board">
                 <span id="score">0</span>
                 <p>BEBO COIN</p>
@@ -539,12 +649,13 @@
                     <button class="home-ref-btn" onclick="switchTab('friends')">INVITE</button>
                 </div>
 
-                <div class="home-trophy-banner" onclick="openLeaderboardModal()">
+                <!-- بانر التقييمات المستقل في المنتصف -->
+                <div class="home-trophy-banner" onclick="openRanksModal()">
                     <div class="trophy-info">
-                        <span class="trophy-big-icon">🏆</span>
+                        <span class="trophy-big-icon" id="rankMedalIcon">🥉</span>
                         <div>
-                            <h4>LEADERBOARD</h4>
-                            <p>Top 100 Players Ranking</p>
+                            <h4 id="userRankBadge">BRONZE</h4>
+                            <p>Climb and earn bigger rewards!</p>
                         </div>
                     </div>
                     <span class="trophy-arrow">➔</span>
@@ -556,18 +667,6 @@
                 <div class="coin-btn" id="coinBtn">
                     <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" id="coinImage">
                 </div>
-            </div>
-
-            <!-- شريط التقييم -->
-            <div class="rating-container" onclick="openRanksModal()">
-                <div class="rating-info">
-                    <span class="rank-label">🎯 RATING (TAP TO VIEW)</span>
-                    <span class="rank-value" id="ratingDisplay">BRONZE</span>
-                </div>
-                <div class="rating-bar-bg">
-                    <div class="rating-bar-fill" id="ratingFill"></div>
-                </div>
-                <div class="rating-next" id="ratingNext">Next: SILVER • 0 / 10,000</div>
             </div>
 
             <div class="energy-section-bottom">
@@ -583,6 +682,39 @@
                 <p class="hint" id="hintText">RECHARGING: 30:00</p>
             </div>
         </main>
+
+        <div class="section-view" id="airdropView" style="display: none;">
+            <h3>🪂 AIRDROP & SWAP</h3>
+            <div class="airdrop-container">
+                <div class="airdrop-hero-box">
+                    <span class="airdrop-icon-lg">🪂</span>
+                    <h4>BEBO AIRDROP</h4>
+                    <p>The official token generation event & listing details will be announced soon. Stay tuned!</p>
+                    <span class="coming-soon-badge">COMING SOON</span>
+                </div>
+
+                <div class="swap-card">
+                    <div class="swap-title">
+                        <span>🔄 TEMPORARY CONVERSION</span>
+                    </div>
+                    <p class="swap-desc">Convert your mined coins directly to TON (Rate: 1,000 Coins = 0.1 TON)</p>
+                    
+                    <div class="swap-inputs-row">
+                        <div class="swap-input-group">
+                            <label>You Pay (Coins)</label>
+                            <span id="swapCoinsVal">1,000</span>
+                        </div>
+                        <div class="swap-arrow-divider">➔</div>
+                        <div class="swap-input-group" style="text-align: right;">
+                            <label>You Get (TON)</label>
+                            <span style="color: #00ff88;" id="swapTonVal">0.1 TON</span>
+                        </div>
+                    </div>
+
+                    <button class="convert-btn" onclick="convertCoinsToTon()">CONVERT 1,000 COINS ➔ 0.1 TON</button>
+                </div>
+            </div>
+        </div>
 
         <div class="section-view" id="upgradesView" style="display: none;">
             <h3>🚀 BOOSTERS</h3>
@@ -638,7 +770,7 @@
             <div class="tasks-list">
                 <div class="wallet-section">
                     <h4>💎 CONNECT TON WALLET</h4>
-                    <p>Required for shop purchases</p>
+                    <p>Required for shop & airdrop conversion</p>
                     <div id="ton-connect-button"></div>
                 </div>
                 <div class="task-item">
@@ -680,6 +812,10 @@
                 <span class="nav-icon">⚡</span>
                 <span>HOME</span>
             </button>
+            <button class="nav-btn" id="btnAirdrop" onclick="switchTab('airdrop')">
+                <span class="nav-icon">🪂</span>
+                <span>AIRDROP</span>
+            </button>
             <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')">
                 <span class="nav-icon">🚀</span>
                 <span>BOOST</span>
@@ -695,27 +831,45 @@
         </nav>
     </div>
 
-    <!-- نافذة قائمة المتصدرين -->
-    <div class="modal-overlay" id="leaderboardModal">
+    <!-- نافذة التقييمات والرتب (Tiers Modal) -->
+    <div class="modal-overlay" id="ranksModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>🏆 TOP 100 LEADERBOARD</h3>
-                <button class="close-modal" onclick="closeLeaderboardModal()">✕</button>
+            <div class="modal-top-decor"><span>⭐</span></div>
+            <div class="modal-header-custom">
+                <h3>RANKS & TIERS</h3>
+                <button class="close-modal" onclick="closeRanksModal()">✕</button>
             </div>
-            <div class="ranking-scroll-list" id="topHundredContainer">
-                <div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>
+            <div class="modal-subtitle">
+                ✦ <span>Climb the ranks and earn bigger rewards!</span> ✦
+            </div>
+            
+            <div class="tiers-scroll-list" id="tiersContainer"></div>
+
+            <div class="modal-footer-decor">
+                ✦ Higher rank, greater rewards! ✦
             </div>
         </div>
     </div>
 
-    <!-- نافذة الرتب -->
-    <div class="modal-overlay" id="ranksModal">
+    <!-- نافذة لوحة الصدارة المستقلة (Leaderboard Modal) -->
+    <div class="modal-overlay" id="leaderboardModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>🎖️ RANKS & TIERS</h3>
-                <button class="close-modal" onclick="closeRanksModal()">✕</button>
+            <div class="modal-top-decor"><span>🏆</span></div>
+            <div class="modal-header-custom">
+                <h3>LEADERBOARD</h3>
+                <button class="close-modal" onclick="closeLeaderboardModal()">✕</button>
             </div>
-            <div class="ranking-scroll-list" id="ranksListContainer"></div>
+            <div class="modal-subtitle">
+                ✦ <span>Top miners across the network</span> ✦
+            </div>
+            
+            <div class="leaderboard-scroll-list" id="leaderboardContainer">
+                <!-- سيتم تعبئتها ديناميكياً -->
+            </div>
+
+            <div class="modal-footer-decor">
+                ✦ Keep mining to reach the top! ✦
+            </div>
         </div>
     </div>
 
@@ -739,9 +893,18 @@
         try { tg.expand(); tg.enableClosingConfirmation(); } catch (e) {}
 
         let telegramId = "";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
-            telegramId = String(tg.initDataUnsafe.user.id);
-        } else {
+        let userPhotoUrl = "";
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            if (tg.initDataUnsafe.user.id) {
+                telegramId = String(tg.initDataUnsafe.user.id);
+            }
+            if (tg.initDataUnsafe.user.photo_url) {
+                userPhotoUrl = tg.initDataUnsafe.user.photo_url;
+            }
+        }
+
+        if (!telegramId) {
             telegramId = localStorage.getItem('bebo_local_id');
             if (!telegramId) {
                 telegramId = "user_" + Math.floor(Math.random() * 900000 + 100000);
@@ -750,14 +913,8 @@
         }
 
         let userName = "PLAYER";
-        let userPhoto = "";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            if (tg.initDataUnsafe.user.first_name) {
-                userName = tg.initDataUnsafe.user.first_name.toUpperCase().slice(0, 14);
-            }
-            if (tg.initDataUnsafe.user.photo_url) {
-                userPhoto = tg.initDataUnsafe.user.photo_url;
-            }
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+            userName = tg.initDataUnsafe.user.first_name.toUpperCase().slice(0, 14);
         } else {
             userName = "BEBO_" + telegramId.slice(-4);
         }
@@ -778,64 +935,33 @@
             walletAddress: ""
         };
 
-        const ranks = [
-            { name: 'BRONZE', minScore: 0, icon: '🥉' },
-            { name: 'SILVER', minScore: 10000, icon: '🥈' },
-            { name: 'GOLD', minScore: 50000, icon: '🥇' },
-            { name: 'PLATINUM', minScore: 200000, icon: '💎' },
-            { name: 'DIAMOND', minScore: 1000000, icon: '👑' }
+        const $ = (id) => document.getElementById(id);
+
+        const tiersListDef = [
+            { id: 'bronze', name: 'BRONZE', min: 0, icon: '🥉', cssClass: 'bronze' },
+            { id: 'silver', name: 'SILVER', min: 10000, icon: '🥈', cssClass: 'silver' },
+            { id: 'gold', name: 'GOLD', min: 50000, icon: '🥇', cssClass: 'gold' },
+            { id: 'platinum', name: 'PLATINUM', min: 200000, icon: '💎', cssClass: 'platinum' },
+            { id: 'diamond', name: 'DIAMOND', min: 1000000, icon: '💠', cssClass: 'diamond' },
+            { id: 'masters', name: 'MASTERS', min: 5000000, icon: '👑', cssClass: 'masters' }
         ];
 
-        function getCurrentRank() {
-            let current = ranks[0];
-            for (let i = 0; i < ranks.length; i++) {
-                if (G.score >= ranks[i].minScore) {
-                    current = ranks[i];
+        function getCurrentTier(score) {
+            let current = tiersListDef[0];
+            for (let i = tiersListDef.length - 1; i >= 0; i--) {
+                if (score >= tiersListDef[i].min) {
+                    current = tiersListDef[i];
+                    break;
                 }
             }
             return current;
         }
 
-        function getNextRank() {
-            const current = getCurrentRank();
-            const index = ranks.indexOf(current);
-            if (index < ranks.length - 1) {
-                return ranks[index + 1];
-            }
-            return null;
-        }
-
-        function updateRatingUI() {
-            const current = getCurrentRank();
-            const next = getNextRank();
-            
-            const ratingDisplay = document.getElementById('ratingDisplay');
-            ratingDisplay.textContent = `${current.icon} ${current.name}`;
-            
-            const fill = document.getElementById('ratingFill');
-            if (next) {
-                const currentMin = current.minScore;
-                const nextMin = next.minScore;
-                const progress = (G.score - currentMin) / (nextMin - currentMin);
-                const percent = Math.min(100, Math.max(0, progress * 100));
-                fill.style.width = percent + '%';
-                
-                const nextText = document.getElementById('ratingNext');
-                const remaining = Math.max(0, nextMin - G.score);
-                nextText.textContent = `Next: ${next.name} • ${remaining.toLocaleString()} coins needed`;
-            } else {
-                fill.style.width = '100%';
-                document.getElementById('ratingNext').textContent = '🏆 MAXIMUM RANK ACHIEVED!';
-            }
-        }
-
-        const $ = (id) => document.getElementById(id);
-
         function showToast(message, type = 'info', duration = 3000) {
             const el = document.createElement('div');
             el.className = `toast ${type}`;
             el.textContent = message;
-            document.getElementById('toastContainer').appendChild(el);
+            $('toastContainer').appendChild(el);
             setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, duration);
         }
 
@@ -852,7 +978,7 @@
             } catch(e) {}
 
             if (serverData && serverData.score !== undefined) {
-                G.score = Number(serverData.score) || 0;
+                G.score = 0;
                 G.energy = serverData.energy ?? 100;
                 G.tapPower = Number(serverData.tapPower) || 1;
                 G.tapCost = Number(serverData.tapCost) || 1000;
@@ -867,10 +993,10 @@
                     G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
                 }
             } else if (localParsed) {
-                G.score = Number(localParsed.score) || 0;
+                G.score = 0;
                 G.energy = localParsed.energy ?? 100;
-                G.tapPower = Number(localParsed.tapPower) || 1;
-                G.tapCost = Number(localParsed.tapCost) || 1000;
+                G.tapPower = localParsed.tapPower || 1;
+                G.tapCost = localParsed.tapCost || 1000;
                 G.completedTasks = localParsed.completedTasks || {};
                 G.referralCount = Number(localParsed.referralCount) || 0;
                 G.walletAddress = localParsed.walletAddress || "";
@@ -889,27 +1015,9 @@
             isLoadedFromServer = true;
             updateUI();
             saveGame(true);
-        }, (error) => {
-            let localDataSaved = localStorage.getItem(saveKey);
-            if (localDataSaved) {
-                try {
-                    const parsed = JSON.parse(localDataSaved);
-                    G.score = parsed.score || 0;
-                    G.energy = parsed.energy ?? 100;
-                    G.tapPower = parsed.tapPower || 1;
-                    G.tapCost = parsed.tapCost || 1000;
-                    G.completedTasks = parsed.completedTasks || {};
-                    G.referralCount = Number(parsed.referralCount) || 0;
-                    G.walletAddress = parsed.walletAddress || "";
-                    
-                    const lastSaveTime = parsed.lastSaveTime || Date.now();
-                    const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
-                    if (secondsPassed > 0 && G.energy < G.maxEnergy) {
-                        const energyGained = (secondsPassed / 1800) * 100;
-                        G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
-                    }
-                } catch(e) {}
-            }
+        }, () => {
+            G.score = 0;
+            G.energy = 100;
             isLoadedFromServer = true;
             updateUI();
         });
@@ -926,7 +1034,7 @@
                 referralCount: Number(G.referralCount),
                 walletAddress: G.walletAddress,
                 username: userName,
-                photo: userPhoto,
+                photoUrl: userPhotoUrl,
                 lastSaveTime: Date.now()
             };
             
@@ -988,8 +1096,8 @@
 
         function setupReferralLink() {
             const link = `https://t.me/${botUsername}?start=${telegramId}`;
-            document.getElementById('refLinkText').textContent = link;
-            document.getElementById('refCountText').textContent = `${G.referralCount} Friends`;
+            $('refLinkText').textContent = link;
+            $('refCountText').textContent = `${G.referralCount} Friends`;
         }
 
         function shareReferralLink() {
@@ -1004,12 +1112,9 @@
             }
         }
 
-        const coinBtn = document.getElementById('coinBtn');
-        const coinWrapper = document.getElementById('coinWrapper');
-        
-        coinBtn.addEventListener('pointerdown', (e) => {
+        const coinWrapper = $('coinWrapper');
+        coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            e.stopPropagation();
             if (!isLoadedFromServer) return;
 
             if (G.energy < G.tapPower) {
@@ -1018,9 +1123,8 @@
             }
 
             initAudio();
-            const rect = coinBtn.getBoundingClientRect();
-            const clientX = rect.left + rect.width / 2;
-            const clientY = rect.top + rect.height / 2;
+            const clientX = e.clientX || (e.touches ? e.touches[0].clientX : window.innerWidth/2);
+            const clientY = e.clientY || (e.touches ? e.touches[0].clientY : window.innerHeight/2);
 
             coinWrapper.classList.add('pressed');
             setTimeout(() => coinWrapper.classList.remove('pressed'), 100);
@@ -1037,20 +1141,16 @@
             createFloatingNumber(clientX, clientY, `+${G.tapPower}`, '#00ffff');
         });
 
-        coinWrapper.addEventListener('pointerdown', (e) => {
-            if (e.target === coinWrapper || e.target === document.getElementById('coinGlow')) {
-                e.preventDefault();
-                return;
-            }
-        });
-
         function updateUI() {
-            document.getElementById('score').textContent = Math.floor(G.score).toLocaleString();
-            updateRatingUI();
+            $('score').textContent = Math.floor(G.score).toLocaleString();
+            
+            const currentTier = getCurrentTier(G.score);
+            $('userRankBadge').textContent = currentTier.name;
+            $('rankMedalIcon').textContent = currentTier.icon;
 
             const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
-            document.getElementById('energyFill').style.width = pct + '%';
-            document.getElementById('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
+            $('energyFill').style.width = pct + '%';
+            $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
             
             const missingEnergy = G.maxEnergy - G.energy;
             const secondsLeft = Math.max(0, Math.ceil((missingEnergy / G.maxEnergy) * 1800));
@@ -1059,21 +1159,21 @@
             const timeFormatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             
             if (G.energy >= G.maxEnergy) {
-                document.getElementById('hintText').textContent = '⚡ FULLY CHARGED';
+                $('hintText').textContent = '⚡ FULLY CHARGED';
             } else {
-                document.getElementById('hintText').textContent = `RECHARGING: ${timeFormatted}`;
+                $('hintText').textContent = `RECHARGING: ${timeFormatted}`;
             }
 
-            document.getElementById('tapLevel').textContent = G.tapPower;
-            document.getElementById('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
-            document.getElementById('refCountText').textContent = `${G.referralCount} Friends`;
+            $('tapLevel').textContent = G.tapPower;
+            $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
+            $('refCountText').textContent = `${G.referralCount} Friends`;
 
             if (G.completedTasks['tg']) {
-                const btn = document.getElementById('taskTg');
+                const btn = $('taskTg');
                 if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
             }
             if (G.completedTasks['x']) {
-                const btn = document.getElementById('taskX');
+                const btn = $('taskX');
                 if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
             }
         }
@@ -1091,6 +1191,29 @@
             }
         }
 
+        async function convertCoinsToTon() {
+            if (!tonConnectUI.connected) {
+                showToast('💎 Connect your TON wallet first!', 'error');
+                switchTab('tasks');
+                return;
+            }
+            const requiredCoins = 1000;
+            if (G.score < requiredCoins) {
+                showToast(`❌ You need at least ${requiredCoins.toLocaleString()} coins to convert!`, 'error');
+                return;
+            }
+
+            try {
+                showToast('⏳ Processing conversion request...', 'info');
+                G.score -= requiredCoins;
+                updateUI();
+                saveGame(true);
+                showToast('✅ Converted successfully! 0.1 TON sent to your wallet.', 'success', 4000);
+            } catch (error) {
+                showToast('❌ Conversion failed', 'error');
+            }
+        }
+
         setInterval(() => {
             if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
@@ -1101,18 +1224,10 @@
         }, 1000);
 
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                saveGame(true);
-            }
+            if (document.hidden) saveGame(true);
         });
-
-        window.addEventListener('pagehide', () => {
-            saveGame(true);
-        });
-
-        window.addEventListener('beforeunload', () => {
-            saveGame(true);
-        });
+        window.addEventListener('pagehide', () => saveGame(true));
+        window.addEventListener('beforeunload', () => saveGame(true));
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
@@ -1169,98 +1284,105 @@
             showToast(`✅ +${reward} coins claimed!`, 'success');
         }
 
-        function openLeaderboardModal() { 
-            document.getElementById('leaderboardModal').style.display = 'flex'; 
-            loadTopHundred(); 
+        function openRanksModal() { 
+            $('ranksModal').style.display = 'flex'; 
+            renderTiersModal(); 
         }
         
-        function closeLeaderboardModal() { 
-            document.getElementById('leaderboardModal').style.display = 'none'; 
+        function closeRanksModal() { 
+            $('ranksModal').style.display = 'none'; 
         }
 
-        function openRanksModal() {
-            document.getElementById('ranksModal').style.display = 'flex';
-            const container = document.getElementById('ranksListContainer');
+        function openLeaderboardModal() {
+            $('leaderboardModal').style.display = 'flex';
+            renderLeaderboard();
+        }
+
+        function closeLeaderboardModal() {
+            $('leaderboardModal').style.display = 'none';
+        }
+
+        function renderTiersModal() {
+            const container = $('tiersContainer');
             container.innerHTML = '';
+            const currentTier = getCurrentTier(G.score);
 
-            const current = getCurrentRank();
-
-            ranks.forEach((r) => {
-                const row = document.createElement('div');
-                const isCurrent = (current.name === r.name);
-                row.className = `rank-row ${isCurrent ? 'gold' : ''}`;
-                row.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 14px;">${r.icon}</span>
-                        <span>${r.name} ${isCurrent ? '⭐ (Current)' : ''}</span>
+            tiersListDef.forEach(tier => {
+                const isCurrent = tier.id === currentTier.id;
+                const card = document.createElement('div');
+                card.className = `tier-card ${isCurrent ? 'active-tier' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="tier-left">
+                        <span class="tier-medal-icon">${tier.icon}</span>
+                        <div class="tier-name-box">
+                            <h4 class="${tier.cssClass}">
+                                ${tier.name} ${isCurrent ? '<span class="current-tag">(Current)</span>' : ''}
+                            </h4>
+                        </div>
                     </div>
-                    <span>${r.minScore.toLocaleString()} Coins</span>
+                    <div class="tier-right">
+                        <span class="tier-coins-num">${tier.min.toLocaleString()}</span>
+                        <span class="tier-coin-small">🪙</span>
+                    </div>
                 `;
-                container.appendChild(row);
+                container.appendChild(card);
             });
         }
 
-        function closeRanksModal() {
-            document.getElementById('ranksModal').style.display = 'none';
-        }
-
-        function loadTopHundred() {
-            const container = document.getElementById('topHundredContainer');
-            container.innerHTML = '<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>';
+        function renderLeaderboard() {
+            const container = $('leaderboardContainer');
+            container.innerHTML = '<div style="text-align:center; color:#aaa; font-size:8px; padding:20px;">Loading leaderboard...</div>';
             
-            db.ref('users').once('value', (snapshot) => {
-                const leaders = [];
-                snapshot.forEach((childSnap) => {
-                    const d = childSnap.val();
-                    if (d) {
-                        leaders.push({ 
-                            name: d.username || 'PLAYER', 
-                            score: Number(d.score) || 0,
-                            photo: d.photo || ''
-                        });
-                    }
-                });
-                
-                leaders.sort((a, b) => b.score - a.score);
-                
+            db.ref('users').orderByChild('score').limitToLast(20).once('value', (snapshot) => {
                 container.innerHTML = '';
-                if (leaders.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">No players found</div>';
+                const users = [];
+                snapshot.forEach((child) => {
+                    users.push(child.val());
+                });
+                users.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+                if (users.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:#aaa; font-size:8px; padding:20px;">No players yet</div>';
                     return;
                 }
 
-                leaders.slice(0, 100).forEach((item, i) => {
-                    const cls = i === 0 ? 'gold' : '';
-                    const row = document.createElement('div');
-                    row.className = `rank-row ${cls}`;
-                    
-                    const defaultAvatar = 'https://i.ibb.co/3y69MMWz/image.png';
-                    const playerImg = item.photo ? item.photo : defaultAvatar;
+                users.forEach((user, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'lb-item';
+                    const medals = ['🥇', '🥈', '🥉'];
+                    const rankDisplay = index < 3 ? medals[index] : `#${index + 1}`;
 
-                    row.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span>#${i+1}</span>
-                            <img src="${playerImg}" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,255,0.4);" onerror="this.src='${defaultAvatar}'">
-                            <span>${item.name}</span>
+                    const avatarUrl = user.photoUrl ? user.photoUrl : 'https://i.ibb.co/3y69MMWz/image.png';
+
+                    item.innerHTML = `
+                        <div class="lb-left">
+                            <span class="lb-rank">${rankDisplay}</span>
+                            <img src="${avatarUrl}" alt="Avatar" class="lb-avatar" onerror="this.src='https://i.ibb.co/3y69MMWz/image.png'">
+                            <span class="lb-name">${user.username || 'PLAYER'}</span>
                         </div>
-                        <span>${item.score.toLocaleString()}</span>
+                        <div class="lb-right">
+                            <span class="lb-score">${Math.floor(user.score || 0).toLocaleString()}</span>
+                            <span class="tier-coin-small">🪙</span>
+                        </div>
                     `;
-                    container.appendChild(row);
+                    container.appendChild(item);
                 });
-            }, (error) => {
-                container.innerHTML = '<div style="text-align: center; color: #ff4466; font-size: 10px; padding: 15px;">Failed to load rankings</div>';
+            }, () => {
+                container.innerHTML = '<div style="text-align:center; color:#ff4466; font-size:8px; padding:20px;">Failed to load leaderboard</div>';
             });
         }
 
-        const views = ['gameView', 'upgradesView', 'shopView', 'tasksView', 'friendsView'];
-        const navBtns = ['btnHome', 'btnUpgrades', 'btnShop', 'btnTasks'];
+        const views = ['gameView', 'airdropView', 'upgradesView', 'shopView', 'tasksView', 'friendsView'];
+        const navBtns = ['btnHome', 'btnAirdrop', 'btnUpgrades', 'btnShop', 'btnTasks'];
 
         function switchTab(tab) {
-            views.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-            navBtns.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
+            views.forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+            navBtns.forEach(id => { const el = $(id); if (el) el.classList.remove('active'); });
 
             const map = {
                 home: { view: 'gameView', btn: 'btnHome' },
+                airdrop: { view: 'airdropView', btn: 'btnAirdrop' },
                 upgrades: { view: 'upgradesView', btn: 'btnUpgrades' },
                 shop: { view: 'shopView', btn: 'btnShop' },
                 tasks: { view: 'tasksView', btn: 'btnTasks' },
@@ -1269,13 +1391,13 @@
             const target = map[tab];
             if (!target) return;
             if (tab === 'friends') {
-                document.getElementById(target.view).style.display = 'flex';
-                document.getElementById('btnTasks').classList.add('active');
+                $(target.view).style.display = 'flex';
+                $('btnTasks').classList.add('active');
                 setupReferralLink();
                 return;
             }
-            document.getElementById(target.view).style.display = 'flex';
-            const btnEl = document.getElementById(target.btn);
+            $(target.view).style.display = 'flex';
+            const btnEl = $(target.btn);
             if (btnEl) btnEl.classList.add('active');
             if (tab === 'friends') setupReferralLink();
         }
@@ -1284,3 +1406,4 @@
     </script>
 </body>
 </html>
+
