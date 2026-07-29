@@ -104,7 +104,6 @@
             flex-shrink: 0;
         }
 
-        /* تكبير السكور وجعله أوضح */
         .score-board span {
             font-family: 'Press Start 2P', cursive;
             font-size: 32px;
@@ -273,7 +272,6 @@
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.5); }
         }
 
-        /* شريط التقييم في الأسفل فوق شريط الطاقة */
         .rating-container {
             width: 100%;
             max-width: 350px;
@@ -283,6 +281,7 @@
             padding: 6px 12px;
             border: 1px solid rgba(255, 215, 0, 0.25);
             flex-shrink: 0;
+            cursor: pointer;
         }
 
         .rating-info {
@@ -320,7 +319,7 @@
             background: linear-gradient(90deg, #ff8c00, #ffd700, #ffec8b);
             border-radius: 3px;
             width: 0%;
-            transition: width 0.5s ease;
+            transition: width 0.3s ease;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
@@ -559,10 +558,10 @@
                 </div>
             </div>
 
-            <!-- شريط التقييم في الأسفل فوق شريط الطاقة -->
-            <div class="rating-container">
+            <!-- شريط التقييم -->
+            <div class="rating-container" onclick="openRanksModal()">
                 <div class="rating-info">
-                    <span class="rank-label">🎯 RATING</span>
+                    <span class="rank-label">🎯 RATING (TAP TO VIEW)</span>
                     <span class="rank-value" id="ratingDisplay">BRONZE</span>
                 </div>
                 <div class="rating-bar-bg">
@@ -780,11 +779,11 @@
         };
 
         const ranks = [
-            { name: 'BRONZE', minScore: 0, icon: '🥉', next: 'SILVER' },
-            { name: 'SILVER', minScore: 10000, icon: '🥈', next: 'GOLD' },
-            { name: 'GOLD', minScore: 50000, icon: '🥇', next: 'PLATINUM' },
-            { name: 'PLATINUM', minScore: 200000, icon: '💎', next: 'DIAMOND' },
-            { name: 'DIAMOND', minScore: 1000000, icon: '👑', next: 'MAX' }
+            { name: 'BRONZE', minScore: 0, icon: '🥉' },
+            { name: 'SILVER', minScore: 10000, icon: '🥈' },
+            { name: 'GOLD', minScore: 50000, icon: '🥇' },
+            { name: 'PLATINUM', minScore: 200000, icon: '💎' },
+            { name: 'DIAMOND', minScore: 1000000, icon: '👑' }
         ];
 
         function getCurrentRank() {
