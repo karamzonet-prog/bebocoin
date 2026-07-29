@@ -308,12 +308,39 @@
             text-align: left;
         }
 
+        /* تأثير النيون والنبض لصناديق المتجر */
+        .shop-list .upgrade-item {
+            background: linear-gradient(145deg, rgba(15, 35, 45, 0.9), rgba(5, 10, 15, 0.95));
+            border: 1.5px solid rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            animation: neonShopPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes neonShopPulse {
+            0%, 100% { 
+                box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 5px rgba(0, 255, 255, 0.1); 
+                border-color: rgba(0, 255, 255, 0.5);
+            }
+            50% { 
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), inset 0 0 15px rgba(0, 255, 255, 0.4); 
+                border-color: rgba(0, 255, 255, 1);
+            }
+        }
+
+        /* تأثير الإضاءة والنبض لأيقونة العملة داخل المتجر */
         .shop-coin-icon {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid rgba(0, 255, 255, 0.5);
+            border: 1.5px solid rgba(0, 255, 255, 0.8);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            animation: shopIconPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes shopIconPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #00ffff); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #00ffff); }
         }
 
         .upgrade-info h4, .daily-info h4, .task-info h4 { font-size: 9px; color: #fff; margin-bottom: 2px; text-align: left; }
