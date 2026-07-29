@@ -308,7 +308,6 @@
             text-align: left;
         }
 
-        /* تأثير النيون والنبض لصناديق المتجر */
         .shop-list .upgrade-item {
             background: linear-gradient(145deg, rgba(15, 35, 45, 0.9), rgba(5, 10, 15, 0.95));
             border: 1.5px solid rgba(0, 255, 255, 0.6);
@@ -327,7 +326,6 @@
             }
         }
 
-        /* تأثير الإضاءة والنبض لأيقونة العملة داخل المتجر */
         .shop-coin-icon {
             width: 26px;
             height: 26px;
@@ -839,6 +837,26 @@
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(15000, 1.0)">1.0 TON</button>
                 </div>
+                <div class="upgrade-item">
+                    <div class="shop-item-left">
+                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <div class="upgrade-info">
+                            <h4>50,000 Bebo Coins</h4>
+                            <p>Whale Bundle 🐋</p>
+                        </div>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyCoinsWithTon(50000, 3.0)">3.0 TON</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="shop-item-left">
+                        <span style="font-size:22px;">⚡</span>
+                        <div class="upgrade-info">
+                            <h4>Infinite Energy (24h)</h4>
+                            <p>No energy drain!</p>
+                        </div>
+                    </div>
+                    <button class="upgrade-btn" onclick="buyCoinsWithTon(0, 0.5)">0.5 TON</button>
+                </div>
             </div>
         </div>
 
@@ -863,6 +881,27 @@
                         <p>+500 Coins</p>
                     </div>
                     <button class="task-btn" id="taskX" onclick="doTask('x','https://x.com/BeboCoin1',500)">VISIT & CLAIM</button>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h4>☕ Visit Coffee Garden</h4>
+                        <p>+100 Coins</p>
+                    </div>
+                    <button class="task-btn" id="taskCoffee" onclick="doTask('coffee','https://t.me/CoffeeGardenbot/app?startapp=ii_8832604944_2_18',100)">VISIT & CLAIM</button>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h4>🪙 Visit Easy Coin Farm</h4>
+                        <p>+100 Coins</p>
+                    </div>
+                    <button class="task-btn" id="taskEasyCoin" onclick="doTask('easycoin','https://t.me/EasyCoinFarBot/app?startapp=r422pdlc',100)">VISIT & CLAIM</button>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h4>🪂 Visit ATF Airdrop Bot</h4>
+                        <p>+100 Coins</p>
+                    </div>
+                    <button class="task-btn" id="taskAtf" onclick="doTask('atf','https://t.me/ATF_AIRDROP_bot?start=8832604944',100)">VISIT & CLAIM</button>
                 </div>
             </div>
         </div>
@@ -1244,14 +1283,14 @@
             $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
             $('refCountText').textContent = `${G.referralCount} Friends`;
 
-            if (G.completedTasks['tg']) {
-                const btn = $('taskTg');
-                if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
-            }
-            if (G.completedTasks['x']) {
-                const btn = $('taskX');
-                if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
-            }
+            // Update Task buttons UI if completed
+            ['tg', 'x', 'coffee', 'easycoin', 'atf'].forEach(taskId => {
+                if (G.completedTasks[taskId]) {
+                    const btn = $('task' + taskId.charAt(0).toUpperCase() + taskId.slice(1)) || 
+                                (taskId === 'coffee' ? $('taskCoffee') : taskId === 'easycoin' ? $('taskEasyCoin') : taskId === 'atf' ? $('taskAtf') : null);
+                    if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
+                }
+            });
         }
 
         function buyTapUpgrade() {
@@ -1340,10 +1379,15 @@
                 const result = await tonConnectUI.sendTransaction(transaction);
                 
                 if (result && result.boc) {
-                    G.score += coins;
+                    if (coins > 0) {
+                        G.score += coins;
+                        showToast(`✅ Payment confirmed! +${coins.toLocaleString()} Coins added!`, 'success', 4000);
+                    } else {
+                        G.energy = G.maxEnergy;
+                        showToast(`⚡ Infinite Energy Activated!`, 'success', 4000);
+                    }
                     updateUI();
                     saveGame(true);
-                    showToast(`✅ Payment confirmed! +${coins.toLocaleString()} Coins added!`, 'success', 4000);
                 } else {
                     showToast('❌ Payment was not completed', 'error');
                 }
