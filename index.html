@@ -107,8 +107,11 @@
             border: 1px solid rgba(255, 215, 0, 0.4);
             padding: 4px 12px;
             border-radius: 20px;
-            margin-top: 4px;
+            margin: 4px auto 2px auto;
+            cursor: pointer;
+            transition: transform 0.1s ease, background 0.2s ease;
         }
+        .rank-badge-box:active { transform: scale(0.95); }
         .rank-badge-box span {
             font-size: 8px;
             color: #ffd700;
@@ -478,9 +481,12 @@
                     <h2 id="username">PLAYER</h2>
                 </div>
             </div>
-            <div class="rank-badge-box">
+            
+            <!-- زر الرتب والتقييم الجديد المصمم باحترافية أعلى النقاط -->
+            <div class="rank-badge-box" onclick="openRanksModal()">
                 <span>🏆 <span id="currentRankName">BRONZE</span></span>
             </div>
+
             <div class="score-board">
                 <span id="score">0</span>
                 <p>BEBO COIN</p>
@@ -641,6 +647,7 @@
         </nav>
     </div>
 
+    <!-- نافذة قائمة المتصدرين -->
     <div class="modal-overlay" id="leaderboardModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -649,6 +656,19 @@
             </div>
             <div class="ranking-scroll-list" id="topHundredContainer">
                 <div style="text-align: center; color: #888; font-size: 10px; padding: 15px;">Loading rankings...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة شريط الرتب والتقييمات الجديدة -->
+    <div class="modal-overlay" id="ranksModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎖️ RANKS & TIERS</h3>
+                <button class="close-modal" onclick="closeRanksModal()">✕</button>
+            </div>
+            <div class="ranking-scroll-list" id="ranksListContainer">
+                <!-- سيتم تعبئتها تلقائياً عبر الكود -->
             </div>
         </div>
     </div>
@@ -1069,6 +1089,43 @@
         
         function closeLeaderboardModal() { 
             $('leaderboardModal').style.display = 'none'; 
+        }
+
+        // دوال فتح وإغلاق نافذة الرتب مع عرض الشروط والعملات المطلوبة
+        function openRanksModal() {
+            $('ranksModal').style.display = 'flex';
+            const container = $('ranksListContainer');
+            container.innerHTML = '';
+
+            ranks.forEach((r) => {
+                const row = document.createElement('div');
+                let isCurrent = false;
+                
+                // تحديد الرتبة الحالية للاعب لتوضيحها في القائمة
+                let currentRankObj = ranks[0];
+                for (let i = 0; i < ranks.length; i++) {
+                    if (G.score >= ranks[i].minScore) {
+                        currentRankObj = ranks[i];
+                    }
+                }
+                if (currentRankObj.name === r.name) {
+                    isCurrent = true;
+                }
+
+                row.className = `rank-row ${isCurrent ? 'gold' : ''}`;
+                row.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 14px;">${r.icon}</span>
+                        <span>${r.name} ${isCurrent ? '⭐ (Current)' : ''}</span>
+                    </div>
+                    <span>${r.minScore.toLocaleString()} Coins</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function closeRanksModal() {
+            $('ranksModal').style.display = 'none';
         }
 
         function loadTopHundred() {
