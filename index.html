@@ -563,7 +563,6 @@
         .tier-left, .lb-left { display: flex; align-items: center; gap: 10px; }
         .tier-medal-icon { font-size: 26px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
         
-        /* Telegram Avatar Styling in Leaderboard */
         .lb-avatar {
             width: 32px;
             height: 32px;
@@ -627,7 +626,6 @@
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
                 </div>
-                <!-- لوحة الصدارة المستقلة في الأعلى -->
                 <div class="leaderboard-badge" onclick="openLeaderboardModal()">
                     <span>🏆</span>
                     <h2>LEADERBOARD</h2>
@@ -649,7 +647,6 @@
                     <button class="home-ref-btn" onclick="switchTab('friends')">INVITE</button>
                 </div>
 
-                <!-- بانر التقييمات المستقل في المنتصف -->
                 <div class="home-trophy-banner" onclick="openRanksModal()">
                     <div class="trophy-info">
                         <span class="trophy-big-icon" id="rankMedalIcon">🥉</span>
@@ -831,7 +828,6 @@
         </nav>
     </div>
 
-    <!-- نافذة التقييمات والرتب (Tiers Modal) -->
     <div class="modal-overlay" id="ranksModal">
         <div class="modal-content">
             <div class="modal-top-decor"><span>⭐</span></div>
@@ -842,16 +838,11 @@
             <div class="modal-subtitle">
                 ✦ <span>Climb the ranks and earn bigger rewards!</span> ✦
             </div>
-            
             <div class="tiers-scroll-list" id="tiersContainer"></div>
-
-            <div class="modal-footer-decor">
-                ✦ Higher rank, greater rewards! ✦
-            </div>
+            <div class="modal-footer-decor">✦ Higher rank, greater rewards! ✦</div>
         </div>
     </div>
 
-    <!-- نافذة لوحة الصدارة المستقلة (Leaderboard Modal) -->
     <div class="modal-overlay" id="leaderboardModal">
         <div class="modal-content">
             <div class="modal-top-decor"><span>🏆</span></div>
@@ -862,14 +853,8 @@
             <div class="modal-subtitle">
                 ✦ <span>Top miners across the network</span> ✦
             </div>
-            
-            <div class="leaderboard-scroll-list" id="leaderboardContainer">
-                <!-- سيتم تعبئتها ديناميكياً -->
-            </div>
-
-            <div class="modal-footer-decor">
-                ✦ Keep mining to reach the top! ✦
-            </div>
+            <div class="leaderboard-scroll-list" id="leaderboardContainer"></div>
+            <div class="modal-footer-decor">✦ Keep mining to reach the top! ✦</div>
         </div>
     </div>
 
@@ -968,62 +953,54 @@
         const saveKey = 'bebo_save_' + telegramId;
         let isLoadedFromServer = false;
 
-        userRef.once('value', (snapshot) => {
-            const serverData = snapshot.val();
+        // دالة لجلب البيانات ودمجها بذكاء لمنع تصفير النقاط
+        function loadGameData() {
             let localDataSaved = localStorage.getItem(saveKey);
             let localParsed = null;
-            
             try {
                 if (localDataSaved) localParsed = JSON.parse(localDataSaved);
             } catch(e) {}
 
-            if (serverData && serverData.score !== undefined) {
-                G.score = 0;
-                G.energy = serverData.energy ?? 100;
-                G.tapPower = Number(serverData.tapPower) || 1;
-                G.tapCost = Number(serverData.tapCost) || 1000;
-                G.completedTasks = serverData.completedTasks || {};
-                G.referralCount = Number(serverData.referralCount) || 0;
-                G.walletAddress = serverData.walletAddress || "";
-
-                const lastSaveTime = serverData.lastSaveTime || Date.now();
-                const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
-                if (secondsPassed > 0 && G.energy < G.maxEnergy) {
-                    const energyGained = (secondsPassed / 1800) * 100;
-                    G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
-                }
-            } else if (localParsed) {
-                G.score = 0;
-                G.energy = localParsed.energy ?? 100;
-                G.tapPower = localParsed.tapPower || 1;
-                G.tapCost = localParsed.tapCost || 1000;
-                G.completedTasks = localParsed.completedTasks || {};
-                G.referralCount = Number(localParsed.referralCount) || 0;
-                G.walletAddress = localParsed.walletAddress || "";
+            userRef.once('value', (snapshot) => {
+                const serverData = snapshot.val();
                 
-                const lastSaveTime = localParsed.lastSaveTime || Date.now();
-                const secondsPassed = Math.floor((Date.now() - lastSaveTime) / 1000);
-                if (secondsPassed > 0 && G.energy < G.maxEnergy) {
-                    const energyGained = (secondsPassed / 1800) * 100;
-                    G.energy = Math.min(G.maxEnergy, G.energy + energyGained);
+                let serverScore = serverData && serverData.score !== undefined ? Number(serverData.score) : 0;
+                let localScore = localParsed && localParsed.score !== undefined ? Number(localParsed.score) : 0;
+
+                // اختيار السكور الأعلى بين السيرفر والمحلي لضمان عدم ضياع أي نقرة
+                G.score = Math.max(serverScore, localScore);
+                
+                const baseData = serverData && serverData.score !== undefined ? serverData : localParsed;
+                if (baseData) {
+                    G.energy = baseData.energy ?? 100;
+                    G.tapPower = Number(baseData.tapPower) || 1;
+                    G.tapCost = Number(baseData.tapCost) || 1000;
+                    G.completedTasks = baseData.completedTasks || {};
+                    G.referralCount = Number(baseData.referralCount) || 0;
+                    G.walletAddress = baseData.walletAddress || "";
                 }
-            } else {
-                G.score = 0;
-                G.energy = 100;
-            }
 
-            isLoadedFromServer = true;
-            updateUI();
-            saveGame(true);
-        }, () => {
-            G.score = 0;
-            G.energy = 100;
-            isLoadedFromServer = true;
-            updateUI();
-        });
+                isLoadedFromServer = true;
+                updateUI();
+                saveGame(true);
+            }, () => {
+                // إذا فشل الاتصال بالسيرفر، نعتمد على التخزين المحلي تماماً
+                if (localParsed) {
+                    G.score = Number(localParsed.score) || 0;
+                    G.energy = localParsed.energy ?? 100;
+                    G.tapPower = Number(localParsed.tapPower) || 1;
+                    G.tapCost = Number(localParsed.tapCost) || 1000;
+                    G.completedTasks = localParsed.completedTasks || {};
+                    G.referralCount = Number(localParsed.referralCount) || 0;
+                    G.walletAddress = localParsed.walletAddress || "";
+                }
+                isLoadedFromServer = true;
+                updateUI();
+            });
+        }
 
-        function saveGame(force = false) {
-            if (!isLoadedFromServer && !force) return;
+        function saveGame(immediate = false) {
+            if (!isLoadedFromServer) return;
 
             const dataToSave = {
                 score: Number(G.score),
@@ -1038,14 +1015,18 @@
                 lastSaveTime: Date.now()
             };
             
+            // حفظ فوري في التخزين المحلي
             localStorage.setItem(saveKey, JSON.stringify(dataToSave));
 
-            if (force) {
-                userRef.update(dataToSave).catch(() => {});
-            } else {
+            // إرسال البيانات للسيرفر (تحديث فوري أو هادئ)
+            if (immediate) {
                 userRef.set(dataToSave).catch(() => {});
+            } else {
+                userRef.update(dataToSave).catch(() => {});
             }
         }
+
+        loadGameData();
 
         let audioCtx = null;
         function initAudio() {
@@ -1137,7 +1118,7 @@
             G.score += G.tapPower;
 
             updateUI();
-            saveGame();
+            saveGame(false);
             createFloatingNumber(clientX, clientY, `+${G.tapPower}`, '#00ffff');
         });
 
@@ -1184,7 +1165,7 @@
                 G.tapPower += 1;
                 G.tapCost = Math.floor(G.tapCost * 2.2);
                 updateUI();
-                saveGame();
+                saveGame(true);
                 showToast(`⚡ Multi-Tap upgraded to Lv.${G.tapPower}!`, 'success');
             } else {
                 showToast(`❌ Need ${Math.floor(G.tapCost).toLocaleString()} coins`, 'error');
@@ -1214,15 +1195,17 @@
             }
         }
 
+        // الحفظ التلقائي كل 3 ثوانٍ وضبط الطاقة
         setInterval(() => {
             if (!isLoadedFromServer) return;
             if (G.energy < G.maxEnergy) {
                 G.energy = Math.min(G.maxEnergy, G.energy + (100 / 1800));
                 updateUI();
             }
-            saveGame();
-        }, 1000);
+            saveGame(true);
+        }, 3000);
 
+        // الحفظ الفوري عند إغلاق التطبيق أو مغادرته
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) saveGame(true);
         });
@@ -1238,7 +1221,7 @@
             if (wallet) {
                 G.walletAddress = wallet.account.address;
                 showToast('💎 TON Wallet connected!', 'success');
-                saveGame();
+                saveGame(true);
             }
         });
 
@@ -1261,7 +1244,7 @@
                 if (result && result.boc) {
                     G.score += coins;
                     updateUI();
-                    saveGame();
+                    saveGame(true);
                     showToast(`✅ Payment confirmed! +${coins.toLocaleString()} Coins added!`, 'success', 4000);
                 } else {
                     showToast('❌ Payment was not completed', 'error');
@@ -1280,7 +1263,7 @@
             G.completedTasks[taskId] = true;
             G.score += reward;
             updateUI();
-            saveGame();
+            saveGame(true);
             showToast(`✅ +${reward} coins claimed!`, 'success');
         }
 
