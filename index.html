@@ -63,7 +63,6 @@
             justify-content: space-between;
             padding: max(8px, env(safe-area-inset-top)) 14px max(6px, env(safe-area-inset-bottom));
             background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
             position: relative;
             z-index: 1;
         }
@@ -215,19 +214,20 @@
 
         .coin-glow {
             position: absolute;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
             border-radius: 50%;
             pointer-events: none;
             opacity: 0.6;
             transition: opacity 0.3s ease;
             border: none !important;
+            outline: none !important;
         }
 
         .coin-btn {
-            width: 160px;
-            height: 160px;
+            width: 220px;
+            height: 220px;
             background: transparent !important;
             border: none !important;
             border-radius: 50%;
@@ -247,8 +247,10 @@
             height: 100%;
             object-fit: contain;
             pointer-events: none;
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
             background: transparent !important;
+            border: none !important;
+            transform: scale(1.15);
         }
 
         .coin-wrapper.pressed .coin-btn {
@@ -675,8 +677,7 @@
 <body>
 
     <div class="app-bg">
-        <!-- تم تحديث الخلفية بالرابط المباشر الجديد -->
-        <img src="https://i.ibb.co/XxXMTCmR/file-000000002b60820a908875e26676b8a6.png" alt="Background">
+        <img src="https://i.ibb.co/vCKGPDnM/file-0000000053b081f491736e0d00af1250.png" alt="Background">
     </div>
 
     <div class="game-container" id="gameContainer">
@@ -1627,4 +1628,4 @@
         calculateSwap();
     </script>
 </body>
-</html>
+    </html>
