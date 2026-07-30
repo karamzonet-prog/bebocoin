@@ -210,45 +210,49 @@
             margin: auto 0;
             flex: 1;
             min-height: 80px;
+            background: transparent !important;
         }
 
         .coin-glow {
             position: absolute;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.6;
             transition: opacity 0.3s ease;
+            border: none !important;
         }
 
         .coin-btn {
-            width: 140px;
-            height: 140px;
-            background-color: rgba(13, 13, 13, 0.9);
-            border: 4px solid #333;
+            width: 160px;
+            height: 160px;
+            background: transparent !important;
+            border: none !important;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            box-shadow: 0 8px 0px #111, 0 12px 20px rgba(0, 0, 0, 0.85);
+            box-shadow: none !important;
             position: relative;
             z-index: 2;
-            transition: transform 0.06s ease, border-color 0.15s ease;
+            transition: transform 0.06s ease;
+            outline: none !important;
         }
 
         .coin-btn img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             pointer-events: none;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+            background: transparent !important;
         }
 
         .coin-wrapper.pressed .coin-btn {
             transform: translateY(6px) scale(0.94);
-            border-color: #00ffff;
         }
 
         .particle {
@@ -327,18 +331,19 @@
         }
 
         .shop-coin-icon {
-            width: 26px;
-            height: 26px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid rgba(0, 255, 255, 0.8);
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            object-fit: contain;
+            border: none !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
             animation: shopIconPulse 2s infinite ease-in-out;
+            background: transparent !important;
         }
 
         @keyframes shopIconPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #00ffff); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #00ffff); }
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ffd700); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ffd700); }
         }
 
         .upgrade-info h4, .daily-info h4, .task-info h4 { font-size: 9px; color: #fff; margin-bottom: 2px; text-align: left; }
@@ -670,7 +675,8 @@
 <body>
 
     <div class="app-bg">
-        <img src="https://i.ibb.co/wFMrKh5t/image.png" alt="Background">
+        <!-- تم تحديث الخلفية بالرابط المباشر الجديد -->
+        <img src="https://i.ibb.co/XxXMTCmR/file-000000002b60820a908875e26676b8a6.png" alt="Background">
     </div>
 
     <div class="game-container" id="gameContainer">
@@ -716,7 +722,7 @@
             <div class="coin-wrapper" id="coinWrapper">
                 <div class="coin-glow" id="coinGlow"></div>
                 <div class="coin-btn" id="coinBtn">
-                    <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Coin" id="coinImage">
+                    <img src="https://i.ibb.co/YFX1ywdg/your-image.png" alt="Coin" id="coinImage">
                 </div>
             </div>
 
@@ -816,7 +822,7 @@
             <div class="shop-list">
                 <div class="upgrade-item">
                     <div class="shop-item-left">
-                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <img src="https://i.ibb.co/YFX1ywdg/your-image.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>1,000 Bebo Coins</h4>
                             <p>Starter Pack</p>
@@ -826,7 +832,7 @@
                 </div>
                 <div class="upgrade-item">
                     <div class="shop-item-left">
-                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <img src="https://i.ibb.co/YFX1ywdg/your-image.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>5,000 Bebo Coins</h4>
                             <p>Popular Bundle</p>
@@ -836,7 +842,7 @@
                 </div>
                 <div class="upgrade-item">
                     <div class="shop-item-left">
-                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <img src="https://i.ibb.co/YFX1ywdg/your-image.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>15,000 Bebo Coins</h4>
                             <p>Mega Booster Pack</p>
@@ -846,7 +852,7 @@
                 </div>
                 <div class="upgrade-item">
                     <div class="shop-item-left">
-                        <img src="https://i.ibb.co/3y69MMWz/image.png" alt="Bebo" class="shop-coin-icon">
+                        <img src="https://i.ibb.co/YFX1ywdg/your-image.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>50,000 Bebo Coins</h4>
                             <p>Whale Bundle 🐋</p>
@@ -1039,7 +1045,7 @@
             score: 0,
             energy: 100,
             maxEnergy: 100,
-            energyLevel: 0, // 0: 100, 1: 200, 2: 400 (Max 3 upgrades total)
+            energyLevel: 0, 
             energyUpgradeCost: 2000,
             tapPower: 1,
             tapCost: 1000,
@@ -1100,7 +1106,6 @@
                 const baseData = (serverScore >= localScore && serverData) ? serverData : (localParsed || serverData);
                 if (baseData) {
                     G.energyLevel = Number(baseData.energyLevel) || Number(localParsed?.energyLevel) || 0;
-                    // تحديد maxEnergy بناءً على مستوى الطاقة
                     if (G.energyLevel === 1) G.maxEnergy = 200;
                     else if (G.energyLevel >= 2) G.maxEnergy = 400;
                     else G.maxEnergy = 100;
@@ -1325,7 +1330,6 @@
             $('tapLevel').textContent = G.tapPower;
             $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
             
-            // تحديث واجهة ترقية سعة الطاقة
             $('energyLimitText').textContent = G.maxEnergy;
             if (G.energyLevel >= 2) {
                 $('energyUpgradeCost').textContent = 'MAXED OUT';
@@ -1373,12 +1377,11 @@
                 
                 if (G.energyLevel === 1) {
                     G.maxEnergy = 200;
-                    G.energyUpgradeCost = 5000; // مضاعفة التكلفة للتطوير التالي
+                    G.energyUpgradeCost = 5000;
                 } else if (G.energyLevel === 2) {
                     G.maxEnergy = 400;
                 }
 
-                // تعبئة الطاقة للحد الأقصى الجديد عند الترقية
                 G.energy = G.maxEnergy;
 
                 updateUI();
@@ -1569,12 +1572,12 @@
                     const medals = ['🥇', '🥈', '🥉'];
                     const rankDisplay = index < 3 ? medals[index] : `#${index + 1}`;
 
-                    const avatarUrl = user.photoUrl ? user.photoUrl : 'https://i.ibb.co/3y69MMWz/image.png';
+                    const avatarUrl = user.photoUrl ? user.photoUrl : 'https://i.ibb.co/8L3mS89z/1000003928.png';
 
                     item.innerHTML = `
                         <div class="lb-left">
                             <span class="lb-rank">${rankDisplay}</span>
-                            <img src="${avatarUrl}" alt="Avatar" class="lb-avatar" onerror="this.src='https://i.ibb.co/3y69MMWz/image.png'">
+                            <img src="${avatarUrl}" alt="Avatar" class="lb-avatar" onerror="this.src='https://i.ibb.co/8L3mS89z/1000003928.png'">
                             <span class="lb-name">${user.username}</span>
                         </div>
                         <div class="lb-right">
@@ -1625,4 +1628,3 @@
     </script>
 </body>
 </html>
-
