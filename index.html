@@ -67,35 +67,48 @@
             z-index: 1;
         }
 
-        .top-bar {
+        /* ===== الترتيب الجديد ===== */
+        .header {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        /* 1. الرانك والتقييم (أعلى شي) */
+        .rank-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2px;
+            padding: 2px 4px;
         }
 
-        .user-badge {
-            display: inline-flex;
+        .rank-badge {
+            display: flex;
             align-items: center;
-            background: rgba(0, 0, 0, 0.45);
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
             gap: 6px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2px 10px 2px 6px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            cursor: pointer;
         }
 
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            background-color: #00ffcc;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ffcc;
+        .rank-badge .medal {
+            font-size: 18px;
         }
 
-        .user-badge h2 {
-            font-size: 8.5px;
-            color: #eee;
-            letter-spacing: 1px;
+        .rank-badge .rank-name {
+            font-size: 9px;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .rank-badge .rank-sub {
+            font-size: 6px;
+            color: #aaa;
+            margin-left: 4px;
         }
 
         .leaderboard-badge {
@@ -107,27 +120,70 @@
             border: 1px solid rgba(255, 215, 0, 0.4);
             gap: 6px;
             cursor: pointer;
+            flex-shrink: 0;
         }
         .leaderboard-badge span { font-size: 10px; }
-        .leaderboard-badge h2 { font-size: 8px; color: #ffd700; font-family: 'Press Start 2P', cursive; }
+        .leaderboard-badge h2 { font-size: 7px; color: #ffd700; font-family: 'Press Start 2P', cursive; }
 
-        .header { text-align: center; flex-shrink: 0; }
+        /* 2. السكور (في منتصف الشاشة تقريباً) */
+        .score-section {
+            text-align: center;
+            padding: 12px 0 4px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 80px;
+        }
 
-        .score-board span {
+        .score-section span {
             font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
+            font-size: 32px;
             color: #fff;
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 3px 3px 0px #ff0055, -3px -3px 0px #00ffff;
             letter-spacing: 2px;
-            margin-bottom: 2px;
             display: inline-block;
         }
 
-        .score-board p {
+        .score-section p {
             font-size: 8px;
             color: #ccc;
             font-weight: 800;
             letter-spacing: 3px;
+            margin-top: 2px;
+        }
+
+        /* 3. شريط الاسم (فوق الطاقة) */
+        .user-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2px 0;
+            flex-shrink: 0;
+        }
+
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.45);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #00ffcc;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ffcc;
+        }
+
+        .user-badge h2 {
+            font-size: 8px;
+            color: #eee;
+            letter-spacing: 1px;
         }
 
         .tap-section, .section-view {
@@ -140,6 +196,33 @@
             padding: 2px 0;
             overflow: hidden;
             min-height: 0;
+        }
+
+        .section-view {
+            position: relative;
+        }
+
+        /* ===== زر إغلاق صفحة الإحالات ===== */
+        .close-section-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .close-section-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
         }
 
         .section-view h3 {
@@ -316,20 +399,7 @@
 
         .shop-list .upgrade-item {
             background: linear-gradient(145deg, rgba(15, 35, 45, 0.9), rgba(5, 10, 15, 0.95));
-            border: 1.5px solid rgba(0, 255, 255, 0.6);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-            animation: neonShopPulse 2s infinite ease-in-out;
-        }
-
-        @keyframes neonShopPulse {
-            0%, 100% { 
-                box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 5px rgba(0, 255, 255, 0.1); 
-                border-color: rgba(0, 255, 255, 0.5);
-            }
-            50% { 
-                box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), inset 0 0 15px rgba(0, 255, 255, 0.4); 
-                border-color: rgba(0, 255, 255, 1);
-            }
+            border: 1.5px solid rgba(0, 255, 255, 0.3);
         }
 
         .shop-coin-icon {
@@ -338,14 +408,8 @@
             border-radius: 50%;
             object-fit: contain;
             border: none !important;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-            animation: shopIconPulse 2s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
             background: transparent !important;
-        }
-
-        @keyframes shopIconPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ffd700); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ffd700); }
         }
 
         .upgrade-info h4, .daily-info h4, .task-info h4 { font-size: 9px; color: #fff; margin-bottom: 2px; text-align: left; }
@@ -362,6 +426,24 @@
             font-size: 8px;
             cursor: pointer;
             white-space: nowrap;
+        }
+
+        .friend-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .friend-actions .friend-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 6px 10px;
+            font-size: 7px;
+        }
+
+        .friend-actions .friend-btn.send {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
         }
 
         .airdrop-hero-box {
@@ -570,6 +652,37 @@
             color: #fff;
         }
 
+        /* ===== زر اللغة في الأسفل ===== */
+        .lang-switch-bottom {
+            display: flex;
+            justify-content: flex-end;
+            padding: 4px 0 2px 0;
+            flex-shrink: 0;
+        }
+        .lang-switch {
+            display: flex;
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+        .lang-switch button {
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 3px 10px;
+            font-size: 9px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.2s;
+        }
+        .lang-switch button.active {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.15);
+            text-shadow: 0 0 8px #00ffff;
+        }
+
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
@@ -682,19 +795,31 @@
 
     <div class="game-container" id="gameContainer">
         <header class="header">
-            <div class="top-bar">
+            <!-- ===== 1. الرانك والتقييم (أعلى شي) ===== -->
+            <div class="rank-section">
+                <div class="rank-badge" onclick="openRanksModal()">
+                    <span class="medal" id="rankMedalIcon">🥉</span>
+                    <span class="rank-name" id="userRankBadge">BRONZE</span>
+                    <span class="rank-sub" id="rankSub">Climb & earn!</span>
+                </div>
+                <div class="leaderboard-badge" onclick="openLeaderboardModal()">
+                    <span>🏆</span>
+                    <h2 id="lbLabel">LEADERBOARD</h2>
+                </div>
+            </div>
+
+            <!-- ===== 2. السكور (وسط الشاشة) ===== -->
+            <div class="score-section">
+                <span id="score">0</span>
+                <p>BEBO COIN</p>
+            </div>
+
+            <!-- ===== 3. شريط الاسم (فوق الطاقة) ===== -->
+            <div class="user-section">
                 <div class="user-badge">
                     <span class="status-dot"></span>
                     <h2 id="username">PLAYER</h2>
                 </div>
-                <div class="leaderboard-badge" onclick="openLeaderboardModal()">
-                    <span>🏆</span>
-                    <h2>LEADERBOARD</h2>
-                </div>
-            </div>
-            <div class="score-board">
-                <span id="score">0</span>
-                <p>BEBO COIN</p>
             </div>
         </header>
 
@@ -702,18 +827,18 @@
             <div class="home-middle-section">
                 <div class="home-ref-banner">
                     <div class="home-ref-info">
-                        <h4>👥 INVITE FRIENDS</h4>
-                        <p>Get +1,000 Coins per referral</p>
+                        <h4 id="inviteTitle">👥 INVITE FRIENDS</h4>
+                        <p id="inviteSub">Get +1,000 Coins per referral</p>
                     </div>
-                    <button class="home-ref-btn" onclick="switchTab('friends')">INVITE</button>
+                    <button class="home-ref-btn" id="inviteBtn" onclick="switchTab('friends')">INVITE</button>
                 </div>
 
                 <div class="home-trophy-banner" onclick="openRanksModal()">
                     <div class="trophy-info">
-                        <span class="trophy-big-icon" id="rankMedalIcon">🥉</span>
+                        <span class="trophy-big-icon" id="rankMedalIcon2">🥉</span>
                         <div>
-                            <h4 id="userRankBadge">BRONZE</h4>
-                            <p>Climb and earn bigger rewards!</p>
+                            <h4 id="userRankBadge2">BRONZE</h4>
+                            <p id="rankSub2">Climb and earn bigger rewards!</p>
                         </div>
                     </div>
                     <span class="trophy-arrow">➔</span>
@@ -741,24 +866,26 @@
             </div>
         </main>
 
+        <!-- ===== صفحة AIRDROP ===== -->
         <div class="section-view" id="airdropView" style="display: none;">
-            <h3>🪂 AIRDROP & SWAP</h3>
+            <button class="close-section-btn" onclick="switchTab('home')">✕</button>
+            <h3 id="airdropTitle">🪂 AIRDROP & SWAP</h3>
             <div class="airdrop-container">
                 <div class="airdrop-hero-box">
                     <span class="airdrop-icon-lg">🪂</span>
                     <div class="airdrop-hero-text">
-                        <h4>BEBO AIRDROP</h4>
-                        <p>Token generation & listing details coming soon. Stay tuned!</p>
+                        <h4 id="airdropHeroTitle">BEBO AIRDROP</h4>
+                        <p id="airdropHeroSub">Token generation & listing details coming soon. Stay tuned!</p>
                     </div>
                 </div>
 
                 <div class="wallet-balance-box">
                     <div class="balance-item">
-                        <span>BEBO BALANCE</span>
+                        <span id="beboBalLabel">BEBO BALANCE</span>
                         <b id="walletBeboBal">0</b>
                     </div>
                     <div class="balance-item">
-                        <span>TON BALANCE</span>
+                        <span id="tonBalLabel">TON BALANCE</span>
                         <b id="walletTonBal" style="color: #00ff88;">0.00 TON</b>
                     </div>
                 </div>
@@ -776,7 +903,7 @@
                     </div>
 
                     <div class="swap-box-container">
-                        <span class="swap-box-label">You Pay</span>
+                        <span class="swap-box-label" id="swapPayLabel">You Pay</span>
                         <div class="swap-box-main">
                             <input type="number" id="swapCoinsInput" class="swap-input-field" value="1000" oninput="calculateSwap()">
                             <div class="swap-token-badge">🪙 BEBO</div>
@@ -786,31 +913,33 @@
                     <div class="swap-divider-icon">⬇</div>
 
                     <div class="swap-box-container">
-                        <span class="swap-box-label">You Get (Estimated)</span>
+                        <span class="swap-box-label" id="swapGetLabel">You Get (Estimated)</span>
                         <div class="swap-box-main">
                             <span style="color: #00ff88; font-family: 'Press Start 2P', cursive; font-size: 11px;" id="swapTonVal">0.10 TON</span>
                             <div class="swap-token-badge ton">💎 TON</div>
                         </div>
                     </div>
 
-                    <button class="convert-btn" onclick="convertCoinsToTon()">CONVERT NOW</button>
+                    <button class="convert-btn" id="swapConvertBtn" onclick="convertCoinsToTon()">CONVERT NOW</button>
                 </div>
             </div>
         </div>
 
+        <!-- ===== صفحة BOOST ===== -->
         <div class="section-view" id="upgradesView" style="display: none;">
-            <h3>🚀 BOOSTERS</h3>
+            <button class="close-section-btn" onclick="switchTab('home')">✕</button>
+            <h3 id="boostTitle">🚀 BOOSTERS</h3>
             <div class="upgrades-list">
                 <div class="upgrade-item">
                     <div class="upgrade-info">
-                        <h4>⚡ Multi-Tap (Lv <span id="tapLevel">1</span>)</h4>
+                        <h4 id="multitapLabel">⚡ Multi-Tap (Lv <span id="tapLevel">1</span>)</h4>
                         <p id="tapCost">Cost: 1,000 Coins</p>
                     </div>
-                    <button class="upgrade-btn" onclick="buyTapUpgrade()">UPGRADE</button>
+                    <button class="upgrade-btn" id="multitapBtn" onclick="buyTapUpgrade()">UPGRADE</button>
                 </div>
                 <div class="upgrade-item">
                     <div class="upgrade-info">
-                        <h4>🔋 Energy Limit (<span id="energyLimitText">100</span> Max)</h4>
+                        <h4 id="energyLabel">🔋 Energy Limit (<span id="energyLimitText">100</span> Max)</h4>
                         <p id="energyUpgradeCost">Cost: 2,000 Coins</p>
                     </div>
                     <button class="upgrade-btn" id="energyUpgradeBtn" onclick="buyEnergyUpgrade()">UPGRADE</button>
@@ -818,15 +947,17 @@
             </div>
         </div>
 
+        <!-- ===== صفحة SHOP ===== -->
         <div class="section-view" id="shopView" style="display: none;">
-            <h3>💎 PREMIUM SHOP</h3>
+            <button class="close-section-btn" onclick="switchTab('home')">✕</button>
+            <h3 id="shopTitle">💎 PREMIUM SHOP</h3>
             <div class="shop-list">
                 <div class="upgrade-item">
                     <div class="shop-item-left">
                         <img src="https://i.ibb.co/mV02Xgyp/20260730-193641-0000-1.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>1,000 Bebo Coins</h4>
-                            <p>Starter Pack</p>
+                            <p id="shopStarter">Starter Pack</p>
                         </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(1000, 0.1)">0.1 TON</button>
@@ -836,7 +967,7 @@
                         <img src="https://i.ibb.co/mV02Xgyp/20260730-193641-0000-1.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>5,000 Bebo Coins</h4>
-                            <p>Popular Bundle</p>
+                            <p id="shopPopular">Popular Bundle</p>
                         </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(5000, 0.4)">0.4 TON</button>
@@ -846,7 +977,7 @@
                         <img src="https://i.ibb.co/mV02Xgyp/20260730-193641-0000-1.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>15,000 Bebo Coins</h4>
-                            <p>Mega Booster Pack</p>
+                            <p id="shopMega">Mega Booster Pack</p>
                         </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(15000, 1.0)">1.0 TON</button>
@@ -856,7 +987,7 @@
                         <img src="https://i.ibb.co/mV02Xgyp/20260730-193641-0000-1.png" alt="Bebo" class="shop-coin-icon">
                         <div class="upgrade-info">
                             <h4>50,000 Bebo Coins</h4>
-                            <p>Whale Bundle 🐋</p>
+                            <p id="shopWhale">Whale Bundle 🐋</p>
                         </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(50000, 3.0)">3.0 TON</button>
@@ -865,8 +996,8 @@
                     <div class="shop-item-left">
                         <span style="font-size:22px;">⚡</span>
                         <div class="upgrade-info">
-                            <h4>Infinite Energy (24h)</h4>
-                            <p>No energy drain!</p>
+                            <h4 id="shopInfEnergy">Infinite Energy (24h)</h4>
+                            <p id="shopInfSub">No energy drain!</p>
                         </div>
                     </div>
                     <button class="upgrade-btn" onclick="buyCoinsWithTon(0, 0.5)">0.5 TON</button>
@@ -874,89 +1005,105 @@
             </div>
         </div>
 
+        <!-- ===== صفحة TASKS ===== -->
         <div class="section-view" id="tasksView" style="display: none;">
-            <h3>📋 SOCIAL & WALLET</h3>
+            <button class="close-section-btn" onclick="switchTab('home')">✕</button>
+            <h3 id="tasksTitle">📋 SOCIAL & WALLET</h3>
             <div class="tasks-list">
                 <div class="wallet-section">
-                    <h4>💎 CONNECT TON WALLET</h4>
-                    <p>Required for shop & airdrop conversion</p>
+                    <h4 id="walletConnect">💎 CONNECT TON WALLET</h4>
+                    <p id="walletSub">Required for shop & airdrop conversion</p>
                     <div id="ton-connect-button"></div>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>📢 Follow Telegram Channel</h4>
-                        <p>+500 Coins</p>
+                        <h4 id="taskTgTitle">📢 Follow Telegram Channel</h4>
+                        <p id="taskTgReward">+500 Coins</p>
                     </div>
                     <button class="task-btn" id="taskTg" onclick="doTask('tg','https://t.me/BeboPixel',500)">VISIT & CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>🐦 Follow X (Twitter)</h4>
-                        <p>+500 Coins</p>
+                        <h4 id="taskXTitle">🐦 Follow X (Twitter)</h4>
+                        <p id="taskXReward">+500 Coins</p>
                     </div>
                     <button class="task-btn" id="taskX" onclick="doTask('x','https://x.com/BeboCoin1',500)">VISIT & CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>☕ Visit Coffee Garden</h4>
-                        <p>+100 Coins</p>
+                        <h4 id="taskCoffeeTitle">☕ Visit Coffee Garden</h4>
+                        <p id="taskCoffeeReward">+100 Coins</p>
                     </div>
                     <button class="task-btn" id="taskCoffee" onclick="doTask('coffee','https://t.me/CoffeeGardenbot/app?startapp=ii_8832604944_2_18',100)">VISIT & CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>🪙 Visit Easy Coin Farm</h4>
-                        <p>+100 Coins</p>
+                        <h4 id="taskEasyTitle">🪙 Visit Easy Coin Farm</h4>
+                        <p id="taskEasyReward">+100 Coins</p>
                     </div>
                     <button class="task-btn" id="taskEasyCoin" onclick="doTask('easycoin','https://t.me/EasyCoinFarBot/app?startapp=r422pdlc',100)">VISIT & CLAIM</button>
                 </div>
                 <div class="task-item">
                     <div class="task-info">
-                        <h4>🪂 Visit ATF Airdrop Bot</h4>
-                        <p>+100 Coins</p>
+                        <h4 id="taskAtfTitle">🪂 Visit ATF Airdrop Bot</h4>
+                        <p id="taskAtfReward">+100 Coins</p>
                     </div>
                     <button class="task-btn" id="taskAtf" onclick="doTask('atf','https://t.me/ATF_AIRDROP_bot?start=8832604944',100)">VISIT & CLAIM</button>
                 </div>
             </div>
         </div>
 
+        <!-- ===== صفحة FRIENDS ===== -->
         <div class="section-view" id="friendsView" style="display: none;">
-            <h3>👥 INVITE FRIENDS</h3>
+            <button class="close-section-btn" onclick="switchTab('home')">✕</button>
+            <h3 id="friendsTitle">👥 INVITE FRIENDS</h3>
             <div class="friends-container">
                 <div class="friend-box">
-                    <p>Invite your friends and get <b>+1,000 Coins</b> for each referral!</p>
+                    <p id="friendsDesc">Invite your friends and get <b>+1,000 Coins</b> for each referral!</p>
                     <div class="friend-link-input" id="refLinkText">Generating link...</div>
-                    <button class="friend-btn" onclick="shareReferralLink()">📋 SHARE / COPY LINK</button>
+                    
+                    <div class="friend-actions">
+                        <button class="friend-btn" id="copyBtn" onclick="copyReferralLink()">📋 Copy Link</button>
+                        <button class="friend-btn send" id="sendBtn" onclick="sendReferralLink()">📤 Send to Friend</button>
+                    </div>
                 </div>
                 <div class="friend-card">
                     <div class="daily-info">
-                        <h4>👥 Total Invited Friends</h4>
+                        <h4 id="friendsTotal">👥 Total Invited Friends</h4>
                         <p id="refCountText">0 Friends</p>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- ===== زر اللغة في الأسفل ===== -->
+        <div class="lang-switch-bottom">
+            <div class="lang-switch">
+                <button id="langEn" class="active" onclick="setLanguage('en')">EN</button>
+                <button id="langRu" onclick="setLanguage('ru')">RU</button>
+            </div>
+        </div>
+
         <nav class="footer-nav">
             <button class="nav-btn active" id="btnHome" onclick="switchTab('home')">
                 <span class="nav-icon">⚡</span>
-                <span>HOME</span>
+                <span id="navHome">HOME</span>
             </button>
             <button class="nav-btn" id="btnAirdrop" onclick="switchTab('airdrop')">
                 <span class="nav-icon">🪂</span>
-                <span>AIRDROP</span>
+                <span id="navAirdrop">AIRDROP</span>
             </button>
             <button class="nav-btn" id="btnUpgrades" onclick="switchTab('upgrades')">
                 <span class="nav-icon">🚀</span>
-                <span>BOOST</span>
+                <span id="navBoost">BOOST</span>
             </button>
             <button class="nav-btn" id="btnShop" onclick="switchTab('shop')">
                 <span class="nav-icon">💎</span>
-                <span>SHOP</span>
+                <span id="navShop">SHOP</span>
             </button>
             <button class="nav-btn" id="btnTasks" onclick="switchTab('tasks')">
                 <span class="nav-icon">📋</span>
-                <span>TASKS</span>
+                <span id="navTasks">TASKS</span>
             </button>
         </nav>
     </div>
@@ -965,11 +1112,11 @@
         <div class="modal-content">
             <div class="modal-top-decor"><span>⭐</span></div>
             <div class="modal-header-custom">
-                <h3>RANKS & TIERS</h3>
+                <h3 id="ranksModalTitle">RANKS & TIERS</h3>
                 <button class="close-modal" onclick="closeRanksModal()">✕</button>
             </div>
             <div class="modal-subtitle">
-                ✦ <span>Climb the ranks and earn bigger rewards!</span> ✦
+                ✦ <span id="ranksSub">Climb the ranks and earn bigger rewards!</span> ✦
             </div>
             <div class="tiers-scroll-list" id="tiersContainer"></div>
             <div class="modal-footer-decor">✦ Higher rank, greater rewards! ✦</div>
@@ -980,11 +1127,11 @@
         <div class="modal-content">
             <div class="modal-top-decor"><span>🏆</span></div>
             <div class="modal-header-custom">
-                <h3>LEADERBOARD</h3>
+                <h3 id="lbModalTitle">LEADERBOARD</h3>
                 <button class="close-modal" onclick="closeLeaderboardModal()">✕</button>
             </div>
             <div class="modal-subtitle">
-                ✦ <span>Top miners across the network</span> ✦
+                ✦ <span id="lbSub">Top miners across the network</span> ✦
             </div>
             <div class="leaderboard-scroll-list" id="leaderboardContainer"></div>
             <div class="modal-footer-decor">✦ Keep mining to reach the top! ✦</div>
@@ -994,6 +1141,9 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        // ============================================================
+        // 1. FIREBASE CONFIG
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBsmlE_PDrLhi_UNKfOdBUZU0mLnqTSeR4",
             authDomain: "b3bo-57b15.firebaseapp.com",
@@ -1007,6 +1157,9 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // ============================================================
+        // 2. TELEGRAM & USER
+        // ============================================================
         const tg = window.Telegram.WebApp;
         try { tg.expand(); tg.enableClosingConfirmation(); } catch (e) {}
 
@@ -1046,7 +1199,7 @@
             score: 0,
             energy: 100,
             maxEnergy: 100,
-            energyLevel: 0, 
+            energyLevel: 0,
             energyUpgradeCost: 2000,
             tapPower: 1,
             tapCost: 1000,
@@ -1058,38 +1211,336 @@
 
         const $ = (id) => document.getElementById(id);
 
-        const tiersListDef = [
-            { id: 'bronze', name: 'BRONZE', min: 0, icon: '🥉', cssClass: 'bronze' },
-            { id: 'silver', name: 'SILVER', min: 10000, icon: '🥈', cssClass: 'silver' },
-            { id: 'gold', name: 'GOLD', min: 50000, icon: '🥇', cssClass: 'gold' },
-            { id: 'platinum', name: 'PLATINUM', min: 200000, icon: '💎', cssClass: 'platinum' },
-            { id: 'diamond', name: 'DIAMOND', min: 1000000, icon: '💠', cssClass: 'diamond' },
-            { id: 'masters', name: 'MASTERS', min: 5000000, icon: '👑', cssClass: 'masters' }
-        ];
-
-        function getCurrentTier(score) {
-            let current = tiersListDef[0];
-            for (let i = tiersListDef.length - 1; i >= 0; i--) {
-                if (score >= tiersListDef[i].min) {
-                    current = tiersListDef[i];
-                    break;
-                }
+        // ============================================================
+        // 3. LANGUAGE SYSTEM (EN / RU)
+        // ============================================================
+        const LANG = {
+            en: {
+                inviteTitle: '👥 INVITE FRIENDS',
+                inviteSub: 'Get +1,000 Coins per referral',
+                inviteBtn: 'INVITE',
+                rankSub: 'Climb & earn!',
+                rankSub2: 'Climb and earn bigger rewards!',
+                navHome: 'HOME',
+                navAirdrop: 'AIRDROP',
+                navBoost: 'BOOST',
+                navShop: 'SHOP',
+                navTasks: 'TASKS',
+                airdropTitle: '🪂 AIRDROP & SWAP',
+                airdropHeroTitle: 'BEBO AIRDROP',
+                airdropHeroSub: 'Token generation & listing details coming soon. Stay tuned!',
+                beboBalLabel: 'BEBO BALANCE',
+                tonBalLabel: 'TON BALANCE',
+                swapPayLabel: 'You Pay',
+                swapGetLabel: 'You Get (Estimated)',
+                swapConvertBtn: 'CONVERT NOW',
+                boostTitle: '🚀 BOOSTERS',
+                multitapLabel: '⚡ Multi-Tap (Lv ',
+                energyLabel: '🔋 Energy Limit (',
+                shopTitle: '💎 PREMIUM SHOP',
+                shopStarter: 'Starter Pack',
+                shopPopular: 'Popular Bundle',
+                shopMega: 'Mega Booster Pack',
+                shopWhale: 'Whale Bundle 🐋',
+                shopInfEnergy: 'Infinite Energy (24h)',
+                shopInfSub: 'No energy drain!',
+                tasksTitle: '📋 SOCIAL & WALLET',
+                walletConnect: '💎 CONNECT TON WALLET',
+                walletSub: 'Required for shop & airdrop conversion',
+                taskTgTitle: '📢 Follow Telegram Channel',
+                taskTgReward: '+500 Coins',
+                taskXTitle: '🐦 Follow X (Twitter)',
+                taskXReward: '+500 Coins',
+                taskCoffeeTitle: '☕ Visit Coffee Garden',
+                taskCoffeeReward: '+100 Coins',
+                taskEasyTitle: '🪙 Visit Easy Coin Farm',
+                taskEasyReward: '+100 Coins',
+                taskAtfTitle: '🪂 Visit ATF Airdrop Bot',
+                taskAtfReward: '+100 Coins',
+                friendsTitle: '👥 INVITE FRIENDS',
+                friendsDesc: 'Invite your friends and get +1,000 Coins for each referral!',
+                friendsTotal: '👥 Total Invited Friends',
+                copyBtn: '📋 Copy Link',
+                sendBtn: '📤 Send to Friend',
+                ranksModalTitle: 'RANKS & TIERS',
+                ranksSub: 'Climb the ranks and earn bigger rewards!',
+                lbModalTitle: 'LEADERBOARD',
+                lbSub: 'Top miners across the network',
+                lbLabel: 'LEADERBOARD',
+                toastCopied: '✅ Link copied to clipboard!',
+                toastCopyFailed: '❌ Failed to copy. Please try manually.',
+                toastReferralSuccess: '🎉 +1,000 coins awarded to your referrer!',
+                toastReferrerNotFound: '⚠️ Referrer not found.',
+                toastAlreadyReferred: 'ℹ️ You already used a referral link.',
+                toastEnergy: '⏳ Energy depleted!',
+                toastMaxed: '⚠️ Energy limit is already at maximum (400)!',
+                toastNeedCoins: (cost) => `❌ Need ${cost.toLocaleString()} coins`,
+                toastUpgraded: (power) => `⚡ Multi-Tap upgraded to Lv.${power}!`,
+                toastEnergyUpgraded: (max) => `🔋 Energy limit upgraded to ${max}!`,
+                toastTaskDone: (reward) => `✅ +${reward} coins claimed!`,
+                toastTaskAlready: '⚠️ Task already completed!',
+                toastSwapInvalid: '❌ Enter a valid amount to swap!',
+                toastSwapNoCoins: '❌ You do not have enough Bebo Coins!',
+                toastSwapSuccess: (ton) => `✅ Converted successfully! +${ton.toFixed(4)} TON added.`,
+                toastSwapFail: '❌ Conversion failed',
+                toastWalletConnect: '💎 TON Wallet connected!',
+                toastWalletFirst: '💎 Connect your TON wallet first!',
+                toastPaymentWait: '⏳ Waiting for payment approval...',
+                toastPaymentConfirm: (coins) => `✅ Payment confirmed! +${coins.toLocaleString()} Coins added!`,
+                toastInfiniteEnergy: '⚡ Infinite Energy Activated!',
+                toastPaymentFail: '❌ Payment was not completed',
+                toastPaymentCancel: '❌ Payment cancelled or failed',
+                toastFullyCharged: '⚡ FULLY CHARGED',
+                toastRecharging: 'RECHARGING:',
+                costText: 'Cost: ',
+                maxedText: 'MAXED OUT',
+                upgradeText: 'UPGRADE',
+                maxText: 'MAX',
+                friendsCount: (count) => `${count} Friends`,
+                completed: 'COMPLETED',
+                visitClaim: 'VISIT & CLAIM',
+                generating: 'Generating link...'
+            },
+            ru: {
+                inviteTitle: '👥 ПРИГЛАСИТЬ ДРУЗЕЙ',
+                inviteSub: 'Получите +1,000 монет за каждого друга',
+                inviteBtn: 'ПРИГЛАСИТЬ',
+                rankSub: 'Поднимайтесь в ранге!',
+                rankSub2: 'Поднимайтесь по рангам и получайте большие награды!',
+                navHome: 'ГЛАВНАЯ',
+                navAirdrop: 'ЭЙРДРОП',
+                navBoost: 'БУСТ',
+                navShop: 'МАГАЗИН',
+                navTasks: 'ЗАДАНИЯ',
+                airdropTitle: '🪂 ЭЙРДРОП & ОБМЕН',
+                airdropHeroTitle: 'BEBO ЭЙРДРОП',
+                airdropHeroSub: 'Информация о генерации и листинге токенов скоро. Оставайтесь с нами!',
+                beboBalLabel: 'BALANCE BEBO',
+                tonBalLabel: 'BALANCE TON',
+                swapPayLabel: 'Вы платите',
+                swapGetLabel: 'Вы получаете (примерно)',
+                swapConvertBtn: 'КОНВЕРТИРОВАТЬ',
+                boostTitle: '🚀 УСИЛИТЕЛИ',
+                multitapLabel: '⚡ Мульти-Тап (Ур. ',
+                energyLabel: '🔋 Лимит энергии (',
+                shopTitle: '💎 ПРЕМИУМ МАГАЗИН',
+                shopStarter: 'Стартовый набор',
+                shopPopular: 'Популярный набор',
+                shopMega: 'Мега-бустер',
+                shopWhale: 'Кит-набор 🐋',
+                shopInfEnergy: 'Бесконечная энергия (24ч)',
+                shopInfSub: 'Энергия не тратится!',
+                tasksTitle: '📋 СОЦСЕТИ & КОШЕЛЕК',
+                walletConnect: '💎 ПОДКЛЮЧИТЬ TON КОШЕЛЕК',
+                walletSub: 'Необходимо для магазина и конвертации',
+                taskTgTitle: '📢 Подписаться на Telegram',
+                taskTgReward: '+500 Монет',
+                taskXTitle: '🐦 Подписаться на X (Twitter)',
+                taskXReward: '+500 Монет',
+                taskCoffeeTitle: '☕ Посетить Coffee Garden',
+                taskCoffeeReward: '+100 Монет',
+                taskEasyTitle: '🪙 Посетить Easy Coin Farm',
+                taskEasyReward: '+100 Монет',
+                taskAtfTitle: '🪂 Посетить ATF Airdrop',
+                taskAtfReward: '+100 Монет',
+                friendsTitle: '👥 ПРИГЛАСИТЬ ДРУЗЕЙ',
+                friendsDesc: 'Пригласите друзей и получите +1,000 монет за каждого!',
+                friendsTotal: '👥 Всего приглашено друзей',
+                copyBtn: '📋 Копировать ссылку',
+                sendBtn: '📤 Отправить другу',
+                ranksModalTitle: 'РАНГИ & УРОВНИ',
+                ranksSub: 'Поднимайтесь по рангам и получайте большие награды!',
+                lbModalTitle: 'ТАБЛИЦА ЛИДЕРОВ',
+                lbSub: 'Лучшие майнеры сети',
+                lbLabel: 'ЛИДЕРЫ',
+                toastCopied: '✅ Ссылка скопирована!',
+                toastCopyFailed: '❌ Не удалось скопировать. Попробуйте вручную.',
+                toastReferralSuccess: '🎉 +1,000 монет начислено вашему рефереру!',
+                toastReferrerNotFound: '⚠️ Реферер не найден.',
+                toastAlreadyReferred: 'ℹ️ Вы уже использовали реферальную ссылку.',
+                toastEnergy: '⏳ Энергия закончилась!',
+                toastMaxed: '⚠️ Лимит энергии уже максимальный (400)!',
+                toastNeedCoins: (cost) => `❌ Нужно ${cost.toLocaleString()} монет`,
+                toastUpgraded: (power) => `⚡ Мульти-Тап улучшен до Ур.${power}!`,
+                toastEnergyUpgraded: (max) => `🔋 Лимит энергии увеличен до ${max}!`,
+                toastTaskDone: (reward) => `✅ +${reward} монет получено!`,
+                toastTaskAlready: '⚠️ Задание уже выполнено!',
+                toastSwapInvalid: '❌ Введите корректную сумму для обмена!',
+                toastSwapNoCoins: '❌ У вас недостаточно Bebo монет!',
+                toastSwapSuccess: (ton) => `✅ Конвертация успешна! +${ton.toFixed(4)} TON добавлено.`,
+                toastSwapFail: '❌ Ошибка конвертации',
+                toastWalletConnect: '💎 TON кошелек подключен!',
+                toastWalletFirst: '💎 Сначала подключите TON кошелек!',
+                toastPaymentWait: '⏳ Ожидание подтверждения платежа...',
+                toastPaymentConfirm: (coins) => `✅ Платеж подтвержден! +${coins.toLocaleString()} монет добавлено!`,
+                toastInfiniteEnergy: '⚡ Бесконечная энергия активирована!',
+                toastPaymentFail: '❌ Платеж не выполнен',
+                toastPaymentCancel: '❌ Платеж отменен или не удался',
+                toastFullyCharged: '⚡ ПОЛНОСТЬЮ ЗАРЯЖЕН',
+                toastRecharging: 'ПЕРЕЗАРЯДКА:',
+                costText: 'Цена: ',
+                maxedText: 'МАКСИМУМ',
+                upgradeText: 'УЛУЧШИТЬ',
+                maxText: 'МАКС',
+                friendsCount: (count) => `${count} Друзей`,
+                completed: 'ВЫПОЛНЕНО',
+                visitClaim: 'ПОСЕТИТЬ & ПОЛУЧИТЬ',
+                generating: 'Генерация ссылки...'
             }
-            return current;
+        };
+
+        let currentLang = 'en';
+
+        function t(key, ...args) {
+            let val = LANG[currentLang][key];
+            if (typeof val === 'function') return val(...args);
+            return val || LANG['en'][key] || key;
         }
 
-        function showToast(message, type = 'info', duration = 3000) {
-            const el = document.createElement('div');
-            el.className = `toast ${type}`;
-            el.textContent = message;
-            $('toastContainer').appendChild(el);
-            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, duration);
+        function setLanguage(lang) {
+            if (lang === currentLang) return;
+            currentLang = lang;
+            document.getElementById('langEn').classList.toggle('active', lang === 'en');
+            document.getElementById('langRu').classList.toggle('active', lang === 'ru');
+            updateUILanguage();
+            updateUI();
+        }
+
+        function updateUILanguage() {
+            const map = {
+                'inviteTitle': 'inviteTitle',
+                'inviteSub': 'inviteSub',
+                'inviteBtn': 'inviteBtn',
+                'rankSub': 'rankSub',
+                'rankSub2': 'rankSub2',
+                'navHome': 'navHome',
+                'navAirdrop': 'navAirdrop',
+                'navBoost': 'navBoost',
+                'navShop': 'navShop',
+                'navTasks': 'navTasks',
+                'airdropTitle': 'airdropTitle',
+                'airdropHeroTitle': 'airdropHeroTitle',
+                'airdropHeroSub': 'airdropHeroSub',
+                'beboBalLabel': 'beboBalLabel',
+                'tonBalLabel': 'tonBalLabel',
+                'swapPayLabel': 'swapPayLabel',
+                'swapGetLabel': 'swapGetLabel',
+                'swapConvertBtn': 'swapConvertBtn',
+                'boostTitle': 'boostTitle',
+                'shopTitle': 'shopTitle',
+                'shopStarter': 'shopStarter',
+                'shopPopular': 'shopPopular',
+                'shopMega': 'shopMega',
+                'shopWhale': 'shopWhale',
+                'shopInfEnergy': 'shopInfEnergy',
+                'shopInfSub': 'shopInfSub',
+                'tasksTitle': 'tasksTitle',
+                'walletConnect': 'walletConnect',
+                'walletSub': 'walletSub',
+                'taskTgTitle': 'taskTgTitle',
+                'taskTgReward': 'taskTgReward',
+                'taskXTitle': 'taskXTitle',
+                'taskXReward': 'taskXReward',
+                'taskCoffeeTitle': 'taskCoffeeTitle',
+                'taskCoffeeReward': 'taskCoffeeReward',
+                'taskEasyTitle': 'taskEasyTitle',
+                'taskEasyReward': 'taskEasyReward',
+                'taskAtfTitle': 'taskAtfTitle',
+                'taskAtfReward': 'taskAtfReward',
+                'friendsTitle': 'friendsTitle',
+                'friendsDesc': 'friendsDesc',
+                'friendsTotal': 'friendsTotal',
+                'copyBtn': 'copyBtn',
+                'sendBtn': 'sendBtn',
+                'ranksModalTitle': 'ranksModalTitle',
+                'ranksSub': 'ranksSub',
+                'lbModalTitle': 'lbModalTitle',
+                'lbSub': 'lbSub',
+                'lbLabel': 'lbLabel'
+            };
+
+            for (const [id, key] of Object.entries(map)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (key === 'multitapLabel' || key === 'energyLabel') continue;
+                    el.textContent = t(key);
+                }
+            }
+
+            document.querySelectorAll('.task-btn').forEach(btn => {
+                if (btn.textContent !== 'COMPLETED' && btn.textContent !== 'ВЫПОЛНЕНО') {
+                    btn.textContent = t('visitClaim');
+                }
+            });
+            
+            const energyBtn = document.getElementById('energyUpgradeBtn');
+            if (energyBtn && energyBtn.textContent !== 'MAX' && energyBtn.textContent !== 'МАКС') {
+                energyBtn.textContent = t('upgradeText');
+            }
+            
+            const inviteBtnHome = document.getElementById('inviteBtn');
+            if (inviteBtnHome) inviteBtnHome.textContent = t('inviteBtn');
+            
+            document.getElementById('copyBtn').innerHTML = t('copyBtn');
+            document.getElementById('sendBtn').innerHTML = t('sendBtn');
+
+            document.querySelector('#ranksModal .modal-subtitle span').textContent = t('ranksSub');
+            document.querySelector('#leaderboardModal .modal-subtitle span').textContent = t('lbSub');
+            document.querySelector('#ranksModal .modal-header-custom h3').textContent = t('ranksModalTitle');
+            document.querySelector('#leaderboardModal .modal-header-custom h3').textContent = t('lbModalTitle');
+
+            document.getElementById('navHome').textContent = t('navHome');
+            document.getElementById('navAirdrop').textContent = t('navAirdrop');
+            document.getElementById('navBoost').textContent = t('navBoost');
+            document.getElementById('navShop').textContent = t('navShop');
+            document.getElementById('navTasks').textContent = t('navTasks');
+        }
+
+        // ============================================================
+        // 4. CORE GAME LOGIC (Referral, Load, Save)
+        // ============================================================
+        function handleReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrerId = urlParams.get('start') || urlParams.get('startapp');
+            
+            if (!referrerId || referrerId === telegramId) return;
+            
+            const alreadyReferred = localStorage.getItem('bebo_referred_' + telegramId);
+            if (alreadyReferred) {
+                console.log('✅ Referral already counted.');
+                return;
+            }
+            
+            const referrerRef = db.ref('users/' + referrerId);
+            referrerRef.once('value', (snapshot) => {
+                const referrerData = snapshot.val();
+                if (referrerData) {
+                    const newCount = (referrerData.referralCount || 0) + 1;
+                    const newScore = (referrerData.score || 0) + 1000;
+                    
+                    referrerRef.update({
+                        referralCount: newCount,
+                        score: newScore
+                    }).then(() => {
+                        localStorage.setItem('bebo_referred_' + telegramId, 'true');
+                        showToast(t('toastReferralSuccess'), 'success', 4000);
+                        console.log(`✅ Referral recorded for ${referrerId}`);
+                    }).catch((err) => {
+                        console.error('❌ Failed to update referral:', err);
+                    });
+                } else {
+                    console.log('⚠️ Referrer not found in DB');
+                    showToast(t('toastReferrerNotFound'), 'error', 3000);
+                }
+            });
         }
 
         const saveKey = 'bebo_save_' + telegramId;
         let isLoadedFromServer = false;
 
         function loadGameData() {
+            handleReferral();
+
             let localDataSaved = localStorage.getItem(saveKey);
             let localParsed = null;
             try {
@@ -1199,6 +1650,151 @@
 
         loadGameData();
 
+        // ============================================================
+        // 5. UI UPDATE & HELPERS
+        // ============================================================
+        function updateUI() {
+            // تحديث السكور
+            document.getElementById('score').textContent = Math.floor(G.score).toLocaleString();
+            document.getElementById('walletBeboBal').textContent = Math.floor(G.score).toLocaleString();
+            document.getElementById('walletTonBal').textContent = G.tonBalance.toFixed(2) + ' TON';
+            
+            // تحديث الرانك
+            const currentTier = getCurrentTier(G.score);
+            document.getElementById('userRankBadge').textContent = currentTier.name;
+            document.getElementById('userRankBadge2').textContent = currentTier.name;
+            document.getElementById('rankMedalIcon').textContent = currentTier.icon;
+            document.getElementById('rankMedalIcon2').textContent = currentTier.icon;
+
+            // الطاقة
+            const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
+            document.getElementById('energyFill').style.width = pct + '%';
+            document.getElementById('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
+            
+            const missingEnergy = G.maxEnergy - G.energy;
+            const secondsLeft = Math.max(0, Math.ceil((missingEnergy / G.maxEnergy) * 1800));
+            const mins = Math.floor(secondsLeft / 60);
+            const secs = secondsLeft % 60;
+            const timeFormatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            
+            if (G.energy >= G.maxEnergy) {
+                document.getElementById('hintText').textContent = t('toastFullyCharged');
+            } else {
+                document.getElementById('hintText').textContent = `${t('toastRecharging')} ${timeFormatted}`;
+            }
+
+            // Boost
+            document.getElementById('tapLevel').textContent = G.tapPower;
+            document.getElementById('tapCost').textContent = `${t('costText')}${Math.floor(G.tapCost).toLocaleString()} Coins`;
+            
+            document.getElementById('energyLimitText').textContent = G.maxEnergy;
+            const energyBtn = document.getElementById('energyUpgradeBtn');
+            const energyCostP = document.getElementById('energyUpgradeCost');
+            if (G.energyLevel >= 2) {
+                energyCostP.textContent = t('maxedText');
+                energyBtn.textContent = t('maxText');
+                energyBtn.style.opacity = '0.5';
+            } else {
+                energyCostP.textContent = `${t('costText')}${Math.floor(G.energyUpgradeCost).toLocaleString()} Coins`;
+                energyBtn.textContent = t('upgradeText');
+                energyBtn.style.opacity = '1';
+            }
+
+            document.getElementById('refCountText').textContent = t('friendsCount', G.referralCount);
+
+            // Tasks
+            ['tg', 'x', 'coffee', 'easycoin', 'atf'].forEach(taskId => {
+                if (G.completedTasks[taskId]) {
+                    const btn = document.getElementById('task' + taskId.charAt(0).toUpperCase() + taskId.slice(1)) || 
+                                (taskId === 'coffee' ? document.getElementById('taskCoffee') : taskId === 'easycoin' ? document.getElementById('taskEasyCoin') : taskId === 'atf' ? document.getElementById('taskAtf' ) : null);
+                    if (btn) { 
+                        btn.textContent = t('completed'); 
+                        btn.style.opacity = '0.5'; 
+                    }
+                } else {
+                    const btn = document.getElementById('task' + taskId.charAt(0).toUpperCase() + taskId.slice(1)) || 
+                                (taskId === 'coffee' ? document.getElementById('taskCoffee') : taskId === 'easycoin' ? document.getElementById('taskEasyCoin') : taskId === 'atf' ? document.getElementById('taskAtf' ) : null);
+                    if (btn && (btn.textContent === 'COMPLETED' || btn.textContent === 'ВЫПОЛНЕНО')) {
+                        btn.textContent = t('visitClaim');
+                        btn.style.opacity = '1';
+                    }
+                }
+            });
+
+            document.getElementById('multitapLabel').innerHTML = `${t('multitapLabel')}${G.tapPower})`;
+            document.getElementById('energyLabel').innerHTML = `${t('energyLabel')}${G.maxEnergy} Max)`;
+        }
+
+        // ============================================================
+        // 6. TOAST SYSTEM
+        // ============================================================
+        function showToast(message, type = 'info', duration = 3000) {
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.textContent = message;
+            document.getElementById('toastContainer').appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, duration);
+        }
+
+        // ============================================================
+        // 7. REFERRAL LINKS (COPY & SEND)
+        // ============================================================
+        function setupReferralLink() {
+            const link = `https://t.me/${botUsername}?start=${telegramId}`;
+            document.getElementById('refLinkText').textContent = link;
+            document.getElementById('refCountText').textContent = t('friendsCount', G.referralCount);
+        }
+
+        function copyReferralLink() {
+            const link = `https://t.me/${botUsername}?start=${telegramId}`;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast(t('toastCopied'), 'success', 2000);
+                }).catch(() => {
+                    copyFallback(link);
+                });
+            } else {
+                copyFallback(link);
+            }
+        }
+
+        function copyFallback(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(t('toastCopied'), 'success', 2000);
+            } catch (err) {
+                showToast(t('toastCopyFailed'), 'error', 2000);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function sendReferralLink() {
+            const link = `https://t.me/${botUsername}?start=${telegramId}`;
+            const text = encodeURIComponent(`🎮 Join Bebo Coin Game and earn coins! Use my link:`);
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`;
+            
+            try {
+                if (tg && typeof tg.openTelegramLink === 'function') {
+                    tg.openTelegramLink(shareUrl);
+                } else if (tg && typeof tg.openLink === 'function') {
+                    tg.openLink(shareUrl);
+                } else {
+                    window.open(shareUrl, '_blank');
+                }
+            } catch (e) {
+                window.open(shareUrl, '_blank');
+            }
+        }
+
+        // ============================================================
+        // 8. TAP & SOUND
+        // ============================================================
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -1246,31 +1842,16 @@
             setTimeout(() => el.remove(), 420);
         }
 
-        function setupReferralLink() {
-            const link = `https://t.me/${botUsername}?start=${telegramId}`;
-            $('refLinkText').textContent = link;
-            $('refCountText').textContent = `${G.referralCount} Friends`;
-        }
-
-        function shareReferralLink() {
-            const link = `https://t.me/${botUsername}?start=${telegramId}`;
-            const text = `Join Bebo Coin Game and start mining with me! 🚀 Use my invite link:`;
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
-            } else {
-                navigator.clipboard.writeText(link).then(() => {
-                    showToast('📋 Referral link copied!', 'success');
-                });
-            }
-        }
-
-        const coinWrapper = $('coinWrapper');
+        // ============================================================
+        // 9. EVENT LISTENERS & GAME FUNCTIONS
+        // ============================================================
+        const coinWrapper = document.getElementById('coinWrapper');
         coinWrapper.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             if (!isLoadedFromServer) return;
 
             if (G.energy < G.tapPower) {
-                showToast('⏳ Energy depleted!', 'error', 1500);
+                showToast(t('toastEnergy'), 'error', 1500);
                 return;
             }
 
@@ -1293,66 +1874,22 @@
             createFloatingNumber(clientX, clientY, `+${G.tapPower}`, '#00ffff');
         });
 
+        // ============================================================
+        // 10. SWAP CALC
+        // ============================================================
         function calculateSwap() {
-            const payCoins = parseFloat($('swapCoinsInput').value) || 0;
-            const rateCoins = parseFloat($('rateCoinsInput').value) || 1000;
-            const rateTon = parseFloat($('rateTonInput').value) || 0.1;
+            const payCoins = parseFloat(document.getElementById('swapCoinsInput').value) || 0;
+            const rateCoins = parseFloat(document.getElementById('rateCoinsInput').value) || 1000;
+            const rateTon = parseFloat(document.getElementById('rateTonInput').value) || 0.1;
 
             if (rateCoins <= 0) return;
             const getTon = (payCoins / rateCoins) * rateTon;
-            $('swapTonVal').textContent = getTon.toFixed(4) + ' TON';
+            document.getElementById('swapTonVal').textContent = getTon.toFixed(4) + ' TON';
         }
 
-        function updateUI() {
-            $('score').textContent = Math.floor(G.score).toLocaleString();
-            $('walletBeboBal').textContent = Math.floor(G.score).toLocaleString();
-            $('walletTonBal').textContent = G.tonBalance.toFixed(2) + ' TON';
-            
-            const currentTier = getCurrentTier(G.score);
-            $('userRankBadge').textContent = currentTier.name;
-            $('rankMedalIcon').textContent = currentTier.icon;
-
-            const pct = Math.max(0, (G.energy / G.maxEnergy) * 100);
-            $('energyFill').style.width = pct + '%';
-            $('energyText').textContent = `${Math.floor(G.energy)} / ${G.maxEnergy}`;
-            
-            const missingEnergy = G.maxEnergy - G.energy;
-            const secondsLeft = Math.max(0, Math.ceil((missingEnergy / G.maxEnergy) * 1800));
-            const mins = Math.floor(secondsLeft / 60);
-            const secs = secondsLeft % 60;
-            const timeFormatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            
-            if (G.energy >= G.maxEnergy) {
-                $('hintText').textContent = '⚡ FULLY CHARGED';
-            } else {
-                $('hintText').textContent = `RECHARGING: ${timeFormatted}`;
-            }
-
-            $('tapLevel').textContent = G.tapPower;
-            $('tapCost').textContent = `Cost: ${Math.floor(G.tapCost).toLocaleString()} Coins`;
-            
-            $('energyLimitText').textContent = G.maxEnergy;
-            if (G.energyLevel >= 2) {
-                $('energyUpgradeCost').textContent = 'MAXED OUT';
-                $('energyUpgradeBtn').textContent = 'MAX';
-                $('energyUpgradeBtn').style.opacity = '0.5';
-            } else {
-                $('energyUpgradeCost').textContent = `Cost: ${Math.floor(G.energyUpgradeCost).toLocaleString()} Coins`;
-                $('energyUpgradeBtn').textContent = 'UPGRADE';
-                $('energyUpgradeBtn').style.opacity = '1';
-            }
-
-            $('refCountText').textContent = `${G.referralCount} Friends`;
-
-            ['tg', 'x', 'coffee', 'easycoin', 'atf'].forEach(taskId => {
-                if (G.completedTasks[taskId]) {
-                    const btn = $('task' + taskId.charAt(0).toUpperCase() + taskId.slice(1)) || 
-                                (taskId === 'coffee' ? $('taskCoffee') : taskId === 'easycoin' ? $('taskEasyCoin') : taskId === 'atf' ? $('taskAtf' ) : null);
-                    if (btn) { btn.textContent = 'COMPLETED'; btn.style.opacity = '0.5'; }
-                }
-            });
-        }
-
+        // ============================================================
+        // 11. BUY FUNCTIONS
+        // ============================================================
         function buyTapUpgrade() {
             if (G.score >= G.tapCost) {
                 G.score -= G.tapCost;
@@ -1360,15 +1897,15 @@
                 G.tapCost = Math.floor(G.tapCost * 2.2);
                 updateUI();
                 saveGame(true);
-                showToast(`⚡ Multi-Tap upgraded to Lv.${G.tapPower}!`, 'success');
+                showToast(t('toastUpgraded', G.tapPower), 'success');
             } else {
-                showToast(`❌ Need ${Math.floor(G.tapCost).toLocaleString()} coins`, 'error');
+                showToast(t('toastNeedCoins', G.tapCost), 'error');
             }
         }
 
         function buyEnergyUpgrade() {
             if (G.energyLevel >= 2) {
-                showToast('⚠️ Energy limit is already at maximum (400)!', 'error');
+                showToast(t('toastMaxed'), 'error');
                 return;
             }
 
@@ -1387,23 +1924,23 @@
 
                 updateUI();
                 saveGame(true);
-                showToast(`🔋 Energy limit upgraded to ${G.maxEnergy}!`, 'success');
+                showToast(t('toastEnergyUpgraded', G.maxEnergy), 'success');
             } else {
-                showToast(`❌ Need ${Math.floor(G.energyUpgradeCost).toLocaleString()} coins`, 'error');
+                showToast(t('toastNeedCoins', G.energyUpgradeCost), 'error');
             }
         }
 
         async function convertCoinsToTon() {
-            const payCoins = parseFloat($('swapCoinsInput').value) || 0;
-            const rateCoins = parseFloat($('rateCoinsInput').value) || 1000;
-            const rateTon = parseFloat($('rateTonInput').value) || 0.1;
+            const payCoins = parseFloat(document.getElementById('swapCoinsInput').value) || 0;
+            const rateCoins = parseFloat(document.getElementById('rateCoinsInput').value) || 1000;
+            const rateTon = parseFloat(document.getElementById('rateTonInput').value) || 0.1;
 
             if (payCoins <= 0) {
-                showToast('❌ Enter a valid amount to swap!', 'error');
+                showToast(t('toastSwapInvalid'), 'error');
                 return;
             }
             if (G.score < payCoins) {
-                showToast('❌ You do not have enough Bebo Coins!', 'error');
+                showToast(t('toastSwapNoCoins'), 'error');
                 return;
             }
 
@@ -1415,77 +1952,18 @@
                 G.tonBalance += getTon;
                 updateUI();
                 saveGame(true);
-                showToast(`✅ Converted successfully! +${getTon.toFixed(4)} TON added.`, 'success', 4000);
+                showToast(t('toastSwapSuccess', getTon), 'success', 4000);
             } catch (error) {
-                showToast('❌ Conversion failed', 'error');
+                showToast(t('toastSwapFail'), 'error');
             }
         }
 
-        setInterval(() => {
-            if (!isLoadedFromServer) return;
-            if (G.energy < G.maxEnergy) {
-                G.energy = Math.min(G.maxEnergy, G.energy + (G.maxEnergy / 1800));
-                updateUI();
-            }
-            saveGame(true);
-        }, 3000);
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) saveGame(true);
-        });
-        window.addEventListener('pagehide', () => saveGame(true));
-        window.addEventListener('beforeunload', () => saveGame(true));
-
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
-        });
-
-        tonConnectUI.onStatusChange((wallet) => {
-            if (wallet) {
-                G.walletAddress = wallet.account.address;
-                showToast('💎 TON Wallet connected!', 'success');
-                saveGame(true);
-            }
-        });
-
-        async function buyCoinsWithTon(coins, amountInTon) {
-            if (!tonConnectUI.connected) {
-                showToast('💎 Connect your TON wallet first!', 'error');
-                switchTab('tasks');
-                return;
-            }
-            try {
-                showToast('⏳ Waiting for payment approval...', 'info');
-                const nanoTon = Math.floor(amountInTon * 1000000000).toString();
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 360,
-                    messages: [{ address: recipientWallet, amount: nanoTon }]
-                };
-                
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
-                if (result && result.boc) {
-                    if (coins > 0) {
-                        G.score += coins;
-                        showToast(`✅ Payment confirmed! +${coins.toLocaleString()} Coins added!`, 'success', 4000);
-                    } else {
-                        G.energy = G.maxEnergy;
-                        showToast(`⚡ Infinite Energy Activated!`, 'success', 4000);
-                    }
-                    updateUI();
-                    saveGame(true);
-                } else {
-                    showToast('❌ Payment was not completed', 'error');
-                }
-            } catch (error) {
-                showToast('❌ Payment cancelled or failed', 'error');
-            }
-        }
-
+        // ============================================================
+        // 12. TASKS & MODALS
+        // ============================================================
         function doTask(taskId, url, reward) {
             if (G.completedTasks[taskId]) {
-                showToast('⚠️ Task already completed!', 'error');
+                showToast(t('toastTaskAlready'), 'error');
                 return;
             }
             try { tg.openLink ? tg.openLink(url) : window.open(url, '_blank'); } catch(_) { window.open(url, '_blank'); }
@@ -1493,29 +1971,49 @@
             G.score += reward;
             updateUI();
             saveGame(true);
-            showToast(`✅ +${reward} coins claimed!`, 'success');
+            showToast(t('toastTaskDone', reward), 'success');
+        }
+
+        const tiersListDef = [
+            { id: 'bronze', name: 'BRONZE', min: 0, icon: '🥉', cssClass: 'bronze' },
+            { id: 'silver', name: 'SILVER', min: 10000, icon: '🥈', cssClass: 'silver' },
+            { id: 'gold', name: 'GOLD', min: 50000, icon: '🥇', cssClass: 'gold' },
+            { id: 'platinum', name: 'PLATINUM', min: 200000, icon: '💎', cssClass: 'platinum' },
+            { id: 'diamond', name: 'DIAMOND', min: 1000000, icon: '💠', cssClass: 'diamond' },
+            { id: 'masters', name: 'MASTERS', min: 5000000, icon: '👑', cssClass: 'masters' }
+        ];
+
+        function getCurrentTier(score) {
+            let current = tiersListDef[0];
+            for (let i = tiersListDef.length - 1; i >= 0; i--) {
+                if (score >= tiersListDef[i].min) {
+                    current = tiersListDef[i];
+                    break;
+                }
+            }
+            return current;
         }
 
         function openRanksModal() { 
-            $('ranksModal').style.display = 'flex'; 
+            document.getElementById('ranksModal').style.display = 'flex'; 
             renderTiersModal(); 
         }
         
         function closeRanksModal() { 
-            $('ranksModal').style.display = 'none'; 
+            document.getElementById('ranksModal').style.display = 'none'; 
         }
 
         function openLeaderboardModal() {
-            $('leaderboardModal').style.display = 'flex';
+            document.getElementById('leaderboardModal').style.display = 'flex';
             renderLeaderboard();
         }
 
         function closeLeaderboardModal() {
-            $('leaderboardModal').style.display = 'none';
+            document.getElementById('leaderboardModal').style.display = 'none';
         }
 
         function renderTiersModal() {
-            const container = $('tiersContainer');
+            const container = document.getElementById('tiersContainer');
             container.innerHTML = '';
             const currentTier = getCurrentTier(G.score);
 
@@ -1543,7 +2041,7 @@
         }
 
         function renderLeaderboard() {
-            const container = $('leaderboardContainer');
+            const container = document.getElementById('leaderboardContainer');
             container.innerHTML = '<div style="text-align:center; color:#aaa; font-size:8px; padding:20px;">Loading leaderboard...</div>';
             
             db.ref('users').once('value', (snapshot) => {
@@ -1594,12 +2092,15 @@
             });
         }
 
+        // ============================================================
+        // 13. NAVIGATION
+        // ============================================================
         const views = ['gameView', 'airdropView', 'upgradesView', 'shopView', 'tasksView', 'friendsView'];
         const navBtns = ['btnHome', 'btnAirdrop', 'btnUpgrades', 'btnShop', 'btnTasks'];
 
         function switchTab(tab) {
-            views.forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
-            navBtns.forEach(id => { const el = $(id); if (el) el.classList.remove('active'); });
+            views.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+            navBtns.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
 
             const map = {
                 home: { view: 'gameView', btn: 'btnHome' },
@@ -1612,20 +2113,90 @@
             const target = map[tab];
             if (!target) return;
             if (tab === 'friends') {
-                $(target.view).style.display = 'flex';
-                $('btnTasks').classList.add('active');
+                document.getElementById(target.view).style.display = 'flex';
+                document.getElementById('btnTasks').classList.add('active');
                 setupReferralLink();
                 return;
             }
-            $(target.view).style.display = 'flex';
-            const btnEl = $(target.btn);
+            document.getElementById(target.view).style.display = 'flex';
+            const btnEl = document.getElementById(target.btn);
             if (btnEl) btnEl.classList.add('active');
             if (tab === 'friends') setupReferralLink();
         }
 
-        setupRefLinks = setupReferralLink;
+        // ============================================================
+        // 14. TON CONNECT
+        // ============================================================
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/karamzonet-prog/bebocoin/main/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        tonConnectUI.onStatusChange((wallet) => {
+            if (wallet) {
+                G.walletAddress = wallet.account.address;
+                showToast(t('toastWalletConnect'), 'success');
+                saveGame(true);
+            }
+        });
+
+        async function buyCoinsWithTon(coins, amountInTon) {
+            if (!tonConnectUI.connected) {
+                showToast(t('toastWalletFirst'), 'error');
+                switchTab('tasks');
+                return;
+            }
+            try {
+                showToast(t('toastPaymentWait'), 'info');
+                const nanoTon = Math.floor(amountInTon * 1000000000).toString();
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 360,
+                    messages: [{ address: recipientWallet, amount: nanoTon }]
+                };
+                
+                const result = await tonConnectUI.sendTransaction(transaction);
+                
+                if (result && result.boc) {
+                    if (coins > 0) {
+                        G.score += coins;
+                        showToast(t('toastPaymentConfirm', coins), 'success', 4000);
+                    } else {
+                        G.energy = G.maxEnergy;
+                        showToast(t('toastInfiniteEnergy'), 'success', 4000);
+                    }
+                    updateUI();
+                    saveGame(true);
+                } else {
+                    showToast(t('toastPaymentFail'), 'error');
+                }
+            } catch (error) {
+                showToast(t('toastPaymentCancel'), 'error');
+            }
+        }
+
+        // ============================================================
+        // 15. INIT
+        // ============================================================
+        setLanguage('en');
         setupReferralLink();
         calculateSwap();
+
+        setInterval(() => {
+            if (!isLoadedFromServer) return;
+            if (G.energy < G.maxEnergy) {
+                G.energy = Math.min(G.maxEnergy, G.energy + (G.maxEnergy / 1800));
+                updateUI();
+            }
+            saveGame(true);
+        }, 3000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) saveGame(true);
+        });
+        window.addEventListener('pagehide', () => saveGame(true));
+        window.addEventListener('beforeunload', () => saveGame(true));
+
+        console.log('🚀 Bebo Coin Game Loaded Successfully');
     </script>
 </body>
-</html>
+    </html>
